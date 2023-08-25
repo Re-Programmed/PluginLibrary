@@ -1,18 +1,27 @@
 package com.willm.CoreMOD;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.willm.CoreMOD.Power.GasBurningGenerator;
 import com.willm.ModAPI.MobDrop;
+import com.willm.ModAPI.Blocks.BlockDirectionData;
 import com.willm.ModAPI.Blocks.LiquidBlock;
 import com.willm.ModAPI.Blocks.MachineConversion;
 import com.willm.ModAPI.Items.BlockCreator;
@@ -21,10 +30,50 @@ import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Items.Recipes.MaterialRecipeTemplate;
 import com.willm.ModAPI.Items.Recipes.RecipeBuilder;
 import com.willm.ModAPI.Items.Recipes.RecipeTemplates;
+import com.willm.ModAPI.Items.Recipes.TemplateMaterial;
 import com.willm.ModAPI.Terrain.Ore;
 
 public class MyItems {
-
+	
+	public static Map<Material, Integer> parishables = new HashMap<Material, Integer>();
+	
+	public static void InitParishables()
+	{
+		parishables.put(Material.BEEF,  (20 * 30));
+		parishables.put(Material.COOKED_BEEF,  (20 * 30) + 350);
+		parishables.put(Material.CHICKEN,  (20 * 30) - 150);
+		parishables.put(Material.COOKED_CHICKEN,  (20 * 30) + 200);
+		parishables.put(Material.PORKCHOP,  (20 * 30));
+		parishables.put(Material.COOKED_PORKCHOP,  (20 * 30) + 350);
+		parishables.put(Material.APPLE,  20 * 60 * 4);
+		parishables.put(Material.GOLDEN_APPLE,  20 * 60 * 8);
+		parishables.put(Material.MELON_SLICE,  20 * 30);
+		parishables.put(Material.SWEET_BERRIES,  20 * 45);
+		parishables.put(Material.GLOW_BERRIES,  20 * 45);
+		parishables.put(Material.CARROT,  20 * 60 * 4);
+		parishables.put(Material.GOLDEN_CARROT,  20 * 60 * 4);
+		parishables.put(Material.POTATO,  20 * 60 * 12);
+		parishables.put(Material.BAKED_POTATO,  20 * 60 * 4);
+		parishables.put(Material.BEETROOT,  20 * 60 * 4);
+		parishables.put(Material.MUTTON,  (20 * 30) - 150);
+		parishables.put(Material.COOKED_MUTTON,  (20 * 30) + 200);
+		parishables.put(Material.RABBIT,  (20 * 30) - 150);
+		parishables.put(Material.COOKED_RABBIT,  (20 * 30) + 200);
+		parishables.put(Material.COD, (20 * 20) * 2);
+		parishables.put(Material.COOKED_COD, (20 * 40) * 2);
+		parishables.put(Material.SALMON, (20 * 20) * 2);
+		parishables.put(Material.COOKED_SALMON, (20 * 40) * 2);
+		parishables.put(Material.TROPICAL_FISH, (20 * 20) * 2);
+		parishables.put(Material.PUFFERFISH, (20 * 20) * 2);
+		parishables.put(Material.BREAD, (20 * 60) * 4 * 2);
+		parishables.put(Material.COOKIE, (20 * 60) * 12 * 2);
+		parishables.put(Material.PUMPKIN_PIE, (20 * 60) * 12 * 2);
+		parishables.put(Material.ROTTEN_FLESH, 20);
+		parishables.put(Material.MUSHROOM_STEW, (20 * 60) * 3 * 2);
+		parishables.put(Material.RABBIT_STEW, (20 * 60) * 3 * 2);
+		parishables.put(Material.SUSPICIOUS_STEW, (20 * 60) * 3 * 2);
+		parishables.put(Material.MILK_BUCKET, (20 * 30) * 2);
+	}
 	
 	//Global Items
 	public static CustomItemStack platinum_ingot, platinum_block;
@@ -75,19 +124,79 @@ public class MyItems {
 	
 	public static CustomItemStack spring_water, spring_water_source;
 	
+	public static CustomItemStack limestone_powder, limestone_block, rotary_kiln, generator_core, netherite_core;
+	
+	public static CustomItemStack gear, gearshift, electronic_gearshift, engine;
+	
+	public static CustomItemStack fridge, cooling_unit;
+	
 	public static void RegisterMyItems() {
+		
+		InitParishables();
+		//CEILING TORCH/CHANDALIER
+		//Conveyor Belts / Machines
 		
 		iron_rod = ItemCreator.RegisterNewItem(new CustomItemStack("Iron Rod", Material.ORANGE_DYE, 10001));
 		iron_rod.getRecipe(6, " I ", " I ", " I ").AddMaterial('I', Material.IRON_INGOT).Finalize();
 		
+		WoodRegistry();
+		
 		TungstenRegistry();
 		PlatinumRegistry();
 		OilRegistry();
-
-		
 		
 		Farming();
+
+		limestone_powder = ItemCreator.RegisterNewItem(new CustomItemStack("Limestone Powder", Material.ORANGE_DYE, 40001));
+		limestone_block = ItemCreator.RegisterNewItem(new CustomItemStack("Limestone", Material.ORANGE_CONCRETE, 40001));
+		BlockCreator.RegisterNewBlock(limestone_block).SetConstBlock(false).SetMineAs(Material.ANDESITE).SetCustomDrops(limestone_powder, limestone_powder).UseSilkTouch(true).SetRequiredTool("PICKAXE");
 		
+		limestone_block.getRecipe(1, "LL", "LL", "  ").AddMaterial('L', RecipeBuilder.ItemStackInput(limestone_powder)).Finalize();
+		
+		new Ore(limestone_block, 45, true, 0, 128, true, true);
+		
+		CustomItemStack liquid_cement = ItemCreator.RegisterNewItem(new CustomItemStack("Bucket Of Liquid Cement", Material.BROWN_DYE, 10232));
+		liquid_cement.AddLoreLine(ChatColor.GRAY + "Made in the Rotary Kiln.");
+
+		CustomItemStack liquid_cement_source = ItemCreator.RegisterNewItem(new CustomItemStack("Liquid Cement Soruce", Material.GOLD_BLOCK, 70001));
+		LiquidBlock liquid_cement_source_b = BlockCreator.RegisterNewLiquid(liquid_cement_source);
+		
+		liquid_cement_source_b.AddLiquidEffect(new PotionEffect(PotionEffectType.SLOW, 20, 4, true, true));
+		
+		com.willm.ModAPI.Blocks.BlockEvents.RegisterBucket(liquid_cement, liquid_cement_source_b);
+		
+		CustomItemStack unfinished_concrete_powder = ItemCreator.RegisterNewItem(new CustomItemStack("Unfinished Concrete Powder", Material.BROWN_CONCRETE, 12341));
+		unfinished_concrete_powder.AddLoreLine(ChatColor.GRAY + "Made in the Rotary Kiln.");
+		BlockCreator.RegisterNewBlock(unfinished_concrete_powder).SetConstBlock(false).SetMineAs(Material.SOUL_SAND);
+		
+		Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
+		Recipe recipe;
+		while(it.hasNext())
+		{
+		recipe = it.next();
+		if (recipe != null && recipe.getResult().getType().toString().contains("CONCRETE_POWDER"))
+		{
+		it.remove();
+		}
+		}
+		
+		registerConcreteRecipe(unfinished_concrete_powder, Material.WHITE_CONCRETE_POWDER, Material.WHITE_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.YELLOW_CONCRETE_POWDER, Material.YELLOW_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.BLUE_CONCRETE_POWDER, Material.WHITE_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.LIGHT_BLUE_CONCRETE_POWDER, Material.LIGHT_BLUE_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.CYAN_CONCRETE_POWDER, Material.CYAN_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.PURPLE_CONCRETE_POWDER, Material.PURPLE_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.MAGENTA_CONCRETE_POWDER, Material.MAGENTA_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.GRAY_CONCRETE_POWDER, Material.GRAY_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.BROWN_CONCRETE_POWDER, Material.BROWN_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.LIME_CONCRETE_POWDER, Material.LIME_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.GREEN_CONCRETE_POWDER, Material.GREEN_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.ORANGE_CONCRETE_POWDER, Material.ORANGE_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.RED_CONCRETE_POWDER, Material.RED_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.PINK_CONCRETE_POWDER, Material.PINK_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.LIGHT_GRAY_CONCRETE_POWDER, Material.LIGHT_GRAY_DYE);
+		registerConcreteRecipe(unfinished_concrete_powder, Material.BLACK_CONCRETE_POWDER, Material.BLACK_DYE);
+
 		//Electronics
 
 		CustomItemStack cathode = ItemCreator.RegisterNewItem(new CustomItemStack("Cathode", Material.YELLOW_DYE, 10001));
@@ -105,20 +214,19 @@ public class MyItems {
 	
 		taser = ItemCreator.RegisterNewItem(new CustomItemStack("Taser", Material.IRON_SWORD, 10002));
 		taser.getRecipe(1, "i i", "r r", "RiC").AddMaterial('i', Material.IRON_INGOT).AddMaterial('r', Material.REDSTONE).AddMaterial('R', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).Finalize();
-	
 		
 		//Titanium
 		
 		titanium_ore = ItemCreator.RegisterNewItem(new CustomItemStack("Titanium Ore", Material.DEAD_BRAIN_CORAL_BLOCK, 10001));
 		titanium_ore.AddLoreLine(ChatColor.GRAY + "Rutile -> From Compressor");
-		BlockCreator.RegisterNewBlock(titanium_ore);
+		BlockCreator.RegisterNewBlock(titanium_ore).SetConstBlock(false).SetMineAs(Material.IRON_ORE).SetRequiredTool("PICKAXE");
 		
 						
 		titanium_ingot = ItemCreator.RegisterNewItem(new CustomItemStack("Titanium Ingot", Material.GREEN_DYE, 10001));
 		titanium_ingot.getFurnaceRecipe(RecipeBuilder.ItemStackInput(titanium_ore), 5, 150, "titanium_from_ore");
 		
 		titanium_block = ItemCreator.RegisterNewItem(new CustomItemStack("Block Of Titanium", Material.GREEN_TERRACOTTA, 10002));
-		BlockCreator.RegisterNewBlock(titanium_block);
+		BlockCreator.RegisterNewBlock(titanium_block).SetConstBlock(false).SetMineAs(Material.IRON_BLOCK).SetRequiredTool("PICKAXE");
 				
 		titanium_block.getRecipe(1, RecipeTemplates.Ingot_Block, "titanium_block").AddMaterial('I', RecipeBuilder.ItemStackInput(titanium_ingot)).Finalize();
 		
@@ -133,7 +241,7 @@ public class MyItems {
 		
 		rutile = ItemCreator.RegisterNewItem(new CustomItemStack("Rutile", Material.DEAD_BUBBLE_CORAL_BLOCK, 10003));
 		
-		BlockCreator.RegisterNewBlock(rutile);
+		BlockCreator.RegisterNewBlock(rutile).SetConstBlock(false).SetMineAs(Material.COAL_ORE).SetRequiredTool("PICKAXE");
 		
 		rutile.getRecipe(6, "TTT", "OOO", "TTT").AddMaterial('T', RecipeBuilder.ItemStackInput(titanium_ore)).AddMaterial('O', RecipeBuilder.ItemStackInput(o2_bottle)).Finalize();
 		
@@ -142,19 +250,16 @@ public class MyItems {
 		CustomItemStack silicon = ItemCreator.RegisterNewItem(new CustomItemStack("Silicon", Material.COAL, 20001));
 		
 		compressor = ItemCreator.RegisterNewItem(new CustomItemStack("Compressor", Material.IRON_BLOCK, 10001));
-		BlockCreator.RegisterNewBlock(compressor, "core_mod.steam", 40, 9, "Compressor", new MachineConversion(new ItemStack(Material.COAL), silicon.GetMyItemStack()), new MachineConversion(rutile.GetMyItemStack(), titanium_ore.GetMyItemStack()), new MachineConversion(new ItemStack(Material.GLASS_BOTTLE, 1), o2_bottle.GetMyItemStack()), new MachineConversion(new ItemStack(Material.APPLE, 1), cider_vinegar.GetMyItemStack()));
+		BlockCreator.RegisterNewBlock(compressor, "core_mod.steam", 40, 9, "Compressor", new MachineConversion(new ItemStack(Material.COAL), silicon.GetMyItemStack()), new MachineConversion(rutile.GetMyItemStack(), titanium_ore.GetMyItemStack()), new MachineConversion(new ItemStack(Material.GLASS_BOTTLE, 1), o2_bottle.GetMyItemStack()), new MachineConversion(new ItemStack(Material.APPLE, 1), cider_vinegar.GetMyItemStack()), new MachineConversion(new ItemStack(Material.PUMPKIN_SEEDS, 1), cooking_oil.GetMyItemStack()), new MachineConversion(new ItemStack(Material.BEETROOT_SEEDS, 1), cooking_oil.GetMyItemStack()));
 		
 		compressor.getRecipe(1, "iRi", "P P", "iCi").AddMaterial('i', Material.IRON_INGOT).AddMaterial('R', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('P', Material.PISTON).Finalize();
 		
 		elevator = ItemCreator.RegisterNewItem(new CustomItemStack("Elevator", Material.BLACK_CONCRETE, 10001));
 		BlockCreator.RegisterNewBlock(elevator);
-		
-		elevator.getRecipe(9, "PPP", "CrR", "SSS").AddMaterial('P', Material.PISTON).AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('R', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('r', Material.REDSTONE).AddMaterial('S', Material.IRON_INGOT).Finalize();
-		
+				
 		elevator_shaft = ItemCreator.RegisterNewItem(new CustomItemStack("Elevator Shaft", Material.BLACK_CONCRETE, 10002));
 		BlockCreator.RegisterNewBlock(elevator_shaft);
 		
-		elevator_shaft.getRecipe(16, RecipeTemplates.Ingot_Block, "craft_shaft_elevator").AddMaterial('I', RecipeBuilder.ItemStackInput(iron_rod)).Finalize();
 		
 		DrillsRegistry();
 				
@@ -177,6 +282,15 @@ public class MyItems {
 		trumpet = ItemCreator.RegisterNewItem(new CustomItemStack("Trumpet", Material.IRON_SWORD, 60001)); 
 		trumpet.getRecipe(1, "IBB", "B B", "BBB").AddMaterial('I', Material.IRON_INGOT).AddMaterial('B', RecipeBuilder.ItemStackInput(brass)).Finalize();
 		
+		
+		ItemCreator.RegisterNewItem(new CustomItemStack("Brass Helmet", Material.IRON_HELMET, 10002).Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.HEAD).Attribute(Attribute.GENERIC_ARMOR, 2f, EquipmentSlot.HEAD)).AddLoreLine(ChatColor.GRAY + "*Brass Armor*").getRecipe(1, "III", "I I", "   ").AddMaterial('I', RecipeBuilder.ItemStackInput(brass)).Finalize();
+		tungsten_chestplate = ItemCreator.RegisterNewItem(new CustomItemStack("Brass Chestplate", Material.IRON_CHESTPLATE, 10002).Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.CHEST).Attribute(Attribute.GENERIC_ARMOR, 7f, EquipmentSlot.CHEST)).AddLoreLine(ChatColor.GRAY + "*Brass Armor*");
+		tungsten_chestplate.getRecipe(1, "I I", "III", "III").AddMaterial('I', RecipeBuilder.ItemStackInput(brass)).Finalize();
+		ItemCreator.RegisterNewItem(new CustomItemStack("Brass Leggings", Material.IRON_LEGGINGS, 10002).Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.LEGS).Attribute(Attribute.GENERIC_ARMOR, 6f, EquipmentSlot.LEGS)).AddLoreLine(ChatColor.GRAY + "*Brass Armor*").getRecipe(1, "III", "I I", "I I").AddMaterial('I', RecipeBuilder.ItemStackInput(brass)).Finalize();
+		ItemCreator.RegisterNewItem(new CustomItemStack("Brass Boots", Material.IRON_BOOTS, 10002).Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.FEET).Attribute(Attribute.GENERIC_ARMOR, 2f, EquipmentSlot.FEET)).AddLoreLine(ChatColor.GRAY + "*Brass Armor*").getRecipe(1, "   ", "I I", "I I").AddMaterial('I', RecipeBuilder.ItemStackInput(brass)).Finalize();
+
+		
+		
 		CustomItemStack screw = ItemCreator.RegisterNewItem(new CustomItemStack("Screw", Material.RED_DYE, 10002));
 		
 		screw.getRecipe(8, "MMM", "M M", "MMM", "titanium_screw").AddMaterial('M', RecipeBuilder.MultiItemStackInput(titanium_ingot, brass, steel)).Finalize();
@@ -188,7 +302,7 @@ public class MyItems {
 		Casing = casing;
 		casing.getRecipe(1, "SHS", "I I", "SHS").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('H', RecipeBuilder.ItemStackInput(hinge)).AddMaterial('I', Material.IRON_INGOT).Finalize();
 		
-		BlockCreator.RegisterNewBlock(casing);
+		BlockCreator.RegisterNewBlock(casing).SetConstBlock(false).SetMineAs(Material.ANDESITE);
 		
 		com.willm.ModAPI.Voltage.Main.er1.getRecipe(8, "SCS", "PDP", "SCS", "craft_er_one").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('P', RecipeBuilder.ItemStackInput(galvanisedSteel)).AddMaterial('D', RecipeBuilder.ItemStackInput(capacitor)).Finalize();
 		com.willm.ModAPI.Voltage.Main.er2.getRecipe(8, "SCS", "PDP", "SCS", "craft_er_two").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('P', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('D', RecipeBuilder.ItemStackInput(com.willm.ModAPI.Voltage.Main.er1)).Finalize();
@@ -200,10 +314,10 @@ public class MyItems {
 		CustomItemStack photovoltaic_cell = ItemCreator.RegisterNewItem(new CustomItemStack("Photovoltaic Cell", Material.COAL, 30001));
 		photovoltaic_cell.getRecipe(6, "SBS", "BSB", "SBS", "pva_cell").AddMaterial('S', RecipeBuilder.ItemStackInput(silicon)).AddMaterial('B', RecipeBuilder.ItemStackInput(brass)).Finalize();
 		
-		CustomItemStack generator_core = ItemCreator.RegisterNewItem(new CustomItemStack("Generator Core", Material.GOLD_BLOCK, 50001));
+		generator_core = ItemCreator.RegisterNewItem(new CustomItemStack("Generator Core", Material.GOLD_BLOCK, 50001));
 		generator_core.getRecipe(1, "RCR", "ZFZ", "RCR", "gc_gen").AddMaterial('R', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('Z', RecipeBuilder.ItemStackInput(zinc)).AddMaterial('F', Material.FURNACE).Finalize();
 		
-		BlockCreator.RegisterNewBlock(generator_core);
+		BlockCreator.RegisterNewBlock(generator_core).SetConstBlock(false).SetMineAs(Material.GOLD_BLOCK);
 		
 		com.willm.CoreMOD.Power.SolarPanel sp = new com.willm.CoreMOD.Power.SolarPanel();
 		com.willm.ModAPI.Voltage.Main.energyUsers.add(sp);
@@ -221,10 +335,10 @@ public class MyItems {
 		
 		cg.GetBlockRef().getRootItem().getRecipe(1, "CSC", "cFr", "CSC", "coal_generator_craft").AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('S', RecipeBuilder.ItemStackInput(galvanisedSteel)).AddMaterial('c', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('r', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('F', RecipeBuilder.ItemStackInput(generator_core)).Finalize();
 	
-		CustomItemStack netherite_core = ItemCreator.RegisterNewItem(new CustomItemStack("Netherite Casing", Material.GOLD_BLOCK, 50002));
+		netherite_core = ItemCreator.RegisterNewItem(new CustomItemStack("Netherite Casing", Material.GOLD_BLOCK, 50002));
 		netherite_core.getRecipe(1, "NSN", "SCS", "NSN").AddMaterial('S', RecipeBuilder.ItemStackInput(galvanisedSteel)).AddMaterial('N', Material.NETHERITE_SCRAP).AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).Finalize();
 		
-		BlockCreator.RegisterNewBlock(netherite_core);
+		BlockCreator.RegisterNewBlock(netherite_core).SetConstBlock(false).SetMineAs(Material.NETHERITE_BLOCK);
 		
 		gg.GetBlockRef().getRootItem().getRecipe(2, "SCS", "cfc", "SBS", "geo_gen_craft").AddMaterial('S', RecipeBuilder.ItemStackInput(galvanisedSteel)).AddMaterial('C', RecipeBuilder.ItemStackInput(netherite_core)).AddMaterial('c', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('f', RecipeBuilder.ItemStackInput(generator_core)).AddMaterial('B', Material.BUCKET).Finalize();
 		
@@ -269,18 +383,17 @@ public class MyItems {
 				com.willm.ModAPI.Voltage.Main.energyUsers.add(wg);
 				wg.GetBlockRef().getRootItem().getRecipe(2, "SRS", "CGC", "TCT", "wg_craft").AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('T', RecipeBuilder.MultiItemStackInput(titanium_block, tungsten_block, platinum_block)).AddMaterial('G', RecipeBuilder.ItemStackInput(generator_core)).AddMaterial('R', RecipeBuilder.ItemStackInput(iron_rod)).AddMaterial('S', RecipeBuilder.ItemStackInput(steel_ingot)).Finalize();
 				
-		CustomItemStack engine = ItemCreator.RegisterNewItem(new CustomItemStack("Engine", Material.GOLD_BLOCK, 60001));
-		BlockCreator.RegisterNewBlock(engine);
+		engine = ItemCreator.RegisterNewItem(new CustomItemStack("Engine", Material.GOLD_BLOCK, 60001));
+		BlockCreator.RegisterNewBlock(engine).SetConstBlock(false).SetMineAs(Material.DIORITE);
 				
-		engine.getRecipe(1, "AAA", "ACA", "ASA").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('A', RecipeBuilder.ItemStackInput(aluminum_alloy)).Finalize();
 		
 		CustomItemStack jet_booster = ItemCreator.RegisterNewItem(new CustomItemStack("Jet Booster", Material.IRON_INGOT, 20001));
 		
-		jet_booster.getRecipe(3, "TtT", "PKP", "EtE").AddMaterial('T', RecipeBuilder.ItemStackInput(tungsten_block)).AddMaterial('t', RecipeBuilder.ItemStackInput(titanium_block)).AddMaterial('P', RecipeBuilder.ItemStackInput(platinum_block)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('K', RecipeBuilder.ItemStackInput(kerosene)).Finalize();
+		jet_booster.getRecipe(2, "TtT", "PKP", "EtE").AddMaterial('T', RecipeBuilder.ItemStackInput(tungsten_block)).AddMaterial('t', RecipeBuilder.ItemStackInput(titanium_block)).AddMaterial('P', RecipeBuilder.ItemStackInput(platinum_block)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('K', RecipeBuilder.ItemStackInput(kerosene)).Finalize();
 		
 		jetpack = ItemCreator.RegisterNewItem(new CustomItemStack("Jetpack", Material.ELYTRA, 20001)).AddLoreLine(ChatColor.RED + "Fuel: 0 mB").AddLoreLine(ChatColor.GRAY + "*Jetpack*").AddLoreLine(ChatColor.GRAY + "Uses kerosene (injector)").Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.CHEST).Attribute(Attribute.GENERIC_ARMOR, 7, EquipmentSlot.CHEST);
 		
-		jetpack.getRecipe(1, "tKt", "ETE", "BBB").AddMaterial('t', RecipeBuilder.ItemStackInput(titanium_ingot)).AddMaterial('T', RecipeBuilder.ItemStackInput(tungsten_chestplate)).AddMaterial('K', RecipeBuilder.ItemStackInput(kerosene)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('B', RecipeBuilder.ItemStackInput(jet_booster)).Finalize();
+		jetpack.getRecipe(1, "tKt", "ETE", "BBB").AddMaterial('t', RecipeBuilder.ItemStackInput(titanium_ingot)).AddMaterial('T', Material.ELYTRA).AddMaterial('K', RecipeBuilder.ItemStackInput(kerosene)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('B', RecipeBuilder.ItemStackInput(jet_booster)).Finalize();
 	
 		ItemCreator.RegisterNewItem(new CustomItemStack("Creative Jetpack", Material.ELYTRA, 20001)).AddLoreLine(ChatColor.GREEN + "Fuel: 1000000 mB").AddLoreLine(ChatColor.GRAY + "*Jetpack*").AddLoreLine(ChatColor.GRAY + "Uses kerosene (injector)").Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.CHEST).Attribute(Attribute.GENERIC_ARMOR, 7, EquipmentSlot.CHEST);		
 		
@@ -313,6 +426,10 @@ public class MyItems {
 		sap = ItemCreator.RegisterNewItem(new CustomItemStack("Sap", Material.COAL, 10423));
 		sap.AddLoreLine(ChatColor.GRAY + "-> From Tree Tap");
 		
+		CustomItemStack sap_piston = ItemCreator.RegisterNewItem(new CustomItemStack("Sappy Piston", Material.STICKY_PISTON, 10001));
+		
+		Bukkit.getServer().addRecipe(sap_piston.GenUnshaped("piston_with_sap", 1).addIngredient(Material.PISTON).addIngredient(RecipeBuilder.ItemStackInput(sap)));
+		
 		syrup = ItemCreator.RegisterNewItem(new CustomItemStack("Syrup", Material.HONEY_BOTTLE, 15023));
 		syrup.AddLoreLine(ChatColor.BLUE + "2 Sap -> Oven (Bowl)");
 		
@@ -331,30 +448,76 @@ public class MyItems {
 		spring_water_source_b.LiquidDamage = -0.5;
 		
 		com.willm.ModAPI.Blocks.BlockEvents.RegisterBucket(spring_water, spring_water_source_b);
+				
+		CustomItemStack cement_powder = ItemCreator.RegisterNewItem(new CustomItemStack("Cement Powder", Material.BROWN_CONCRETE, 51023));
+		BlockCreator.RegisterNewBlock(cement_powder).SetConstBlock(false).SetMineAs(Material.CLAY);
 		
 		
+		rotary_kiln = ItemCreator.RegisterNewItem(new CustomItemStack("Rotary Kiln", Material.BROWN_CONCRETE, 10001));
+		BlockCreator.RegisterNewBlock(rotary_kiln, "core_mod.kiln_spin", 200, 9, "Rotary Kiln", new MachineConversion(limestone_block.GetMyItemStack(), liquid_cement.GetMyItemStack()),
+				new MachineConversion(liquid_cement.GetMyItemStack(), cement_powder.GetAmountClone(4)));
 		
+		Bukkit.getServer().addRecipe(unfinished_concrete_powder.GenUnshaped("craft_concrete_pow_from_cement_pow", 4).addIngredient(Material.GRAVEL).addIngredient(Material.SAND).addIngredient(Material.GRAVEL).addIngredient(Material.SAND).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)));
+		
+		gear = ItemCreator.RegisterNewItem(new CustomItemStack("Gear", Material.BLUE_DYE, 60001));
+		gear.getRecipe(4, "SW ", "WRW", " WS").AddMaterial('W', RecipeBuilder.MultiMaterialInput(Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.DARK_OAK_PLANKS, Material.ACACIA_PLANKS, Material.JUNGLE_PLANKS, Material.CHERRY_PLANKS, Material.BAMBOO_PLANKS, Material.BIRCH_PLANKS, Material.CRIMSON_PLANKS, Material.WARPED_PLANKS, Material.MANGROVE_PLANKS)).AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('R', RecipeBuilder.ItemStackInput(iron_rod)).Finalize();
+		
+		gearshift = ItemCreator.RegisterNewItem(new CustomItemStack("Gearshift", Material.BLUE_DYE, 60002));
+		gearshift.getRecipe(1, "G  ", "SRS", "  G").AddMaterial('G', RecipeBuilder.ItemStackInput(gear)).AddMaterial('R', RecipeBuilder.ItemStackInput(iron_rod)).AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).Finalize();
+		
+		electronic_gearshift = ItemCreator.RegisterNewItem(new CustomItemStack("Electronic Gearshift", Material.BLUE_DYE, 60003));
+		electronic_gearshift.getRecipe(1, " C ", " G ", " R ").AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('R', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('G', RecipeBuilder.ItemStackInput(gearshift)).Finalize();
+		
+		rotary_kiln.getRecipe(1, "PGP", "CBC", "cEc").AddMaterial('G', RecipeBuilder.ItemStackInput(galvanisedSteel)).AddMaterial('P', RecipeBuilder.ItemStackInput(platinum_block)).AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('B', Material.BUCKET).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('c', RecipeBuilder.ItemStackInput(electronic_gearshift)).Finalize();
+		
+		GasBurningGenerator gbg = new GasBurningGenerator();
+		com.willm.ModAPI.Voltage.Main.energyUsers.add(gbg);
+		
+		cooling_unit = ItemCreator.RegisterNewItem(new CustomItemStack("Cooling Unit", Material.IRON_BLOCK, 45202));
+		BlockCreator.RegisterNewBlock(cooling_unit);
+		
+		cooling_unit.getRecipe(1, "SBS", "CIT", "SBS").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('T', RecipeBuilder.ItemStackInput(titanium_block)).AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('B', RecipeBuilder.ItemStackInput(casing)).AddMaterial('I', RecipeBuilder.MultiMaterialInput(Material.ICE, Material.PACKED_ICE, Material.BLUE_ICE)).Finalize();
+		
+		fridge = ItemCreator.RegisterNewItem(new CustomItemStack("Fridge", Material.IRON_BLOCK, 45201));
+		BlockCreator.RegisterNewBlock(fridge).SetDirectional(BlockDirectionData.PLAYER_RELATIVE);
+		
+		fridge.getRecipe(1, "QQQ", "HCQ", "GcS").AddMaterial('Q', Material.IRON_BLOCK).AddMaterial('C', Material.CHEST).AddMaterial('G', RecipeBuilder.ItemStackInput(gearshift)).AddMaterial('H', RecipeBuilder.ItemStackInput(hinge)).AddMaterial('S', RecipeBuilder.ItemStackInput(aluminum_alloy)).AddMaterial('c', RecipeBuilder.ItemStackInput(cooling_unit)).Finalize();
+	
+		//ENGINE RECIPE
+		engine.getRecipe(1, "AGA", "ACA", "ASA").AddMaterial('G', RecipeBuilder.ItemStackInput(gearshift)).AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('A', RecipeBuilder.ItemStackInput(aluminum_alloy)).Finalize();
+		
+		//ELEVATOR RECIPE
+		elevator_shaft.getRecipe(5, "GRG", "SRS", "gEg", "craft_shaft_elevator").AddMaterial('G', RecipeBuilder.ItemStackInput(gear)).AddMaterial('g', RecipeBuilder.ItemStackInput(gearshift)).AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('R', RecipeBuilder.ItemStackInput(iron_rod)).Finalize();
+		elevator.getRecipe(8, "PPP", "CrR", "SGS").AddMaterial('P', Material.STICKY_PISTON).AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('R', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('r', Material.REDSTONE_BLOCK).AddMaterial('S', Material.IRON_INGOT).AddMaterial('G', RecipeBuilder.ItemStackInput(electronic_gearshift)).Finalize();
 	}
 	
 	
-	public static CustomItemStack tomato_plant, oven, pan_oven, pan, oven_red, tomato, oven_blue, oven_tan, spaghetti, bacon, wooden_plate, cider_vinegar, tomato_sauce, spare_rib, rib_eye, bbq_sauce_smokey, beef_broth;
-	public static CustomItemStack cutting_board, chopped_carrots;
+	public static CustomItemStack tomato_plant, oven, pan_oven, pan, oven_red, tomato, oven_blue, oven_tan, spaghetti, bacon, wooden_plate, cider_vinegar, tomato_sauce, spare_rib, rib_eye, bbq_sauce_smoky, beef_broth;
+	public static CustomItemStack cutting_board, chopped_carrots, potato_slices;
 	public static CustomItemStack pepper_plant, peppercorn, pepper_sack;
+	public static CustomItemStack onion_plant, onion;
+	
+	public static CustomItemStack curdled_milk;
 	
 	public static CustomItemStack lamb;
 	public static CustomItemStack ham;
 	
+	public static CustomItemStack cooking_oil, potato_chips;
+	
 	private static void Farming()
 	{
+		curdled_milk = ItemCreator.RegisterNewItem(new CustomItemStack("Curdled Milk", Material.MILK_BUCKET, 10001));
+		curdled_milk.AddLoreLine(ChatColor.RED + "ROTTEN");
 		
 		cutting_board = ItemCreator.RegisterNewItem(new CustomItemStack("Cutting Board", Material.QUARTZ_BRICKS, 10001));
 		BlockCreator.RegisterNewBlock(cutting_board);
 		
 		cider_vinegar = ItemCreator.RegisterNewItem(new CustomItemStack("Cider Vinegar", Material.HONEY_BOTTLE, 10001)).AddLoreLine(ChatColor.GRAY + "Apple -> From Compressor");
+		cooking_oil = ItemCreator.RegisterNewItem(new CustomItemStack("Cooking Oil", Material.HONEY_BOTTLE, 10004)).AddLoreLine(ChatColor.GRAY + "Beetroot Seeds -> From Compressor").AddLoreLine(ChatColor.GRAY + "Pumpkin Seeds -> From Compressor");
 		
 		wooden_plate = ItemCreator.RegisterNewItem(new CustomItemStack("Wooden Plate", Material.BOWL, 10001));
 		wooden_plate.getRecipe(6, "   ", "BBB", "   ", "craft_wooden_plate").AddMaterial('B', Material.BOWL).Finalize();
-		
+				
 		
 		ItemCreator.RegisterMobDrop(new MobDrop(EntityType.COW, 160), ItemCreator.RegisterNewItem(new CustomItemStack("Brisket", Material.BEEF, 50001)), 1);
 		ItemCreator.RegisterMobDrop(new MobDrop(EntityType.COW, 160), ItemCreator.RegisterNewItem(new CustomItemStack("Chuck Steak", Material.BEEF, 50002)), 1);
@@ -421,6 +584,16 @@ public class MyItems {
 
 			BlockEvents.CuttingBoardRecipes.put(peppercorn.GetMyItemStack(), pepper_sack.GetMyItemStack());
 			
+		//Onion
+			onion_plant = ItemCreator.RegisterNewItem(new CustomItemStack("Onion Plant (Stage 4)", Material.DIRT, 10012));
+			CustomItemStack onion_plant_2 = ItemCreator.RegisterNewItem(new CustomItemStack("Onion Plant (Stage 3)", Material.DIRT, 10011));
+			CustomItemStack onion_plant_3 = ItemCreator.RegisterNewItem(new CustomItemStack("Onion Plant (Stage 2)", Material.DIRT, 10010));
+			CustomItemStack onion_plant_4 = ItemCreator.RegisterNewItem(new CustomItemStack("Onion Plant", Material.DIRT, 10009));
+	
+			onion = ItemCreator.RegisterNewItem(new CustomItemStack("Onion", Material.CARROT, 15001));
+			
+			ItemCreator.RegisterPlant(onion, 5, 15, BlockCreator.RegisterNewBlock(onion_plant), BlockCreator.RegisterNewBlock(onion_plant_2), BlockCreator.RegisterNewBlock(onion_plant_3), BlockCreator.RegisterNewBlock(onion_plant_4));
+				
 		CustomItemStack lambchop = ItemCreator.RegisterNewItem(new CustomItemStack("Lamb Chop", Material.COOKED_MUTTON, 10001));
 		lambchop.AddFoodModifier(1, 1).AddLoreLine(ChatColor.BLUE + "Lamb + Pepper Pouch -> Oven (Plate)");
 			
@@ -432,12 +605,12 @@ public class MyItems {
 		
 		BlockEvents.ovenRecipes.add(new OvenRecipe(tomato_sauce.GetMyItemStack(), false, tomato.GetAmountClone(2)));
 		
-		bbq_sauce_smokey = ItemCreator.RegisterNewItem(new CustomItemStack("Smokey BBQ Sauce", Material.HONEY_BOTTLE, 10002)).AddLoreLine(ChatColor.BLUE + "Cider Vinegar + Tomato Sauce -> Oven (Bowl)");
-		BlockEvents.ovenRecipes.add(new OvenRecipe(bbq_sauce_smokey.GetAmountClone(2), false, cider_vinegar.GetMyItemStack(), tomato_sauce.GetMyItemStack()));
+		bbq_sauce_smoky = ItemCreator.RegisterNewItem(new CustomItemStack("Smoky BBQ Sauce", Material.HONEY_BOTTLE, 10002)).AddLoreLine(ChatColor.BLUE + "Cider Vinegar + Tomato Sauce -> Oven (Bowl)");
+		BlockEvents.ovenRecipes.add(new OvenRecipe(bbq_sauce_smoky.GetAmountClone(2), false, cider_vinegar.GetMyItemStack(), tomato_sauce.GetMyItemStack()));
 		
-		CustomItemStack smokey_ribs = ItemCreator.RegisterNewItem(new CustomItemStack("Smokey Ribs", Material.COOKED_BEEF, 10007)).AddFoodModifier(2, 3).AddLoreLine(ChatColor.BLUE + "Smokey BBQ Sauce + Rib-Eye -> Oven (Plate)").AddLoreLine(ChatColor.BLUE + "Smokey BBQ Sauce + Spare Ribs -> Oven (Plate)");
-		BlockEvents.ovenRecipes.add(new OvenRecipe(smokey_ribs.GetAmountClone(4), true, bbq_sauce_smokey.GetMyItemStack(), spare_rib.GetMyItemStack()));
-		BlockEvents.ovenRecipes.add(new OvenRecipe(smokey_ribs.GetAmountClone(4), true, bbq_sauce_smokey.GetMyItemStack(), rib_eye.GetMyItemStack()));
+		CustomItemStack smoky_ribs = ItemCreator.RegisterNewItem(new CustomItemStack("Smoky Ribs", Material.COOKED_BEEF, 10007)).AddFoodModifier(2, 3).AddLoreLine(ChatColor.BLUE + "Smoky BBQ Sauce + Rib-Eye -> Oven (Plate)").AddLoreLine(ChatColor.BLUE + "Smoky BBQ Sauce + Spare Ribs -> Oven (Plate)");
+		BlockEvents.ovenRecipes.add(new OvenRecipe(smoky_ribs.GetAmountClone(4), true, bbq_sauce_smoky.GetMyItemStack(), spare_rib.GetMyItemStack()));
+		BlockEvents.ovenRecipes.add(new OvenRecipe(smoky_ribs.GetAmountClone(4), true, bbq_sauce_smoky.GetMyItemStack(), rib_eye.GetMyItemStack()));
 
 		spaghetti = ItemCreator.RegisterNewItem(new CustomItemStack("Spaghetti", Material.WHEAT, 10001));
 		Bukkit.getServer().addRecipe(spaghetti.GenUnshaped("spaghetti_s").addIngredient(Material.WATER_BUCKET).addIngredient(Material.WATER_BUCKET).addIngredient(Material.WHEAT).addIngredient(Material.WHEAT).addIngredient(Material.WHEAT));
@@ -463,6 +636,13 @@ public class MyItems {
 		CustomItemStack carrot_stew = ItemCreator.RegisterNewItem(new CustomItemStack("Carrot Stew", Material.COOKED_BEEF, 10008)).AddFoodModifier(1, 1).AddLoreLine(ChatColor.BLUE + "Chopped Carrots + Beef Broth -> Oven (Bowl)");
 		
 		BlockEvents.ovenRecipes.add(new OvenRecipe(carrot_stew.GetMyItemStack(), false, chopped_carrots.GetMyItemStack(), beef_broth.GetMyItemStack()));
+		
+		potato_chips = ItemCreator.RegisterNewItem(new CustomItemStack("Potato Chips", Material.BAKED_POTATO, 60001)).AddFoodModifier(1, 1).AddLoreLine(ChatColor.BLUE + "Cooking Oil + Baked Potato -> Oven (Bowl)");
+		
+		potato_slices = ItemCreator.RegisterNewItem(new CustomItemStack("Potato Slices", Material.BAKED_POTATO, 60002)).AddLoreLine(ChatColor.BLUE + "Baked Potato -> Cutting Board");
+		BlockEvents.CuttingBoardRecipes.put(new ItemStack(Material.BAKED_POTATO, 1), potato_slices.GetMyItemStack());
+		
+		BlockEvents.ovenRecipes.add(new OvenRecipe(potato_chips.GetMyItemStack(), false, potato_slices.GetMyItemStack(), cooking_oil.GetMyItemStack()));
 	}
 	
 	private static void ZincRegistry()
@@ -485,7 +665,7 @@ public class MyItems {
 	private static void OilRegistry()
 	{
 		crude_oil_deposit = ItemCreator.RegisterNewItem(new CustomItemStack("Crude Oil Deposit", Material.DEAD_HORN_CORAL_BLOCK, 20001));
-		BlockCreator.RegisterNewBlock(crude_oil_deposit);
+		BlockCreator.RegisterNewBlock(crude_oil_deposit).SetConstBlock(false).SetMineAs(Material.STONE).SetRequiredTool("PICKAXE");
 		
 		new Ore(crude_oil_deposit, 24, true, 7, 10);
 		
@@ -548,7 +728,7 @@ public class MyItems {
 		
 		//Ore
 	platinum_ore = ItemCreator.RegisterNewItem(new CustomItemStack("Platinum Ore", Material.DEAD_TUBE_CORAL_BLOCK, 10001));
-	BlockCreator.RegisterNewBlock(platinum_ore);
+	BlockCreator.RegisterNewBlock(platinum_ore).SetConstBlock(false).SetMineAs(Material.DEEPSLATE).SetRequiredTool("PICKAXE");
 	
 	new Ore(platinum_ore, 32, true, 5, 24);
 	
@@ -573,7 +753,7 @@ public class MyItems {
 	platinum_block = ItemCreator.RegisterNewItem(new CustomItemStack("Block Of Platinum", Material.LIGHT_BLUE_TERRACOTTA, 10002));
 	platinum_block.getRecipe(1, RecipeTemplates.Ingot_Block, "platinum_block").AddMaterial('I', RecipeBuilder.ItemStackInput(platinum_ingot)).Finalize();
 	
-	BlockCreator.RegisterNewBlock(platinum_block);
+	BlockCreator.RegisterNewBlock(platinum_block).SetConstBlock(false).SetMineAs(Material.IRON_BLOCK).SetRequiredTool("PICKAXE");
 	
 	platinum_ingot.getRecipe(9, RecipeTemplates.Ingot_Middle, "platinum_ingot_from_block").AddMaterial('I', RecipeBuilder.ItemStackInput(platinum_block)).Finalize();
 	
@@ -597,7 +777,7 @@ public class MyItems {
 		
 			//Ore
 		wolframite = ItemCreator.RegisterNewItem(new CustomItemStack("Wolframite", Material.DEAD_FIRE_CORAL_BLOCK, 10001));
-		BlockCreator.RegisterNewBlock(wolframite);
+		BlockCreator.RegisterNewBlock(wolframite).SetConstBlock(false).SetMineAs(Material.IRON_ORE).SetRequiredTool("PICKAXE");
 	
 		new Ore(wolframite, 64, true, 1, 64);
 				
@@ -624,7 +804,7 @@ public class MyItems {
 			//Blocks And Decoration
 		tungsten_block = ItemCreator.RegisterNewItem(new CustomItemStack("Block Of Tungsten", Material.ORANGE_TERRACOTTA, 10002));
 		tungsten_block.getRecipe(1, "III", "III", "III").AddMaterial('I', RecipeBuilder.ItemStackInput(tungsten_ingot)).Finalize();
-		BlockCreator.RegisterNewBlock(tungsten_block);
+		BlockCreator.RegisterNewBlock(tungsten_block).SetConstBlock(false).SetMineAs(Material.GOLD_BLOCK).SetRequiredTool("PICKAXE");
 		
 		tungsten_ingot.getRecipe(9, "   ", " B ", "   ").AddMaterial('B', RecipeBuilder.ItemStackInput(tungsten_block)).Finalize();
 		
@@ -634,4 +814,40 @@ public class MyItems {
 		BlockCreator.RegisterNewBlock(tungsten_lamp);
 	}
 	
+	public static CustomItemStack pine_log;
+	
+	public static void WoodRegistry()
+	{
+		CustomItemStack sand_paper_item = ItemCreator.RegisterNewItem(new CustomItemStack("Sandpaper", Material.PAPER, 20001)).AddLoreLine(ChatColor.GRAY + "Used to strip logs.");
+		Bukkit.getServer().addRecipe(sand_paper_item.GenUnshaped("craft_sand_paper", 1).addIngredient(Material.PAPER).addIngredient(RecipeBuilder.MultiMaterialInput(Material.SAND, Material.RED_SAND)));
+
+		CustomItemStack pine_log_item = ItemCreator.RegisterNewItem(new CustomItemStack("Pine Log", Material.OAK_LOG, 10001));
+		BlockCreator.RegisterNewBlock(pine_log_item).SetConstBlock(false).SetDirectional(BlockDirectionData.FACE_RELATIVE).SetSidewaysBlock(BlockCreator.RegisterNewBlock(new CustomItemStack("Pine Log", Material.OAK_LOG, 10002)).SetCustomDrops(pine_log_item).SetMineAs(Material.OAK_LOG).SetConstBlock(false)).SetMineAs(Material.OAK_LOG);
+	
+		pine_log = pine_log_item;
+		
+		CustomItemStack stripped_pine_log_item = ItemCreator.RegisterNewItem(new CustomItemStack("Stripped Pine Log", Material.STRIPPED_OAK_LOG, 10001));
+		BlockCreator.RegisterNewBlock(stripped_pine_log_item).SetConstBlock(false).SetDirectional(BlockDirectionData.FACE_RELATIVE).SetSidewaysBlock(BlockCreator.RegisterNewBlock(new CustomItemStack("Stripped Pine Log", Material.STRIPPED_OAK_LOG, 10002)).SetCustomDrops(stripped_pine_log_item).SetMineAs(Material.STRIPPED_OAK_LOG).SetConstBlock(false)).SetMineAs(Material.STRIPPED_OAK_LOG);
+		
+		Bukkit.getServer().addRecipe(stripped_pine_log_item.GenUnshaped("strip_pine_log", 2).addIngredient(RecipeBuilder.ItemStackInput(sand_paper_item)).addIngredient(RecipeBuilder.ItemStackInput(pine_log_item)).addIngredient(RecipeBuilder.ItemStackInput(pine_log_item)));
+		
+		CustomItemStack pine_planks = ItemCreator.RegisterNewItem(new CustomItemStack("Pine Planks", Material.OAK_PLANKS, 10001));
+		BlockCreator.RegisterNewBlock(pine_planks).SetConstBlock(false).SetMineAs(Material.OAK_PLANKS);
+		
+		Bukkit.getServer().addRecipe(pine_planks.GenUnshaped("pine_planks_f_log", 4).addIngredient(RecipeBuilder.MultiItemStackInput(pine_log_item, stripped_pine_log_item)));
+		
+		CustomItemStack pine_fence = ItemCreator.RegisterNewItem(new CustomItemStack("Pine Fence", Material.OAK_FENCE, 10001));
+		BlockCreator.RegisterNewBlock(pine_fence).SetConstBlock(false).SetMineAs(Material.OAK_FENCE);
+	}
+	
+	private static void registerConcreteRecipe(CustomItemStack unfinished_concrete_powder, Material product, Material dye)
+	{
+		ShapelessRecipe craftConcreteWithUnfinished = new ShapelessRecipe(NamespacedKey.minecraft("core_" + product.toString().toLowerCase()), new ItemStack(product, 32));
+		craftConcreteWithUnfinished.addIngredient(Material.GRAVEL);craftConcreteWithUnfinished.addIngredient(Material.GRAVEL);
+		craftConcreteWithUnfinished.addIngredient(Material.SAND);craftConcreteWithUnfinished.addIngredient(Material.SAND);
+		craftConcreteWithUnfinished.addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder));craftConcreteWithUnfinished.addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder));
+		craftConcreteWithUnfinished.addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder));craftConcreteWithUnfinished.addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder));
+		craftConcreteWithUnfinished.addIngredient(dye);
+		Bukkit.getServer().addRecipe(craftConcreteWithUnfinished);
+	}
 }

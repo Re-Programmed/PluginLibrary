@@ -27,8 +27,8 @@ public class RegisterElementalItems {
 	
 	public static void Register()
 	{
-		CustomItemStack enforced_glass = ItemCreator.RegisterNewItem(new CustomItemStack("Reinforced Glass", Material.GLASS, 10001));
-		BlockCreator.RegisterNewBlock(enforced_glass);
+		CustomItemStack enforced_glass = ItemCreator.RegisterNewItem(new CustomItemStack("Reinforced Glass", Material.YELLOW_STAINED_GLASS, 10001));
+		BlockCreator.RegisterNewBlock(enforced_glass).SetConstBlock(false);
 
 		GasCanister = ItemCreator.RegisterNewItem(new CustomItemStack("Gas Canister", Material.WOODEN_SWORD, 10001));
 		GasCanister.AddLoreLine(ChatColor.GRAY + "Contents: ");

@@ -13,7 +13,7 @@ import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Voltage.Main;
 import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class SolarPanel extends EnergyCompatible {
 	
@@ -32,12 +32,12 @@ public class SolarPanel extends EnergyCompatible {
 			{
 				if(p.isSneaking())
 				{
-					p.sendMessage(ChatColor.BLUE + "[SOLAR PANEL OUTPUT]: 3");
+					p.sendMessage(ChatColor.BLUE + "[SOLAR PANEL OUTPUT]: 1");
 				}
 			}
 		}
 		
-		AddEnergy(6, loc);
+		AddEnergy(3, loc);
 		
 		for(BlockFace bf : checkFaces)
 		{
@@ -46,7 +46,7 @@ public class SolarPanel extends EnergyCompatible {
 			{
 				if(ec.GetBlockRef().CheckForCustomBlock(b))
 				{
-					ec.AddEnergy(RemoveEnergy(3, loc), b.getLocation());
+					ec.AddEnergy(RemoveEnergy(1, loc), b.getLocation());
 				}
 			}
 		}

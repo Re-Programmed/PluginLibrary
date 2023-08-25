@@ -1,6 +1,7 @@
 package com.willm.CoreMOD.Power;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,8 +15,6 @@ import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class Crusher extends EnergyCompatible {
 	
 	public static CustomItemStack iron_dust, gold_dust, emerald_dust, diamond_dust, lapis_dust, obsidian_dust, wolframite_dust, platinum_dust, titanium_dust, netherite_dust;
@@ -25,9 +24,9 @@ public class Crusher extends EnergyCompatible {
 		CustomItemStack cis = ItemCreator.RegisterNewItem(new CustomItemStack("Electric Crusher", Material.POLISHED_ANDESITE, 22006));
 		
 		cis.AddLoreLine(ChatColor.RED + "Needs Power!");
-
-		iron_dust = ItemCreator.RegisterNewItem(new CustomItemStack("Pulverized Iron", Material.GUNPOWDER, 30001)).AddLoreLine(ChatColor.GRAY + "Iron Ore -> From Electric Crusher");
-		gold_dust = ItemCreator.RegisterNewItem(new CustomItemStack("Gold Dust", Material.GUNPOWDER, 30002)).AddLoreLine(ChatColor.GRAY + "Gold Ore -> From Electric Crusher");
+		
+		iron_dust = ItemCreator.RegisterNewItem(new CustomItemStack("Pulverized Iron", Material.GUNPOWDER, 30001)).AddLoreLine(ChatColor.GRAY + "Raw Iron -> From Electric Crusher");
+		gold_dust = ItemCreator.RegisterNewItem(new CustomItemStack("Gold Dust", Material.GUNPOWDER, 30002)).AddLoreLine(ChatColor.GRAY + "Raw Gold -> From Electric Crusher");
 		emerald_dust = ItemCreator.RegisterNewItem(new CustomItemStack("Emerald Dust", Material.GUNPOWDER, 30003)).AddLoreLine(ChatColor.GRAY + "Emerald Ore -> From Electric Crusher");
 		diamond_dust = ItemCreator.RegisterNewItem(new CustomItemStack("Diamond Dust", Material.GUNPOWDER, 30004)).AddLoreLine(ChatColor.GRAY + "Diamond Ore -> From Electric Crusher");
 		lapis_dust = ItemCreator.RegisterNewItem(new CustomItemStack("Lapis Dust", Material.GUNPOWDER, 30005)).AddLoreLine(ChatColor.GRAY + "Lapis Ore -> From Electric Crusher");
@@ -41,13 +40,14 @@ public class Crusher extends EnergyCompatible {
 				, new MachineConversion(MyItems.wolframite.GetMyItemStack(), wolframite_dust.GetAmountClone(3))
 				, new MachineConversion(MyItems.platinum_ore.GetMyItemStack(), platinum_dust.GetAmountClone(3))
 				, new MachineConversion(MyItems.titanium_ore.GetMyItemStack(), titanium_dust.GetAmountClone(3))
-				, new MachineConversion(new ItemStack(Material.IRON_ORE), iron_dust.GetAmountClone(3))
-				, new MachineConversion(new ItemStack(Material.GOLD_ORE), gold_dust.GetAmountClone(3))
+				, new MachineConversion(new ItemStack(Material.RAW_IRON), iron_dust.GetAmountClone(3))
+				, new MachineConversion(new ItemStack(Material.RAW_GOLD), gold_dust.GetAmountClone(3))
 				, new MachineConversion(new ItemStack(Material.EMERALD_ORE), emerald_dust.GetAmountClone(3))
 				, new MachineConversion(new ItemStack(Material.DIAMOND_ORE), diamond_dust.GetAmountClone(3))
 				, new MachineConversion(new ItemStack(Material.LAPIS_ORE), lapis_dust.GetAmountClone(30))
 				, new MachineConversion(new ItemStack(Material.OBSIDIAN), obsidian_dust.GetAmountClone(2))
 				, new MachineConversion(new ItemStack(Material.ANCIENT_DEBRIS), netherite_dust.GetAmountClone(2))
+				, new MachineConversion(MyItems.limestone_block.GetMyItemStack(), MyItems.limestone_powder.GetAmountClone(4))
 				);
 
 

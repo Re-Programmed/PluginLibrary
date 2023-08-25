@@ -3,8 +3,6 @@ package com.willm.CoreMOD.ElementalItems;
 import java.util.HashMap;
 
 import org.bukkit.Material;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import com.willm.CoreMOD.MyItems;
 import com.willm.ModAPI.Blocks.BlockEvents;
@@ -14,8 +12,7 @@ import com.willm.ModAPI.Items.BlockCreator;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Items.Recipes.RecipeBuilder;
-
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class Nonmetals {
 
@@ -105,7 +102,7 @@ public class Nonmetals {
 		CustomItemStack pillow = ItemCreator.RegisterNewItem(new CustomItemStack("Pillow", Material.ORANGE_DYE, 12121));
 		pillow.getRecipe(1, "NNN", "NFN", "NNN", "craft_pillow").AddMaterial('N', RecipeBuilder.ItemStackInput(nylon)).AddMaterial('F', Material.FEATHER).Finalize();
 		
-		sleeping_bag = ItemCreator.RegisterNewItem(new CustomItemStack("Sleeping Bag", Material.GLASS, 10002)).AddLoreLine(ChatColor.RED + "Set your spawn at any location. Cannot skip night.");
+		sleeping_bag = ItemCreator.RegisterNewItem(new CustomItemStack("Sleeping Bag", Material.YELLOW_STAINED_GLASS, 10002)).AddLoreLine(ChatColor.RED + "Set your spawn at any location. Cannot skip night.");
 		sleeping_bag.getRecipe(1, "PNN", "OOO", "   ", "craft_sleeping_bag").AddMaterial('P', RecipeBuilder.ItemStackInput(pillow)).AddMaterial('O', RecipeBuilder.MultiMaterialInput(Material.OAK_PLANKS, Material.JUNGLE_PLANKS, Material.SPRUCE_PLANKS, Material.DARK_OAK_PLANKS, Material.ACACIA_PLANKS, Material.BIRCH_PLANKS)).AddMaterial('N', RecipeBuilder.ItemStackInput(nylon)).Finalize();
 		
 		BlockCreator.RegisterNewBlock(sleeping_bag);

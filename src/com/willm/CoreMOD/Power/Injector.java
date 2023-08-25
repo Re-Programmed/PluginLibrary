@@ -17,7 +17,7 @@ import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class Injector extends EnergyCompatible {
 	

@@ -17,7 +17,7 @@ public class CustomFeature extends FeatureElement {
 	@Override
 	public void Place(Location location) {
 		Location l = this.location.Apply(location);
-		b.Place(location);
+		b.Place(l);
 	}
 
 }

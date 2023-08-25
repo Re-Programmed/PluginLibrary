@@ -19,6 +19,8 @@ import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
 
 public class HydrogenGenerator extends EnergyCompatible {
 	
+	public int cooldown = 0;
+	
 	public HydrogenGenerator()
 	{
 		CustomItemStack cis = ItemCreator.RegisterNewItem(new CustomItemStack("Hydrogen Generator", Material.POLISHED_ANDESITE, 21027));
@@ -30,33 +32,38 @@ public class HydrogenGenerator extends EnergyCompatible {
 	@Override
 	public void Tick(Location loc) {
 
+		cooldown--;
 		boolean output = false;
 		
-		for(Machine m : blockRef.m)
+		if(cooldown < 0)
 		{
-			if(m.location.distance(loc) < 0.1f)
+			for(Machine m : blockRef.m)
 			{
-				if(m.getInventory().containsAtLeast(MyItems.hydrogen.GetMyItemStack(), 1))
+				if(m.location.distance(loc) < 0.1f)
 				{
-					output = true;
-					AddEnergy(1400, loc);
-					
-					for(BlockFace bf : checkFaces)
+					if(m.getInventory().containsAtLeast(MyItems.hydrogen.GetMyItemStack(), 1))
 					{
-						Block b = loc.getBlock().getRelative(bf);
-						for(EnergyCompatible ec : Main.energyRecievers)
+						cooldown = 75;
+						output = true;
+						AddEnergy(1000, loc);
+						
+						for(BlockFace bf : checkFaces)
 						{
-							if(ec.GetBlockRef().CheckForCustomBlock(b))
+							Block b = loc.getBlock().getRelative(bf);
+							for(EnergyCompatible ec : Main.energyRecievers)
 							{
-								ec.AddEnergy(RemoveEnergy(700, loc), b.getLocation());
+								if(ec.GetBlockRef().CheckForCustomBlock(b))
+								{
+									ec.AddEnergy(RemoveEnergy(350, loc), b.getLocation());
+								}
 							}
 						}
+						
+						m.getInventory().removeItem(MyItems.hydrogen.GetMyItemStack());
 					}
+	
 					
-					m.getInventory().removeItem(MyItems.hydrogen.GetMyItemStack());
 				}
-
-				
 			}
 		}
 		

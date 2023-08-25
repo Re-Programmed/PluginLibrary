@@ -17,3 +17,9 @@ commands:
       description: Opens a creative menu of custom items.
    assortedtool:
       description: Allows the creation of an alloyed tool.
+   setcustomblock:
+      description: Setblock for custom blocks.
+   fillcustomblock:
+      description: Fill for custom blocks.
+   rottick:
+      description: Ticks all rotting items.

@@ -35,6 +35,18 @@ public class GiveTabCompleter implements TabCompleter {
         	}
         
         	return str;
+    	}else if(args.length == 2)
+    	{
+    		ArrayList<String> str = new ArrayList<String>();
+
+    		str.add("1");
+    		str.add("8");
+    		str.add("16");
+    		str.add("32");
+    		str.add("64");
+    		str.add("128");
+    		
+    		return str;
     	}
     	
     	return new ArrayList<String>();

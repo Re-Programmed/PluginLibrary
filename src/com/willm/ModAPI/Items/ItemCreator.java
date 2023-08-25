@@ -1,5 +1,6 @@
 package com.willm.ModAPI.Items;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -7,8 +8,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.willm.ModAPI.Main;
 import com.willm.ModAPI.MobDrop;
 import com.willm.ModAPI.Blocks.CustomBlock;
-
-import net.md_5.bungee.api.ChatColor;
 
 public class ItemCreator {
 

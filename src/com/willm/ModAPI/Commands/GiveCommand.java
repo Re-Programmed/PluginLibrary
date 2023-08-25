@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.willm.ModAPI.Main;
 import com.willm.ModAPI.Items.CustomItemStack;
@@ -30,10 +31,20 @@ public class GiveCommand implements CommandExecutor {
 							if(item.getName().replace(" ", "_").equalsIgnoreCase(args[0].replace(Main.PluginName + ":", "").toLowerCase()))
 							{
 								Player p = ((Player)sender);
-								Item i = p.getWorld().dropItemNaturally(p.getLocation(), item.GetMyItemStack());
+								
+								ItemStack drp;
+								
+								if(args.length > 1)
+								{
+									drp = item.GetAmountClone(Integer.parseInt(args[1]));
+								}else {
+									drp = item.GetMyItemStack();
+								}
+								
+								Item i = p.getWorld().dropItemNaturally(p.getLocation(), drp);
 								i.setPickupDelay(0);
 								i.setThrower(p.getUniqueId());
-								sender.sendMessage(ChatColor.WHITE + "Gave 1 [" + item.getName() + "] to " + sender.getName());
+								sender.sendMessage(ChatColor.WHITE + "Gave " + drp.getAmount() + " [" + item.getName() + "] to " + sender.getName());
 								return true;
 							}
 						}

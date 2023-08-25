@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -24,8 +25,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -45,11 +48,55 @@ import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Terrain.CustomPopulator;
 import com.willm.ModAPI.Terrain.Ore;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class ItemEvents implements Listener {
 
 	private ArrayList<Location> wireRedstoneActiveLinks = new ArrayList<Location>();
+	
+	@EventHandler
+	public void PlayerJoinRootAdvancement(PlayerJoinEvent event)
+	{
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement grant @a only core:root");
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement grant @a only core:root_farming");
+	}
+	
+	@EventHandler
+	public void AnyHeadItem(InventoryClickEvent event)
+	{
+		if(event.getClickedInventory().getType() == InventoryType.PLAYER)
+		{
+			if(event.getSlotType() == SlotType.ARMOR)
+			{
+				if(event.getSlot() == 39)
+				{
+					if(event.getCursor() != null)
+					{
+						if(event.getCursor().getType() != Material.AIR)
+						{
+							if(event.getClickedInventory().getItem(event.getSlot()) != null && event.getClickedInventory().getItem(event.getSlot()).getType() != Material.AIR)
+							{
+								return;
+							}
+							
+							event.getClickedInventory().setItem(event.getSlot(), event.getCursor());
+							event.getWhoClicked().setItemOnCursor(null);
+							event.setCancelled(true);
+							return;
+						}
+					}
+					
+					if(event.getClickedInventory().getItem(event.getSlot()) != null)
+					{
+						event.getWhoClicked().setItemOnCursor(event.getClickedInventory().getItem(event.getSlot()));
+						event.getClickedInventory().setItem(event.getSlot(), null);
+						event.setCancelled(true);
+						return;
+					}
+					
+				}
+			}
+			
+		}
+	}
 	
 	@EventHandler
 	public void UseNitrous(PlayerInteractEntityEvent event)
@@ -74,6 +121,43 @@ public class ItemEvents implements Listener {
 					}else {
 						event.getPlayer().getEquipment().setItemInMainHand(null);
 					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void CheckForRottenFood(PlayerItemConsumeEvent event)
+	{
+		if(event.getItem().hasItemMeta())
+		{
+			if(event.getItem().getItemMeta().hasLore())
+			{
+				List<String> lore = event.getItem().getItemMeta().getLore();
+				if(lore.get(lore.size() - 1).contains("ROTTEN"))
+				{
+					if(event.getItem().getType() == Material.MILK_BUCKET)
+					{
+						event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 20 * (9 * 2 + 15), 5));
+						event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * (9 * 2 + 15), 1));
+
+						event.getPlayer().setSaturation(0);
+						
+						event.setCancelled(true);
+						
+						event.getPlayer().getEquipment().setItemInMainHand(new ItemStack(Material.BUCKET));
+						return;
+					}
+					
+					Random foodRand = new Random();
+					if(foodRand.nextInt(101) < 36)
+					{
+						event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 20 * (foodRand.nextInt(10) * 2 + 15), foodRand.nextInt(5) + 1));
+					}
+					
+					event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() - (foodRand.nextInt(8) + 3));
+					event.getPlayer().setSaturation(event.getPlayer().getSaturation() - (foodRand.nextInt(8) + 3));
+					event.getPlayer().setAbsorptionAmount(0);
 				}
 			}
 		}

@@ -30,8 +30,12 @@ import com.willm.ModAPI.Commands.AddEnchant;
 import com.willm.ModAPI.Commands.AddEnchantTabCompleter;
 import com.willm.ModAPI.Commands.ClearBrokenArmorstand;
 import com.willm.ModAPI.Commands.CreativeMenu;
+import com.willm.ModAPI.Commands.FillCustomBlockCommand;
+import com.willm.ModAPI.Commands.FillCustomBlockTabCompleter;
 import com.willm.ModAPI.Commands.GiveCommand;
 import com.willm.ModAPI.Commands.GiveTabCompleter;
+import com.willm.ModAPI.Commands.SetCustomBlockCommand;
+import com.willm.ModAPI.Commands.SetCustomBlockTabCompleter;
 import com.willm.ModAPI.Enchantments.EnchantAnvils;
 import com.willm.ModAPI.Items.BlockCreator;
 import com.willm.ModAPI.Items.CustomItemStack;
@@ -62,6 +66,7 @@ public class Main {
 
 	public static int LiquidTick = 0;
 	
+	
 	public static void Launch(String pluginName, JavaPlugin jp)
 	{
 		Main.PluginName = pluginName;
@@ -73,6 +78,12 @@ public class Main {
 		jp.getCommand("enchantcustom").setTabCompleter(new AddEnchantTabCompleter());
 		
 		jp.getCommand("removebrokenstand").setExecutor(new ClearBrokenArmorstand());
+		
+		jp.getCommand("setcustomblock").setExecutor(new SetCustomBlockCommand());
+		jp.getCommand("setcustomblock").setTabCompleter(new SetCustomBlockTabCompleter());
+		
+		jp.getCommand("fillcustomblock").setExecutor(new FillCustomBlockCommand());
+		jp.getCommand("fillcustomblock").setTabCompleter(new FillCustomBlockTabCompleter());
 		
 		jp.getServer().getPluginManager().registerEvents(new OreEvents(), jp);
 		jp.getServer().getPluginManager().registerEvents(new BlockEvents(), jp);
@@ -117,7 +128,7 @@ public class Main {
 					
 					for(Player p : Bukkit.getOnlinePlayers())
 					{
-						for(Entity e : p.getWorld().getNearbyEntities(p.getLocation(), 15f, 15f, 15f))
+						for(Entity e : p.getWorld().getNearbyEntities(p.getLocation(), 25f, 25f, 25f))
 						{
 							if(e.getType() == EntityType.ARMOR_STAND)
 							{
@@ -129,7 +140,13 @@ public class Main {
 									{
 										if(as.getEquipment().getHelmet().getItemMeta().hasCustomModelData())
 										{
-											as.setFireTicks(999999999);
+											if(as.getEquipment().getHelmet().getAmount() < 2)
+											{
+												as.setFireTicks(999999999);
+											}else if(as.getFireTicks() < 5)
+											{
+												as.getLocation().getBlock().setType(Material.GLASS);
+											}
 											
 											if(com.willm.ModAPI.Voltage.Main.Enabled)
 											{

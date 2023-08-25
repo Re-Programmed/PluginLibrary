@@ -173,10 +173,12 @@ public class CustomItemStack {
 		return sr;
 	}
 	
-	public ShapelessRecipe GenUnshaped(String name)
+	public ShapelessRecipe GenUnshaped(String name) {return GenUnshaped(name, 1);}
+	public ShapelessRecipe GenUnshaped(String name, int count)
 	{
-
-		ShapelessRecipe sr = new ShapelessRecipe(NamespacedKey.minecraft(name), relatedItem.clone());		
+		ItemStack clone = relatedItem.clone();
+		clone.setAmount(count);
+		ShapelessRecipe sr = new ShapelessRecipe(NamespacedKey.minecraft(name), clone);		
 				
 		return sr;
 	}

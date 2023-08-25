@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,6 +17,7 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,9 +46,58 @@ public class BlockEvents implements Listener {
 	
 	@EventHandler
 	public void UseInteractableMachine(PlayerInteractEvent event)
-	{
+	{	
 		if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
 		{
+			if(MyItems.fridge.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				Dispenser d = (Dispenser)event.getClickedBlock().getState();
+				String save = d.getLock();
+				
+				d.setCustomName("Fridge");
+				
+				d.setLock("");
+				d.update(true);
+				event.getPlayer().openInventory(d.getInventory());
+				d.setLock(save);
+				d.update(true);
+			}
+			
+			if(MyItems.cooling_unit.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				for(Entity e : event.getClickedBlock().getWorld().getNearbyEntities(event.getClickedBlock().getLocation(), 5f, 5f, 5f))
+				{
+					if(e instanceof LivingEntity)
+					{
+						LivingEntity le = (LivingEntity)e;
+						le.setFreezeTicks(8 * 20);
+					}
+				}
+				
+				Utils.PlayCustomSound("core_mod.steam", event.getClickedBlock().getLocation());
+				event.getClickedBlock().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ENTITY_PLAYER_SPLASH, 1.0f, 1.0f);
+				event.getClickedBlock().getWorld().spawnParticle(Particle.WATER_SPLASH, event.getClickedBlock().getLocation().getX(), event.getClickedBlock().getLocation().getY() + 1, event.getClickedBlock().getLocation().getZ(), 50, 1, 0.5d, 0.5d, 0.5d);
+
+				for(int x = -2; x < 2; x++)
+				{
+					for(int y = -2; y < 2; y++)
+					{
+						for(int z = -2; z < 2; z++)
+						{
+							Location loc = new Location(event.getClickedBlock().getWorld(), x, y, z);
+							loc.add(event.getClickedBlock().getLocation());
+							
+							if(loc.getBlock().getType() == Material.WATER)
+							{
+								loc.getBlock().setType(Material.ICE);
+								loc.getWorld().spawnParticle(Particle.WATER_SPLASH, loc.getX(), loc.getY() + 1, loc.getZ(), 50, 1, 0.5d, 0.5d, 0.5d);
+								loc.getWorld().playSound(loc, Sound.ENTITY_PLAYER_SPLASH, 1.0f, 1.0f);
+							}
+						}
+					}
+				}
+			}
+			
 			if(MyItems.tree_tap.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
 			{
 				if(event.getClickedBlock().getRelative(BlockFace.DOWN).getType().toString().contains("LOG"))
@@ -178,7 +229,7 @@ public class BlockEvents implements Listener {
 							event.getClickedBlock().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 
 							//ITEMS THAT MAKE OVEN TURN RED
-							if((hi.getType() == Material.COOKED_BEEF && !hi.getItemMeta().hasCustomModelData()) || MyItems.tomato.CheckForCustomItem(hi) || MyItems.bacon.CheckForCustomItem(hi) || MyItems.tomato_sauce.CheckForCustomItem(hi) || MyItems.spare_rib.CheckForCustomItem(hi) || MyItems.rib_eye.CheckForCustomItem(hi) || MyItems.bbq_sauce_smokey.CheckForCustomItem(hi) || MyItems.beef_broth.CheckForCustomItem(hi))
+							if((hi.getType() == Material.COOKED_BEEF && !hi.getItemMeta().hasCustomModelData()) || MyItems.tomato.CheckForCustomItem(hi) || MyItems.bacon.CheckForCustomItem(hi) || MyItems.tomato_sauce.CheckForCustomItem(hi) || MyItems.spare_rib.CheckForCustomItem(hi) || MyItems.rib_eye.CheckForCustomItem(hi) || MyItems.bbq_sauce_smoky.CheckForCustomItem(hi) || MyItems.beef_broth.CheckForCustomItem(hi))
 							{
 								SetOven(event, hi, MyItems.oven_red.getRelatedBlock());
 							}
@@ -190,7 +241,7 @@ public class BlockEvents implements Listener {
 							}
 							
 							//ITEMS THAT MAKE OVEN TURN TAN
-							if(MyItems.spaghetti.CheckForCustomItem(hi) || MyItems.lamb.CheckForCustomItem(hi) || MyItems.ham.CheckForCustomItem(hi))
+							if(MyItems.spaghetti.CheckForCustomItem(hi) || MyItems.lamb.CheckForCustomItem(hi) || MyItems.ham.CheckForCustomItem(hi) || MyItems.potato_slices.CheckForCustomItem(hi) || MyItems.cooking_oil.CheckForCustomItem(hi))
 							{
 								SetOven(event, hi, MyItems.oven_tan.getRelatedBlock());
 							}

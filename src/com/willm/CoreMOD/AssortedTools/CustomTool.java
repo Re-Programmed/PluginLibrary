@@ -7,8 +7,6 @@ import org.bukkit.Material;
 
 import com.willm.ModAPI.Items.CustomItemStack;
 
-import net.md_5.bungee.api.ChatColor;
-
 public class CustomTool extends CustomItemStack {
 
 	public static final int CMD_DATA = 16232;
@@ -18,7 +16,7 @@ public class CustomTool extends CustomItemStack {
 	public CustomTool(String name, Material mat, int cmd, ToolAbilities... abilities) {
 		super(name, mat, cmd);
 		
-		this.AddLoreLine(ChatColor.GRAY + "Alloy:");
+		this.AddLoreLine(org.bukkit.ChatColor.GRAY + "Alloy:");
 		for(ToolAbilities ta : abilities)
 		{
 			this.abilities.add(ta);

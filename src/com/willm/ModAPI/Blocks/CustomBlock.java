@@ -2,7 +2,6 @@ package com.willm.ModAPI.Blocks;
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.Directional;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -42,6 +42,27 @@ public class CustomBlock {
 	boolean drops = true;
 	public CustomBlock SetDrops(boolean drops) {this.drops = drops; return this;}
 	
+	boolean constBlock = true;
+	public CustomBlock SetConstBlock(boolean constBlock) {this.constBlock = constBlock; return this;}
+
+	public Material mineAs = null;
+	public CustomBlock SetMineAs(Material mineAs) {this.mineAs = mineAs; return this;}
+	
+	public BlockDirectionData Directional = BlockDirectionData.NONE;
+	public CustomBlock SetDirectional(BlockDirectionData directional) {Directional = directional; return this;}
+	
+	public CustomBlock sidewaysBlockData;
+	public CustomBlock SetSidewaysBlock(CustomBlock block) {sidewaysBlockData = block; return this;}
+	
+	public CustomItemStack[] customDrops = null;
+	public CustomBlock SetCustomDrops(CustomItemStack... item) {customDrops = item; return this;}
+	
+	private boolean useSilkTouch;
+	public CustomBlock UseSilkTouch(boolean use) {useSilkTouch = use;return this;}
+	
+	private String[] requireTool = null;
+	public CustomBlock SetRequiredTool(String... tools) {requireTool = tools;return this;}
+	
 	public CustomBlock(CustomItemStack rootItem)
 	{
 		this.rootItem = rootItem;
@@ -63,7 +84,7 @@ public class CustomBlock {
 		
 		for(MachineConversion mc : mt)
 		{
-			rootItem.AddLoreLine(ChatColor.WHITE + (mc.i1.getItemMeta().hasDisplayName() ? mc.i1.getItemMeta().getDisplayName() : WordUtils.capitalize(mc.i1.getType().toString().toLowerCase().replace('_', ' '))) + " -> " + (mc.i2[0].getItemMeta().hasDisplayName() ? mc.i2[0].getItemMeta().getDisplayName() : WordUtils.capitalize(mc.i2[0].getType().toString().toLowerCase().replace('_', ' '))));
+			rootItem.AddLoreLine(ChatColor.WHITE + (mc.i1.getItemMeta().hasDisplayName() ? mc.i1.getItemMeta().getDisplayName() : mc.i1.getType().toString().toLowerCase().replace('_', ' ').toUpperCase()) + " -> " + (mc.i2[0].getItemMeta().hasDisplayName() ? mc.i2[0].getItemMeta().getDisplayName() : mc.i2[0].getType().toString().toLowerCase().replace('_', ' ').toUpperCase()));
 		}
 		
 		
@@ -83,7 +104,7 @@ public class CustomBlock {
 			rootItem.AddLoreLine(ChatColor.WHITE + "Converts: ");
 			for(MachineConversion mc : m.conversions)
 			{
-				rootItem.AddLoreLine(ChatColor.WHITE + (mc.i1.getItemMeta().hasDisplayName() ? mc.i1.getItemMeta().getDisplayName() : WordUtils.capitalize(mc.i1.getType().toString().toLowerCase().replace('_', ' '))) + " -> " + (mc.i2[0].getItemMeta().hasDisplayName() ? mc.i2[0].getItemMeta().getDisplayName() : WordUtils.capitalize(mc.i2[0].getType().toString().toLowerCase().replace('_', ' '))));
+				rootItem.AddLoreLine(ChatColor.WHITE + (mc.i1.getItemMeta().hasDisplayName() ? mc.i1.getItemMeta().getDisplayName() : mc.i1.getType().toString().toLowerCase().replace('_', ' ').toUpperCase()) + " -> " + (mc.i2[0].getItemMeta().hasDisplayName() ? mc.i2[0].getItemMeta().getDisplayName() : mc.i2[0].getType().toString().toLowerCase().replace('_', ' ').toUpperCase()));
 			}
 			
 		}
@@ -104,7 +125,7 @@ public class CustomBlock {
 		
 		for(MachineConversion mc : mt)
 		{
-			rootItem.AddLoreLine(ChatColor.WHITE + (mc.i1.getItemMeta().hasDisplayName() ? mc.i1.getItemMeta().getDisplayName() : WordUtils.capitalize(mc.i1.getType().toString().toLowerCase().replace('_', ' '))) + " -> " + (mc.i2[0].getItemMeta().hasDisplayName() ? mc.i2[0].getItemMeta().getDisplayName() : WordUtils.capitalize(mc.i2[0].getType().toString().toLowerCase().replace('_', ' '))));
+			rootItem.AddLoreLine(ChatColor.WHITE + (mc.i1.getItemMeta().hasDisplayName() ? mc.i1.getItemMeta().getDisplayName() : mc.i1.getType().toString().toLowerCase().replace('_', ' ').toUpperCase()) + " -> " + (mc.i2[0].getItemMeta().hasDisplayName() ? mc.i2[0].getItemMeta().getDisplayName() : mc.i2[0].getType().toString().toLowerCase().replace('_', ' ').toUpperCase()));
 		}
 		
 	}
@@ -117,18 +138,23 @@ public class CustomBlock {
 	@SuppressWarnings("unchecked")
 	public ArmorStand Place(Location location)
 	{		
-		location.getBlock().setType(Material.DISPENSER);
-		Dispenser d = (Dispenser)location.getBlock().getState();
+		if(constBlock) {
+			location.getBlock().setType(Material.DISPENSER);
 		
-		d.setLock(getTag());
-		
-		d.update(true);
+			Dispenser d = (Dispenser)location.getBlock().getState();
+			
+			d.setLock(getTag());
+			
+			d.update(true);
+		}else {
+			location.getBlock().setType(Material.GLASS);
+		}
 		
 		ArmorStand displayStand = (ArmorStand)location.getWorld().spawnEntity(new Location(location.getWorld(), location.getX() + 0.5f, location.getY(), location.getZ() + 0.5f), EntityType.ARMOR_STAND);
 		
 		displayStand.setInvisible(true);
 		displayStand.setMarker(true);
-		displayStand.setFireTicks(999999999);
+		if(constBlock) {displayStand.setFireTicks(999999999);}
 		displayStand.setSmall(true);
 		
 		AddToArmorStand(displayStand);
@@ -137,7 +163,13 @@ public class CustomBlock {
 	
 		ItemCreator.SetItemCustomModelData(disp, getDisplayCustomModelData());
 		
+		if(!constBlock)
+		{
+			disp.setAmount(2);
+		}
+		
 		displayStand.getEquipment().setHelmet(disp);
+	
 		
 		if(machineTemplate != null)
 		{
@@ -152,30 +184,39 @@ public class CustomBlock {
 		return displayStand;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void Place(Location location, BlockFace facing)
-	{		
-		location.getBlock().setType(Material.DISPENSER);
-		
-		Directional dir = (Directional) location.getBlock().getBlockData();
-		
-		dir.setFacing(facing);
-		
-		location.getBlock().setBlockData(dir);
-		
-		Dispenser d = (Dispenser)location.getBlock().getState();
-		
-		d.setLock(getTag());
-		
-		d.update(true);
+	{
+		Place(location, facing, 0.f);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void Place(Location location, BlockFace facing, float addRot)
+	{	
+		if(constBlock) {
+			location.getBlock().setType(Material.DISPENSER);
+			
+			Directional dir = (Directional) location.getBlock().getBlockData();
+			
+			dir.setFacing(facing);
+			
+			location.getBlock().setBlockData(dir);
+			
+			Dispenser d = (Dispenser)location.getBlock().getState();
+			
+			d.setLock(getTag());
+			
+			d.update(true);
+		}else {
+			location.getBlock().setType(Material.GLASS);
+		}
 		
 		ArmorStand displayStand = (ArmorStand)location.getWorld().spawnEntity(new Location(location.getWorld(), location.getX() + 0.5f, location.getY(), location.getZ() + 0.5f), EntityType.ARMOR_STAND);
 		
-		displayStand.setRotation(facing.getModX(), 0f);
+		displayStand.setRotation(facing.getModX() * 90f + addRot, 0f);
 		
 		displayStand.setInvisible(true);
 		displayStand.setMarker(true);
-		displayStand.setFireTicks(999999999);
+		if(constBlock) {displayStand.setFireTicks(999999999);}
 		displayStand.setSmall(true);
 		
 		AddToArmorStand(displayStand);
@@ -184,8 +225,13 @@ public class CustomBlock {
 	
 		ItemCreator.SetItemCustomModelData(disp, getDisplayCustomModelData());
 		
-		displayStand.getEquipment().setHelmet(disp);
+		if(!constBlock)
+		{
+			disp.setAmount(2);
+		}
 		
+		displayStand.getEquipment().setHelmet(disp);
+				
 		if(machineTemplate != null)
 		{
 			if(machineTemplate.conversions == null)
@@ -215,9 +261,61 @@ public class CustomBlock {
 					return true;
 				}
 			}
+		}else if(block.getType() == Material.GLASS || block.getType() == mineAs)
+		{
+			for(Entity e : block.getWorld().getNearbyEntities(Utils.AddToLocationAsNew(block.getLocation(), 0.5f, 0, 0.5f), 0.2f, 0.2f, 0.2f))
+			{
+				if(e instanceof ArmorStand)
+				{
+					ArmorStand as = (ArmorStand)e;
+					if(as.getEquipment().getHelmet() != null)
+					{
+						if(as.getEquipment().getHelmet().getAmount() > 1)
+						{
+							if(as.getEquipment().getHelmet().getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").equalsIgnoreCase(name.toLowerCase()))
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		return false;
+	}
+	
+	public void InitMineAs(Block b)
+	{
+		if(mineAs != null)
+		{
+			b.setType(mineAs);
+			
+			getMyStand(b).setFireTicks(20 * 8);
+		}
+	}
+	
+	private ArmorStand getMyStand(Block b)
+	{
+		for(Entity e : b.getWorld().getNearbyEntities(Utils.AddToLocationAsNew(b.getLocation(), 0.5f, 0, 0.5f), 0.2f, 0.2f, 0.2f))
+		{
+			if(e instanceof ArmorStand)
+			{
+				ArmorStand as = (ArmorStand)e;
+				if(as.getEquipment().getHelmet() != null)
+				{
+					if(as.getEquipment().getHelmet().getAmount() > 1)
+					{
+						if(as.getEquipment().getHelmet().getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").equalsIgnoreCase(name.toLowerCase()))
+						{
+							return as;
+						}
+					}
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	public void Interact(PlayerInteractEvent event)
@@ -263,7 +361,17 @@ public class CustomBlock {
 			rem.remove();
 		}
 		
-		if(drops && this.drops) {rootItem.DropNaturally(blockCenter);}
+		if(drops && this.drops) {
+			if(customDrops != null)
+			{
+				for(CustomItemStack cis : customDrops) {
+					cis.DropNaturally(blockCenter);
+				}
+				
+			}else {
+				rootItem.DropNaturally(blockCenter);
+			}
+		}
 		
 		location.getBlock().setType(Material.AIR);
 		
@@ -302,7 +410,59 @@ public class CustomBlock {
 		
 		event.setDropItems(false);
 		
-		if(drops) {rootItem.DropNaturally(blockCenter);}
+		if(drops) {
+			ItemStack handItem = event.getPlayer().getEquipment().getItemInMainHand();
+			boolean doDrops = true;
+			if(requireTool != null)
+			{
+				if(handItem != null)
+				{
+					doDrops = false;
+					for(String m : requireTool)
+					{
+						if(handItem.getType().toString().contains(m))
+						{
+							doDrops = true;
+							break;
+						}
+					}
+				}
+			}
+			
+			if(doDrops)
+			{
+				if(customDrops != null)
+				{
+					if(useSilkTouch)
+					{
+						if(handItem != null)
+						{
+							if(handItem.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH))
+							{
+								rootItem.DropNaturally(blockCenter);
+							}else {
+								for(CustomItemStack cis : customDrops) {
+									cis.DropNaturally(blockCenter);
+								}
+							}
+						}else {
+							for(CustomItemStack cis : customDrops) {
+								cis.DropNaturally(blockCenter);
+							}
+						}
+						
+					}else {
+						for(CustomItemStack cis : customDrops) {
+							cis.DropNaturally(blockCenter);
+						}
+					}
+				}else {
+					rootItem.DropNaturally(blockCenter);
+				}
+			}
+			
+
+		}
 		
 		for(Machine ma : m)
 		{

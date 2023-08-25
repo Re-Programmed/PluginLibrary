@@ -7,6 +7,8 @@ import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.generator.BlockPopulator;
 
 import com.willm.ModAPI.Items.CustomItemStack;
@@ -33,12 +35,12 @@ public class CustomPopulator extends BlockPopulator {
 		
 		for(Ore ore : getOres())
 		{
-			GenerateOre(world, random, chunk, ore.drop.GetMyItemStack().getType(), ore.rarity, 0, ore.ySpawnCap, ore.veins, Material.STONE, ore.drop);
+			GenerateOre(world, random, chunk, ore.drop.GetMyItemStack().getType(), ore.rarity, 0, ore.ySpawnCap, ore.veins, Material.STONE, ore.drop, ore.placeCustom, ore.mustHaveAir);
 		}
 	}
 	
 	
-	public static void GenerateOre(World world, Random random, Chunk chunk, Material mat, int tries, int heightMin, int heightMax, boolean veinChance, Material replace, CustomItemStack cmd)
+	public static void GenerateOre(World world, Random random, Chunk chunk, Material mat, int tries, int heightMin, int heightMax, boolean veinChance, Material replace, CustomItemStack cmd, boolean placeCustom, boolean mustHaveAir)
 	{
 		int X, Y, Z;
 		boolean isStone;
@@ -52,9 +54,29 @@ public class CustomPopulator extends BlockPopulator {
 				while (isStone) {
 					if(X > 0 && Y > 0 && Z > 0 && X < 15 && Z < 15)
 					{
+						Block b = chunk.getBlock(X, Y, Z);
+						boolean canPlace = !mustHaveAir;
+						if(mustHaveAir)
+						{
+							canPlace = b.getRelative(BlockFace.EAST).getType() == Material.AIR || b.getRelative(BlockFace.EAST).getType() == Material.CAVE_AIR
+									|| b.getRelative(BlockFace.WEST).getType() == Material.AIR || b.getRelative(BlockFace.WEST).getType() == Material.CAVE_AIR
+									|| b.getRelative(BlockFace.SOUTH).getType() == Material.AIR || b.getRelative(BlockFace.SOUTH).getType() == Material.CAVE_AIR
+									|| b.getRelative(BlockFace.NORTH).getType() == Material.AIR || b.getRelative(BlockFace.NORTH).getType() == Material.CAVE_AIR
+									|| b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.CAVE_AIR
+									|| b.getRelative(BlockFace.DOWN).getType() == Material.AIR || b.getRelative(BlockFace.DOWN).getType() == Material.CAVE_AIR;
+						}
 						
-						chunk.getBlock(X, Y, Z).setType(mat);
-						chunk.getBlock(X, Y, Z).setBiome(Biome.THE_END);
+						if(canPlace)
+						{
+							if(!placeCustom)
+							{
+								b.setType(mat);
+								b.setBiome(Biome.THE_END);
+							}else {
+								cmd.getRelatedBlock().Place(b.getLocation());
+							}
+						}
+
 						
 
 					}else {
@@ -76,6 +98,7 @@ public class CustomPopulator extends BlockPopulator {
 		    }
 		}
 	}
+	
 
 	public ArrayList<Ore> getOres() {
 		return ores;

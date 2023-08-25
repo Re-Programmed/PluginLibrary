@@ -12,8 +12,7 @@ import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Voltage.Main;
 import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
-
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 
 public class GeothermalGenerator extends EnergyCompatible {
 	
@@ -47,10 +46,7 @@ public class GeothermalGenerator extends EnergyCompatible {
 		case DESERT:
 			lavaBoost += 3;
 			break;
-		case DESERT_HILLS:
-			lavaBoost += 3;
-			break;
-		case DESERT_LAKES:
+		case BASALT_DELTAS:
 			lavaBoost += 2;
 			break;
 		case FROZEN_OCEAN:
@@ -62,10 +58,13 @@ public class GeothermalGenerator extends EnergyCompatible {
 		case ICE_SPIKES:
 			lavaBoost -= 3;
 			break;
-		case MOUNTAINS:
+		case MEADOW:
 			lavaBoost -= 1;
 			break;
-		case MOUNTAIN_EDGE:
+		case WINDSWEPT_HILLS:
+			lavaBoost -= 1;
+			break;
+		case WINDSWEPT_GRAVELLY_HILLS:
 			lavaBoost -= 1;
 			break;
 		case NETHER_WASTES:
@@ -74,25 +73,25 @@ public class GeothermalGenerator extends EnergyCompatible {
 		case SNOWY_BEACH:
 			lavaBoost -= 2;
 			break;
-		case SNOWY_MOUNTAINS:
+		case GROVE:
 			lavaBoost -= 3;
 			break;
 		case SNOWY_TAIGA:
 			lavaBoost -= 2;
 			break;
-		case SNOWY_TAIGA_HILLS:
+		case CHERRY_GROVE:
 			lavaBoost -= 2;
 			break;
-		case SNOWY_TAIGA_MOUNTAINS:
+		case SNOWY_PLAINS:
 			lavaBoost -= 2;
 			break;
-		case SNOWY_TUNDRA:
+		case SNOWY_SLOPES:
 			lavaBoost -= 3;
 			break;
 		case SWAMP:
 			lavaBoost -= 1;
 			break;
-		case SWAMP_HILLS:
+		case MANGROVE_SWAMP:
 			lavaBoost -= 1;
 			break;
 		default:
@@ -106,7 +105,7 @@ public class GeothermalGenerator extends EnergyCompatible {
 		{
 			if(loc.getBlock().getRelative(bf).getType() == Material.LAVA)
 			{
-				lavaBoost += 3;
+				lavaBoost += 1;
 				lavaUp++;
 			}
 		}

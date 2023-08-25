@@ -18,6 +18,8 @@ import com.willm.ModAPI.Voltage.Main;
 import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
 
 public class CoalGenerator extends EnergyCompatible {
+
+	public int cooldown = 0;
 	
 	public CoalGenerator()
 	{
@@ -30,33 +32,40 @@ public class CoalGenerator extends EnergyCompatible {
 	@Override
 	public void Tick(Location loc) {
 
+		cooldown--;
 		boolean output = false;
 		
-		for(Machine m : blockRef.m)
+		if(cooldown < 0)
 		{
-			if(m.location.distance(loc) < 0.1f)
+			
+			for(Machine m : blockRef.m)
 			{
-				if(m.getInventory().contains(Material.COAL))
+			
+				if(m.location.distance(loc) < 0.1f)
 				{
-					output = true;
-					AddEnergy(2000, loc);
-					
-					for(BlockFace bf : checkFaces)
+					if(m.getInventory().contains(Material.COAL))
 					{
-						Block b = loc.getBlock().getRelative(bf);
-						for(EnergyCompatible ec : Main.energyRecievers)
+						cooldown = 75;
+						output = true;
+						AddEnergy(1000, loc);
+						
+						for(BlockFace bf : checkFaces)
 						{
-							if(ec.GetBlockRef().CheckForCustomBlock(b))
+							Block b = loc.getBlock().getRelative(bf);
+							for(EnergyCompatible ec : Main.energyRecievers)
 							{
-								ec.AddEnergy(RemoveEnergy(1000, loc), b.getLocation());
+								if(ec.GetBlockRef().CheckForCustomBlock(b))
+								{
+									ec.AddEnergy(RemoveEnergy(575, loc), b.getLocation());
+								}
 							}
 						}
+						
+						m.getInventory().removeItem(new ItemStack(Material.COAL, 1));
 					}
+	
 					
-					m.getInventory().removeItem(new ItemStack(Material.COAL, 1));
 				}
-
-				
 			}
 		}
 		
@@ -66,7 +75,7 @@ public class CoalGenerator extends EnergyCompatible {
 			{
 				if(p.isSneaking())
 				{
-					p.sendMessage(ChatColor.GREEN + "[COAL GENERATOR OUTPUT]: " + (output ? "1000" : "0"));
+					p.sendMessage(ChatColor.GREEN + "[COAL GENERATOR OUTPUT]: " + (output ? "575" : "0"));
 				}
 			}
 		}

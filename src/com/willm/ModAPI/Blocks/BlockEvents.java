@@ -6,9 +6,14 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -24,14 +29,14 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
 
 import com.willm.ModAPI.Main;
 import com.willm.ModAPI.MobDrop;
+import com.willm.ModAPI.Utils;
 import com.willm.ModAPI.Commands.CreativeMenu;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.Plant;
-
-import net.md_5.bungee.api.ChatColor;
 
 public class BlockEvents implements Listener {
 
@@ -182,7 +187,41 @@ public class BlockEvents implements Listener {
 	
 	@EventHandler
 	public void MineBlock(BlockBreakEvent event)
-	{
+	{/*
+		if(event.getBlock().getType() == Material.GLASS)
+		{
+
+				for(Entity e : event.getBlock().getWorld().getNearbyEntities(Utils.AddToLocationAsNew(event.getBlock().getLocation(), 0.5f, 0, 0.5f), 0.2f, 0.2f, 0.2f))
+				{
+					if(e.getType() == EntityType.ARMOR_STAND)
+					{
+						ArmorStand as = (ArmorStand)e;
+						
+						if(as.getEquipment().getHelmet() != null)
+						{
+							if(as.getEquipment().getHelmet().getItemMeta().hasCustomModelData())
+							{
+								int cmd = as.getEquipment().getHelmet().getItemMeta().getCustomModelData();
+								for(CustomBlock b : Main.CustomBlockRegistry)
+								{
+									if(b.getDisplayCustomModelData() == cmd)
+									{
+										b.Remove(event);
+										break;
+									}
+
+									
+								}
+							}
+						}
+
+					}
+				}
+				
+				
+			
+		}*/
+		
 		if(event.getBlock().getType() == Material.DISPENSER)
 		{
 			for(Plant p : Main.PlantRegistry)
@@ -212,6 +251,55 @@ public class BlockEvents implements Listener {
 					{
 						b.Remove(event);
 						break;
+					}
+				}
+			}
+			
+			return;
+			
+		}
+		
+		for(Entity e : event.getBlock().getWorld().getNearbyEntities(Utils.AddToLocationAsNew(event.getBlock().getLocation(), 0.5f, 0, 0.5f), 0.2f, 0.2f, 0.2f))
+		{
+			if(e.getType() == EntityType.ARMOR_STAND)
+			{
+				ArmorStand as = (ArmorStand)e;
+				
+				if(as.getEquipment().getHelmet() != null)
+				{
+					if(as.getEquipment().getHelmet().getItemMeta().hasCustomModelData())
+					{
+						for(CustomBlock b : Main.CustomBlockRegistry)
+						{
+							if(b.CheckForCustomBlock(as.getLocation().getBlock()))
+							{
+								b.Remove(event);
+								break;
+							}
+
+							
+						}
+					}
+				}
+
+			}
+		}
+	}
+	
+	@EventHandler
+	public void PlayerStartMining(PlayerInteractEvent event)
+	{
+		if(event.getAction() != Action.LEFT_CLICK_BLOCK) {return;}
+		
+		if(event.getClickedBlock() != null)
+		{
+			if(event.getClickedBlock().getType() == Material.DISPENSER || event.getClickedBlock().getType() == Material.GLASS)
+			{
+				for(CustomBlock b : Main.CustomBlockRegistry)
+				{
+					if(b.CheckForCustomBlock(event.getClickedBlock()))
+					{
+						b.InitMineAs(event.getClickedBlock());
 					}
 				}
 			}
@@ -334,8 +422,47 @@ public class BlockEvents implements Listener {
 					{
 						if(b.getRootItem().getCustomModelData() == event.getPlayer().getEquipment().getItemInMainHand().getItemMeta().getCustomModelData())
 						{
+							if(b.Directional == BlockDirectionData.FACE_RELATIVE)
+							{
+								if(event.getBlock().getRelative(BlockFace.EAST).equals(event.getBlockAgainst()))
+								{
+									b.sidewaysBlockData.Place(event.getBlock().getLocation(), BlockFace.EAST);
+									return;
+								}
+								
+								if(event.getBlock().getRelative(BlockFace.WEST).equals(event.getBlockAgainst()))
+								{
+									b.sidewaysBlockData.Place(event.getBlock().getLocation(), BlockFace.WEST);
+									return;
+								}
+								
+								if(event.getBlock().getRelative(BlockFace.SOUTH).equals(event.getBlockAgainst()))
+								{
+									b.sidewaysBlockData.Place(event.getBlock().getLocation(), BlockFace.SOUTH);
+									return;
+								}
+								
+								if(event.getBlock().getRelative(BlockFace.NORTH).equals(event.getBlockAgainst()))
+								{
+									b.sidewaysBlockData.Place(event.getBlock().getLocation(), BlockFace.NORTH);
+									return;
+								}
+							}
+							
+							if(b.Directional == BlockDirectionData.PLAYER_RELATIVE)
+							{
+								if(event.getPlayer().getFacing() == BlockFace.SOUTH)
+								{
+									b.Place(event.getBlock().getLocation(), event.getPlayer().getFacing(), 180.f);
+									return;
+								}
+								
+								b.Place(event.getBlock().getLocation(), event.getPlayer().getFacing());
+								return;
+							}
+							
+							
 							b.Place(event.getBlock().getLocation());
-							break;
 						}	
 					}
 				}

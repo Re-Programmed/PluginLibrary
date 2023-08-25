@@ -1,8 +1,8 @@
 package com.willm.CoreMOD.Power;
 
-import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,8 +17,6 @@ import com.willm.ModAPI.Items.BlockCreator;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
-
-import net.md_5.bungee.api.ChatColor;
 
 public class AtmosphereCondenser extends EnergyCompatible {
 

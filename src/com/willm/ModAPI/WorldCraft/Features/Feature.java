@@ -14,11 +14,11 @@ public class Feature {
 		
 	private final FeatureType type = FeatureType.SURFACE;
 	
-	private final Material materialCheck;
+	private final Material[] materialCheck;
 	
 	public FeatureType GetFeatureType() {return type;}
 	
-	public Feature(int spawnChance, Material materialCheck)
+	public Feature(int spawnChance, Material... materialCheck)
 	{
 		this.spawnChance = spawnChance;
 		this.materialCheck = materialCheck;
@@ -39,7 +39,16 @@ public class Feature {
 	//Place this feature at the input location.
 	public void Place(Location root_location)
 	{
-		if(root_location.getBlock().getType() != materialCheck) {return;}
+		boolean ret = true;
+		for(Material m : materialCheck)
+		{
+			if(root_location.getBlock().getType() == m)
+			{
+				ret = false;
+				break;
+			}
+		}
+		if(ret) {return;}
 		for(FeatureElement fe : elements)
 		{
 			fe.Place(root_location);
