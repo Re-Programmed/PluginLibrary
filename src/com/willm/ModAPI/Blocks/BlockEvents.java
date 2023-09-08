@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -34,6 +35,7 @@ import org.bukkit.util.Vector;
 import com.willm.ModAPI.Main;
 import com.willm.ModAPI.MobDrop;
 import com.willm.ModAPI.Utils;
+import com.willm.ModAPI.Blocks.CustomStates.CustomTrapdoorBlock;
 import com.willm.ModAPI.Commands.CreativeMenu;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.Plant;
@@ -469,6 +471,8 @@ public class BlockEvents implements Listener {
 			}
 		}
 	}
+	
+
 	
 	
 }

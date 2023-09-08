@@ -21,7 +21,7 @@ public class GiveCommand implements CommandExecutor {
 		{
 			if(sender instanceof Player)
 			{
-				if(((Player)sender).getGameMode() == GameMode.CREATIVE)
+				if(((Player)sender).isOp())
 				{
 					if(args[0] != null)
 					{
@@ -49,6 +49,9 @@ public class GiveCommand implements CommandExecutor {
 							}
 						}
 					}
+				}else {
+					sender.sendMessage(ChatColor.RED + "You do not have permission to use this command!");
+					return false;
 				}
 			}
 		}

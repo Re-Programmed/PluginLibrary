@@ -9,7 +9,7 @@ import com.willm.ModAPI.Blocks.Machine;
 import com.willm.ModAPI.Blocks.MachineConversion;
 
 public class BlockCreator {
-
+	
 	public static CustomBlock RegisterNewBlock(CustomItemStack rootItem)
 	{
 		CustomBlock b = new CustomBlock(rootItem);
@@ -21,6 +21,13 @@ public class BlockCreator {
 		return b;
 	}
 	
+	public static CustomBlock RegisterNewBlock(CustomItemStack rootItem, CustomBlock block)
+	{
+		Main.CustomBlockRegistry.add(block);
+		rootItem.setRelatedBlock(block);
+		return block;
+	}
+
 	public static LiquidBlock RegisterNewLiquid(CustomItemStack rootItem) {return RegisterNewLiquid(rootItem, 3, 20);}
 	public static LiquidBlock RegisterNewLiquid(CustomItemStack rootItem, int flow_span, int flow_time)
 	{

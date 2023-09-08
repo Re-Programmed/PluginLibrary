@@ -2,6 +2,7 @@ package com.willm.CoreMOD;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -10,10 +11,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -57,6 +62,8 @@ public class ItemEvents implements Listener {
 	{
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement grant @a only core:root");
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "advancement grant @a only core:root_farming");
+		
+		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1k--4y93dO04vjpRGKwYOOVMIWmw3aYRQ");
 	}
 	
 	@EventHandler
@@ -123,6 +130,601 @@ public class ItemEvents implements Listener {
 					}
 				}
 			}
+		}
+	}
+	
+
+	
+	@EventHandler
+	public void CheckForBrineMaking(PlayerInteractEvent event)
+	{
+		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) {return;}
+		
+		
+		if(event.getItem() != null)
+		{
+			if(MyItems.brine_cauldron.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				if(event.getItem().getType() == Material.GLASS_BOTTLE)
+				{
+					int c = event.getItem().getAmount();
+					
+					if(c == 1)
+					{
+						event.getPlayer().getEquipment().setItemInMainHand(MyItems.brine.GetAmountClone(2));
+					}else {
+						ItemStack newItem = event.getItem().clone();
+						newItem.setAmount(c - 1);
+						
+						event.getPlayer().getEquipment().setItemInMainHand(newItem);
+						
+						ItemStack brine = MyItems.brine.GetAmountClone(2);
+						Item i = event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), brine);
+						i.setPickupDelay(0);
+						
+					}
+					
+					MyItems.brine_cauldron.getRelatedBlock().Remove(event.getClickedBlock().getLocation(), false);
+					event.getClickedBlock().setType(Material.CAULDRON);
+				}
+			}
+		}
+		
+		if(event.getClickedBlock().getType() == Material.WATER_CAULDRON)
+		{
+			for(Entity e : event.getClickedBlock().getWorld().getNearbyEntities(event.getClickedBlock().getLocation(), 0.8f, 1f, 0.8f))
+			{
+				if(e instanceof Item)
+				{
+					Item i = (Item)e;
+					ItemStack is = i.getItemStack();
+					if(MyItems.salt_item.CheckForCustomItem(is))
+					{
+						if(is.getAmount() > 12)
+						{
+							MyItems.brine_cauldron.getRelatedBlock().Place(event.getClickedBlock().getLocation());
+							
+							is.setAmount(is.getAmount() - 12);
+							i.setItemStack(is);
+							return;
+						}
+						
+						if(is.getAmount() == 12)
+						{
+							MyItems.brine_cauldron.getRelatedBlock().Place(event.getClickedBlock().getLocation());
+							
+							i.remove();
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void SaltWaterFromOcean(org.bukkit.event.player.PlayerBucketFillEvent event)
+	{		
+		if(event.getItemStack().getType() == Material.WATER_BUCKET)
+		{
+			if(event.getBlockClicked().getBiome() == Biome.OCEAN || event.getBlockClicked().getBiome() == Biome.COLD_OCEAN || event.getBlockClicked().getBiome() == Biome.DEEP_COLD_OCEAN || event.getBlockClicked().getBiome() == Biome.DEEP_FROZEN_OCEAN || event.getBlockClicked().getBiome() == Biome.DEEP_LUKEWARM_OCEAN || event.getBlockClicked().getBiome() == Biome.DEEP_OCEAN || event.getBlockClicked().getBiome() == Biome.FROZEN_OCEAN || event.getBlockClicked().getBiome() == Biome.LUKEWARM_OCEAN || event.getBlockClicked().getBiome() == Biome.WARM_OCEAN || event.getBlockClicked().getBiome() == Biome.BEACH || event.getBlockClicked().getBiome() == Biome.SNOWY_BEACH)
+			{
+				event.setItemStack(MyItems.salt_water.GetMyItemStack());
+			}
+		}
+	}
+	
+	@EventHandler
+	public void CheckForBreakCentrifuge(BlockBreakEvent event)
+	{
+		for(CustomItemStack cis : MyItems.centrifuge_tops)
+		{
+			if(cis.getRelatedBlock().CheckForCustomBlock(event.getBlock()))
+			{
+				List<ArmorStand> asl = GetCentrifugeStands(event.getBlock());
+				for(ArmorStand as : asl)
+				{
+					as.getWorld().dropItemNaturally(as.getLocation(), as.getEquipment().getItemInMainHand());
+					
+					as.remove();
+				}
+				break;
+			}
+		}
+	}
+	
+	@EventHandler
+	public void CentrifugeHandling(PlayerInteractEvent event)
+	{
+		if(event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getPlayer().isSneaking())
+		{
+			return;
+		}
+		
+			//ENGINES
+		if(MyItems.centrifuge_engines[0].getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+		{
+			event.setCancelled(true);
+			for(CustomItemStack cis : MyItems.centrifuge_tops)
+			{
+				if(cis.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock().getRelative(BlockFace.UP)))
+				{
+					triggerCentrifuge(event.getClickedBlock().getRelative(BlockFace.UP), cis, 30f, event.getPlayer(), 1);
+					return;
+				}
+			}
+			
+			
+			return;
+		}
+		
+			
+			//TOPS
+		for(CustomItemStack cis : MyItems.centrifuge_tops)
+		{
+			if(cis.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				event.setCancelled(true);
+				if(event.getItem() != null)
+				{
+					placeItemOnCentrifuge(event.getItem(), event.getPlayer(), event.getClickedBlock(), cis);	
+				}
+				break;
+			}
+		}
+
+	}
+	
+	public static final String CENTRIFUGE_AS_PREFIX = "centrifuge_item";
+	
+	private static void placeItemOnCentrifuge(ItemStack item, Player p, Block b, CustomItemStack cis)
+	{
+		ArmorStand check = cis.getRelatedBlock().GetMyStand(b);
+		if(check.getCustomName() != null)
+		{
+			if(Float.parseFloat(check.getCustomName()) > 0)
+			{
+				return;
+			}
+		}
+		
+		ItemStack put = item.clone();
+		if(item.getAmount() > 1)
+		{
+			item.setAmount(item.getAmount() - 1);
+			p.getEquipment().setItemInMainHand(item);
+			
+			put.setAmount(1);
+		}else {
+			p.getEquipment().setItemInMainHand(null);
+		}
+		
+		
+		
+		ArmorStand as = (ArmorStand)p.getWorld().spawnEntity(b.getLocation(), EntityType.ARMOR_STAND);
+		
+		
+		as.setMarker(true);
+		as.setInvisible(true);
+		as.setInvulnerable(true);
+		as.setCustomName(CENTRIFUGE_AS_PREFIX + ":");
+		
+		as.getEquipment().setItemInMainHand(put);
+		
+		List<ArmorStand> stands = GetCentrifugeStands(b);
+		
+		switch(stands.size() - 1)
+		{
+		case 0:
+			as.teleport(as.getLocation().add(1f, -0.35f, -1f));
+			break;
+		case 1:
+			as.teleport(as.getLocation().add(2f, -0.35f, 0f));
+			break;
+		case 2:
+			as.teleport(as.getLocation().add(1f, -0.35f, 1f));
+			break;
+		case 3:
+			as.teleport(as.getLocation().add(0f, -0.35f, 0f));
+			break;
+		default:
+			as.remove();
+			break;
+		}
+	}
+	
+	private static List<ArmorStand> GetCentrifugeStands(Block b)
+	{
+		List<ArmorStand> stands = new ArrayList<ArmorStand>();
+		for(Entity e : b.getWorld().getNearbyEntities(Utils.AddToLocationAsNew(b.getLocation(), 0.5f, 0.5f, 0.5f), 2f, 2f, 2f))
+		{
+			if(e.getType() == EntityType.ARMOR_STAND)
+			{
+				ArmorStand cas = (ArmorStand)e;
+				if(cas.getCustomName() == null) {continue;}
+				if(cas.getCustomName().startsWith(CENTRIFUGE_AS_PREFIX))
+				{
+					stands.add(cas);
+				}
+			}
+		}
+		
+		return stands;
+	}
+	
+	private static void triggerCentrifuge(Block b, CustomItemStack cis, float deg, Player p, int level)
+	{
+		List<ArmorStand> stands = GetCentrifugeStands(b);
+
+		if(stands.size() == 0)
+		{
+			return;
+		}
+		
+		ArmorStand as = cis.getRelatedBlock().GetMyStand(b);
+		
+		float prevDeg = 0;
+		prevDeg += deg;
+		
+		if(as.getCustomName() == null)
+		{
+			as.setCustomName("0");
+		}
+		
+		prevDeg += Float.parseFloat(as.getCustomName());
+		
+		as.setCustomName("" + prevDeg);
+
+		
+		as.setRotation(as.getLocation().getYaw() + deg, 0);
+		
+		
+		for(ArmorStand stand : stands)
+		{
+			Location newloc = RotateAboutAPoint(as.getLocation(), stand.getLocation(), deg);
+			stand.teleport(newloc);
+		}
+		
+		if(prevDeg > 1000)
+		{
+			if(stands.size() == 1)
+			{
+				as.setRotation(0, 0);
+				as.setCustomName("0");
+			}else {
+				as.setCustomName("1");
+			}
+			
+			ItemStack is = stands.get(0).getEquipment().getItemInMainHand();
+			
+			for(CentrifugeRecipe cr : MyItems.centrifugeRecipes)
+			{
+				if(cr.CheckForRecipe(is, level)) {
+					Vector v = stands.get(0).getLocation().toVector().subtract(as.getLocation().toVector()).normalize().multiply(-deg/250);
+					
+					Item i = as.getWorld().dropItem(stands.get(0).getLocation(), cr.Result());
+					i.setVelocity(v);
+				}
+			}
+			
+			stands.get(0).remove();
+		}
+	}
+	
+	public static Location RotateAboutAPoint(Location middle, Location point, double degrees)
+	{
+        middle.setY(point.getY());
+       
+        float oldyaw = point.getYaw()%360.0F;
+       
+        double d = middle.distance(point);
+        double angle = Math.acos((point.getX()-middle.getX())/d);
+       
+        if(point.getZ() < middle.getZ()){
+            double newangle = 2*Math.PI-angle + (degrees * Math.PI / 180);
+            double newx = Math.cos(newangle) * d;
+            double newz = Math.sin(newangle) * d;
+            point = middle.clone().add(newx, 0, newz);
+            point.setYaw((float) ((oldyaw+degrees)%360.0F));
+            return point;
+        }else {
+            double newangle = angle + (degrees * Math.PI / 180);
+
+            double newx = Math.cos(newangle) * d;
+            double newz = Math.sin(newangle) * d;
+            point = middle.clone().add(newx, 0, newz);
+            point.setYaw((float) ((oldyaw+degrees)%360.0F));
+            return point;
+        }
+	}
+
+	
+	@EventHandler
+	public void JarHandling(PlayerInteractEvent event)
+	{
+		if(event.getAction() != Action.RIGHT_CLICK_BLOCK)
+		{
+			return;
+		}
+		
+		
+		if(MyItems.glass_jar.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+		{
+			event.setCancelled(true);
+			if(event.getItem() != null)
+			{
+				int standCmd = MyItems.glass_jar.getRelatedBlock().GetMyStand(event.getClickedBlock()).getEquipment().getHelmet().getItemMeta().getCustomModelData();
+				int fillLevel = standCmd == MyItems.glass_jar.getCustomModelData() ? -1 : standCmd % 10;
+				
+				if(MyItems.salt_item.CheckForCustomItem(event.getItem()))
+				{
+					if(event.getItem().getAmount() >= 16)
+					{
+						if(standCmd == MyItems.glass_jar_water.getDisplayCustomModelData() + 2 || standCmd == MyItems.glass_jar_salt_water.getDisplayCustomModelData() + 2)
+						{
+							MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(new CustomBlock(new CustomItemStack("Glass Jar", Material.WARPED_TRAPDOOR, MyItems.glass_jar_brine.getDisplayCustomModelData() + 2)), event.getClickedBlock());
+							ItemStack i = event.getItem();
+							if(i.getAmount() == 16)
+							{
+								event.getPlayer().getEquipment().setItemInMainHand(null);
+							}else {
+								i.setAmount(i.getAmount() - 16);
+								event.getPlayer().getEquipment().setItemInMainHand(i);
+							}
+						}
+						
+						
+					}
+					return;
+				}
+				
+				if(event.getItem().getType() == Material.BUCKET || event.getItem().getType() == Material.GLASS_BOTTLE)
+				{
+					if(event.getItem().hasItemMeta())
+					{
+						if(event.getItem().getItemMeta().hasCustomModelData())
+						{
+							return;
+						}
+					}
+					
+					int soundId = -1;
+					for(Entry<Integer, ItemStack> conversion : MyItems.GlassJarConversions.entrySet())
+					{
+						soundId++;
+						if(conversion.getValue().getType() == Material.HONEY_BOTTLE && event.getItem().getType() != Material.GLASS_BOTTLE) { continue; }
+						if(conversion.getValue().getType() != Material.HONEY_BOTTLE && event.getItem().getType() != Material.BUCKET) { continue; }
+						if((standCmd - fillLevel) + 1 == conversion.getKey())
+						{
+							if(fillLevel == 1)
+							{
+								MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(MyItems.glass_jar.getRelatedBlock(), event.getClickedBlock());
+							}else {
+								MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(new CustomBlock(new CustomItemStack("Glass Jar", Material.WARPED_TRAPDOOR, standCmd - 1)), event.getClickedBlock());
+							}
+							
+							//event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), MyItems.GlassOUTJarSounds.get(soundId), 1.0f, 1.0f);
+							
+							if(event.getItem().getType().toString().contains("BUCKET"))
+							{
+								if(conversion.getValue().getType() == Material.LAVA_BUCKET)
+								{
+									event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1.0f, 1.0f);
+								}else {
+									event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BUCKET_FILL, 1.0f, 1.0f);
+								}
+							}else if(event.getItem().getType().toString().contains("BOTTLE"))
+							{
+								event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BOTTLE_FILL, 1.0f, 1.0f);
+							}else if(conversion.getValue().getType() == Material.COOKIE)
+							{
+								event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+							}
+							
+							if(event.getPlayer().getEquipment().getItemInMainHand().getAmount() == 1)
+							{
+								event.getPlayer().getEquipment().setItemInMainHand(conversion.getValue().clone());
+							}else {
+								ItemStack i = event.getPlayer().getEquipment().getItemInMainHand();
+								i.setAmount(i.getAmount() - 1);
+								event.getPlayer().getEquipment().setItemInMainHand(i);
+								
+								Item id = event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), conversion.getValue().clone());
+								id.setPickupDelay(0);
+							}
+							
+							return;
+						}
+					}
+				}
+				
+				if(fillLevel > 2) {return;}
+				
+				if(event.getItem().getType() == Material.COOKIE)
+				{
+					if(event.getItem().getAmount() < 3)
+					{
+						return;
+					}
+				}
+				
+				int soundId = -1;
+				for(Entry<ItemStack, CustomBlock> insert : MyItems.GlassJarInserts.entrySet())
+				{
+					soundId++;
+					if(event.getItem().getType() == insert.getKey().getType())
+					{
+						if(insert.getKey().hasItemMeta())
+						{
+							if(insert.getKey().getItemMeta().hasCustomModelData())
+							{
+								if(event.getItem().hasItemMeta())
+								{
+									if(event.getItem().getItemMeta().hasCustomModelData())
+									{
+										if(insert.getKey().getItemMeta().getCustomModelData() == event.getItem().getItemMeta().getCustomModelData())
+										{
+
+											
+											if(fillLevel == -1)
+											{
+												MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(insert.getValue(), event.getClickedBlock());
+											}else {
+												if(standCmd - fillLevel + 1 == insert.getValue().getDisplayCustomModelData())
+												{
+													MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(new CustomBlock(new CustomItemStack("Glass Jar", Material.WARPED_TRAPDOOR, standCmd + 1)), event.getClickedBlock());
+												}else {
+													return;
+												}
+											}
+											//event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), MyItems.GlassINJarSounds.get(soundId), 1.0f, 1.0f);
+											
+											if(event.getItem().getType() == Material.COOKIE)
+											{
+												event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+												if(event.getItem().getAmount() == 4)
+												{
+													event.getPlayer().getEquipment().setItemInMainHand(null);
+												}else {
+													ItemStack is = event.getItem();
+													is.setAmount(is.getAmount() - 4);
+													event.getPlayer().getEquipment().setItemInMainHand(is);
+												}
+											}
+											
+											if(insert.getKey().getItemMeta().getDisplayName().toLowerCase().contains("bucket"))
+											{
+												if(event.getItem().getType() == Material.LAVA_BUCKET)
+												{
+													event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BUCKET_EMPTY_LAVA, 1.0f, 1.0f);
+												}else {
+													event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BUCKET_EMPTY, 1.0f, 1.0f);
+												}
+												
+												
+												if(event.getItem().getAmount() == 1)
+												{
+													event.getPlayer().getEquipment().setItemInMainHand(new ItemStack(Material.BUCKET));
+												}else {
+													Item i = event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), new ItemStack(Material.BUCKET));
+													i.setPickupDelay(0);
+													
+													ItemStack is = event.getItem();
+													is.setAmount(is.getAmount() -1 );
+													event.getPlayer().getEquipment().setItemInMainHand(is);
+												}
+											}
+											
+											if(insert.getKey().getType() == Material.HONEY_BOTTLE)
+											{
+												event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BOTTLE_EMPTY, 1.0f, 1.0f);
+												if(event.getItem().getAmount() == 1)
+												{
+													event.getPlayer().getEquipment().setItemInMainHand(new ItemStack(Material.GLASS_BOTTLE));
+												}else {
+													Item i = event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), new ItemStack(Material.GLASS_BOTTLE));
+													i.setPickupDelay(0);
+
+													ItemStack is = event.getItem();
+													is.setAmount(is.getAmount() -1 );
+													event.getPlayer().getEquipment().setItemInMainHand(is);
+												}
+											}
+
+								
+											
+											return;
+										}
+									}
+								}
+								
+								continue;
+							}
+						}else if(event.getItem().hasItemMeta())
+						{
+							if(event.getItem().getItemMeta().hasCustomModelData())
+							{
+								return;
+							}
+						}
+						
+						
+						
+						if(fillLevel == -1)
+						{
+							MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(insert.getValue(), event.getClickedBlock());
+						}else {
+							if(standCmd - fillLevel + 1 == insert.getValue().getDisplayCustomModelData())
+							{
+								MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(new CustomBlock(new CustomItemStack("Glass Jar", Material.WARPED_TRAPDOOR, standCmd + 1)), event.getClickedBlock());
+							}else {
+								return;
+							}
+						}
+						
+						
+						//event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), MyItems.GlassINJarSounds.get(soundId), 1.0f, 1.0f);
+						
+						if(event.getItem().getType() == Material.COOKIE)
+						{
+							event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ENTITY_ITEM_PICKUP, 1.0f, 1.0f);
+							if(event.getItem().getAmount() == 4)
+							{
+								event.getPlayer().getEquipment().setItemInMainHand(null);
+							}else {
+								ItemStack is = event.getItem();
+								is.setAmount(is.getAmount() - 4);
+								event.getPlayer().getEquipment().setItemInMainHand(is);
+							}
+							return;
+						}
+						
+						if(event.getItem().getType().toString().contains("BUCKET"))
+						{
+							if(event.getItem().getType() == Material.LAVA_BUCKET)
+							{
+								event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BUCKET_EMPTY_LAVA, 1.0f, 1.0f);
+							}else {
+								event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BUCKET_EMPTY, 1.0f, 1.0f);
+							}
+							event.getPlayer().getEquipment().setItemInMainHand(new ItemStack(Material.BUCKET));
+						}else if(event.getItem().getType().toString().contains("BOTTLE"))
+						{
+							event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), Sound.ITEM_BOTTLE_EMPTY, 1.0f, 1.0f);
+							if(event.getItem().getAmount() == 1)
+							{
+								event.getPlayer().getEquipment().setItemInMainHand(new ItemStack(Material.GLASS_BOTTLE));
+							}else {
+								Item i = event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), new ItemStack(Material.GLASS_BOTTLE));
+								i.setPickupDelay(0);
+							}
+						}
+						return;
+					}
+				}
+			}else {
+				ArmorStand as = MyItems.glass_jar.getRelatedBlock().GetMyStand(event.getClickedBlock());
+				int cmd = as.getEquipment().getHelmet().getItemMeta().getCustomModelData();
+				int fillLevel = cmd == MyItems.glass_jar.getRelatedBlock().getDisplayCustomModelData() ? -1 : cmd % 10;
+				
+				if(fillLevel == -1) {return;}
+				
+				if(fillLevel == 1)
+				{
+					MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(MyItems.glass_jar.getRelatedBlock(), event.getClickedBlock());
+				}else {
+					ItemStack disp = as.getEquipment().getHelmet();
+					ItemMeta dispMeta = disp.getItemMeta();
+					dispMeta.setCustomModelData(cmd - 1);
+					disp.setItemMeta(dispMeta);
+					
+					as.getEquipment().setHelmet(disp);
+				}
+				
+				Item i = event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), new ItemStack(Material.COOKIE, 4));
+				i.setPickupDelay(0);
+			}
+			
 		}
 	}
 	

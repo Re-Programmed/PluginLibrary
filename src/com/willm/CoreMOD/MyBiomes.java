@@ -31,6 +31,9 @@ public class MyBiomes {
 				.AddFeature(new Feature(700, Material.SAND).AddElement(new CustomFeature(RelativeLocation.Zero, MyItems.limestone_block.getRelatedBlock())))
 				);
 		
+		CustomPopulator.GetPM().AddBiome(new Biome(1800, org.bukkit.block.Biome.BEACH)
+				.AddFeature(new Feature(125, Material.SAND).AddElement(new CustomFeature(RelativeLocation.Zero, MyItems.salt_block.getRelatedBlock()))));
+		
 		CustomPopulator.GetPM().AddBiome(new Biome(1750, org.bukkit.block.Biome.STONY_PEAKS, org.bukkit.block.Biome.WINDSWEPT_HILLS, org.bukkit.block.Biome.WINDSWEPT_GRAVELLY_HILLS, org.bukkit.block.Biome.FLOWER_FOREST, org.bukkit.block.Biome.SUNFLOWER_PLAINS)
 				.AddFeature(new Feature(150, Material.GRASS_BLOCK, Material.GRAVEL, Material.COARSE_DIRT, Material.STONE)
 						.AddElement(new CustomFeature(new RelativeLocation(0, 1, 0), MyItems.pine_log.getRelatedBlock()))

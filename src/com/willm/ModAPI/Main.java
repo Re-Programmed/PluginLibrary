@@ -14,6 +14,8 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -26,6 +28,7 @@ import com.willm.ModAPI.Blocks.BlockEvents;
 import com.willm.ModAPI.Blocks.CustomBlock;
 import com.willm.ModAPI.Blocks.LiquidBlock;
 import com.willm.ModAPI.Blocks.Machine;
+import com.willm.ModAPI.Blocks.CustomStates.CustomTrapdoorBlock;
 import com.willm.ModAPI.Commands.AddEnchant;
 import com.willm.ModAPI.Commands.AddEnchantTabCompleter;
 import com.willm.ModAPI.Commands.ClearBrokenArmorstand;
@@ -140,10 +143,12 @@ public class Main {
 									{
 										if(as.getEquipment().getHelmet().getItemMeta().hasCustomModelData())
 										{
-											if(as.getEquipment().getHelmet().getAmount() < 2)
+											
+											
+											if(as.getLocation().getBlock() instanceof Dispenser)
 											{
 												as.setFireTicks(999999999);
-											}else if(as.getFireTicks() < 5)
+											}else if(as.getFireTicks() < 5 && as.getEquipment().getHelmet().getAmount() > 1)
 											{
 												as.getLocation().getBlock().setType(Material.GLASS);
 											}
@@ -156,6 +161,23 @@ public class Main {
 											for(Plant pl : PlantRegistry)
 											{
 												pl.CheckStand(as, random_plant);
+											}
+											
+											if(as.getLocation().getBlock().getType() == Material.WARPED_TRAPDOOR)
+											{
+												Block b = as.getLocation().getBlock();
+												for(CustomTrapdoorBlock ctb : CustomTrapdoorBlock.Trapdoors)
+												{
+													if(ctb.CheckForCustomBlock(b))
+													{
+														TrapDoor t = (TrapDoor)b.getBlockData();
+														
+														if(t.isOpen() != (as.getEquipment().getHelmet().getItemMeta().getCustomModelData() == ctb.GetOpenCMD()))
+														{
+															ctb.UpdateState(b, t.isOpen());
+														}
+													}
+												}
 											}
 											
 											for(Entry<Location, LiquidBlock> el : Main.Liquids.entrySet())

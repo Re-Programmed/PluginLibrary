@@ -1,6 +1,7 @@
 package com.willm.ModAPI.Terrain;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Chunk;
@@ -35,10 +36,12 @@ public class CustomPopulator extends BlockPopulator {
 		
 		for(Ore ore : getOres())
 		{
-			GenerateOre(world, random, chunk, ore.drop.GetMyItemStack().getType(), ore.rarity, 0, ore.ySpawnCap, ore.veins, Material.STONE, ore.drop, ore.placeCustom, ore.mustHaveAir);
+			GenerateOre(world, random, chunk, ore.drop.GetMyItemStack().getType(), ore.rarity, ore.yMinSpawn, ore.ySpawnCap, ore.veins, Material.STONE, ore.drop, ore.placeCustom, ore.mustHaveAir);
 		}
 	}
 	
+	
+	private static final List<Material> airBlocks = List.of(Material.AIR, Material.CAVE_AIR, Material.WATER, Material.LAVA);
 	
 	public static void GenerateOre(World world, Random random, Chunk chunk, Material mat, int tries, int heightMin, int heightMax, boolean veinChance, Material replace, CustomItemStack cmd, boolean placeCustom, boolean mustHaveAir)
 	{
@@ -58,12 +61,12 @@ public class CustomPopulator extends BlockPopulator {
 						boolean canPlace = !mustHaveAir;
 						if(mustHaveAir)
 						{
-							canPlace = b.getRelative(BlockFace.EAST).getType() == Material.AIR || b.getRelative(BlockFace.EAST).getType() == Material.CAVE_AIR
-									|| b.getRelative(BlockFace.WEST).getType() == Material.AIR || b.getRelative(BlockFace.WEST).getType() == Material.CAVE_AIR
-									|| b.getRelative(BlockFace.SOUTH).getType() == Material.AIR || b.getRelative(BlockFace.SOUTH).getType() == Material.CAVE_AIR
-									|| b.getRelative(BlockFace.NORTH).getType() == Material.AIR || b.getRelative(BlockFace.NORTH).getType() == Material.CAVE_AIR
-									|| b.getRelative(BlockFace.UP).getType() == Material.AIR || b.getRelative(BlockFace.UP).getType() == Material.CAVE_AIR
-									|| b.getRelative(BlockFace.DOWN).getType() == Material.AIR || b.getRelative(BlockFace.DOWN).getType() == Material.CAVE_AIR;
+							canPlace = airBlocks.contains(b.getRelative(BlockFace.EAST).getType())
+									|| airBlocks.contains(b.getRelative(BlockFace.WEST).getType())
+									|| airBlocks.contains(b.getRelative(BlockFace.SOUTH).getType())
+									|| airBlocks.contains(b.getRelative(BlockFace.NORTH).getType())
+									|| airBlocks.contains(b.getRelative(BlockFace.UP).getType())
+									|| airBlocks.contains(b.getRelative(BlockFace.DOWN).getType());
 						}
 						
 						if(canPlace)

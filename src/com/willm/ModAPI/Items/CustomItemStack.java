@@ -12,6 +12,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -76,6 +77,14 @@ public class CustomItemStack {
 	public CustomItemStack(String name, Material mat, int cmd)
 	{
 		setup(name, mat, cmd);
+	}
+	
+	public CustomItemStack AddFlags(ItemFlag... flags)
+	{
+		ItemMeta m = relatedItem.getItemMeta();
+		m.addItemFlags(flags);
+		relatedItem.setItemMeta(m);
+		return this;
 	}
 	
 	public CustomItemStack Attribute(Attribute attrib, float amount)
@@ -201,6 +210,18 @@ public class CustomItemStack {
 		result.setAmount(count);
 		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.minecraft(name.toLowerCase().replace(' ', '_')), result);
 		sr.shape(row1, row2, row3);
+		
+		
+		return new RecipeBuilder(sr);
+	}
+	
+	public RecipeBuilder getRecipe(int count, String row1, String row2)
+	{
+
+		ItemStack result = relatedItem.clone();
+		result.setAmount(count);
+		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.minecraft(name.toLowerCase().replace(' ', '_')), result);
+		sr.shape(row1, row2);
 		
 		
 		return new RecipeBuilder(sr);

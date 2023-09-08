@@ -26,13 +26,13 @@ public class CustomBlock {
 	private CustomItemStack rootItem;
 	public CustomItemStack getRootItem() {return rootItem;}
 	
-	private Material displayMaterial;
+	protected Material displayMaterial;
 	public Material getDisplayMaterial() {return displayMaterial;}
 	
 	private int displayCustomModelData;
 	public int getDisplayCustomModelData()  {return displayCustomModelData;}
 	
-	private String name;
+	protected String name;
 	public String getName()  {return name;}
 	
 	public ArrayList<Machine> m = new ArrayList<Machine>();
@@ -42,7 +42,7 @@ public class CustomBlock {
 	boolean drops = true;
 	public CustomBlock SetDrops(boolean drops) {this.drops = drops; return this;}
 	
-	boolean constBlock = true;
+	protected boolean constBlock = true;
 	public CustomBlock SetConstBlock(boolean constBlock) {this.constBlock = constBlock; return this;}
 
 	public Material mineAs = null;
@@ -270,12 +270,9 @@ public class CustomBlock {
 					ArmorStand as = (ArmorStand)e;
 					if(as.getEquipment().getHelmet() != null)
 					{
-						if(as.getEquipment().getHelmet().getAmount() > 1)
+						if(as.getEquipment().getHelmet().getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").equalsIgnoreCase(name.toLowerCase()))
 						{
-							if(as.getEquipment().getHelmet().getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").equalsIgnoreCase(name.toLowerCase()))
-							{
-								return true;
-							}
+							return true;
 						}
 					}
 				}
@@ -283,6 +280,18 @@ public class CustomBlock {
 		}
 		
 		return false;
+	}
+	
+	//UTIL
+	public void UpdateArmorStandTexture(CustomBlock newTexture, Block block)
+	{
+		ArmorStand as = getMyStand(block);
+		
+		ItemStack disp = ItemCreator.CreateNamedItemStack(newTexture.getDisplayMaterial(), newTexture.getName(), 1);
+		
+		ItemCreator.SetItemCustomModelData(disp, newTexture.getDisplayCustomModelData());
+		
+		as.getEquipment().setHelmet(disp);
 	}
 	
 	public void InitMineAs(Block b)
@@ -295,7 +304,8 @@ public class CustomBlock {
 		}
 	}
 	
-	private ArmorStand getMyStand(Block b)
+	public ArmorStand GetMyStand(Block b) {return getMyStand(b);}
+	protected ArmorStand getMyStand(Block b)
 	{
 		for(Entity e : b.getWorld().getNearbyEntities(Utils.AddToLocationAsNew(b.getLocation(), 0.5f, 0, 0.5f), 0.2f, 0.2f, 0.2f))
 		{
@@ -304,12 +314,9 @@ public class CustomBlock {
 				ArmorStand as = (ArmorStand)e;
 				if(as.getEquipment().getHelmet() != null)
 				{
-					if(as.getEquipment().getHelmet().getAmount() > 1)
+					if(as.getEquipment().getHelmet().getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").equalsIgnoreCase(name.toLowerCase()))
 					{
-						if(as.getEquipment().getHelmet().getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").equalsIgnoreCase(name.toLowerCase()))
-						{
-							return as;
-						}
+						return as;
 					}
 				}
 			}
