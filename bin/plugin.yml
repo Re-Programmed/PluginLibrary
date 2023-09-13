@@ -1,0 +1,29 @@
+name: modapi
+version: 1.0
+api-version: 1.18
+author: WillM
+main: com.willm.CoreMOD.Main
+comments: Make sure to remove this YML, only use files in com.willm.ModAPI! Run the ModAPI.Main.Launch() function in your onEnable function. (COPY THE COMMANDS TO YOUR .yml)
+commands:
+   removebrokenstand:
+      description: Removes all nearby armorstands.
+   givecustom:
+      aliases: [ gc ]
+      description: Gives you a custom item.
+   enchantcustom:
+      description: Enchants the held item with the specified custom enchantment.
+   itemmenu:
+      aliases: [ im, creativemenu ]
+      description: Opens a creative menu of custom items.
+   recipes:
+      description: Shows a recipe for an item or a recipe menu.
+   assortedtool:
+      description: Allows the creation of an alloyed tool.
+   setcustomblock:
+      description: Setblock for custom blocks.
+   fillcustomblock:
+      description: Fill for custom blocks.
+   rottick:
+      description: Ticks all rotting items.
+   setupdateradius:
+      description: Sets the radius of the area around players where blocks will be ticked.
