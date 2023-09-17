@@ -9,16 +9,14 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.willm.CoreMOD.Alloying.CreateAlloyPickCommand;
+import com.willm.CoreMOD.Alloying.CreateAlloyPickTabCompleter;
 import com.willm.CoreMOD.AssortedTools.AssortedToolEvent;
-import com.willm.CoreMOD.AssortedTools.CreateAssortedToolCommand;
-import com.willm.CoreMOD.AssortedTools.CreateAssortedToolCommandTabCompleter;
 import com.willm.CoreMOD.ElementalItems.RegisterElementalItems;
 
 public class Main extends JavaPlugin {
@@ -51,9 +49,9 @@ public class Main extends JavaPlugin {
 		
 		getCommand("rottick").setExecutor(new RotTickCommand());
 		
-		getCommand("assortedtool").setExecutor(new CreateAssortedToolCommand());
-		getCommand("assortedtool").setTabCompleter(new CreateAssortedToolCommandTabCompleter());
-		
+		getCommand("alloypick").setExecutor(new CreateAlloyPickCommand());
+		getCommand("alloypick").setTabCompleter(new CreateAlloyPickTabCompleter());
+
 		RegisterElementalItems.Register();
 
 		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {

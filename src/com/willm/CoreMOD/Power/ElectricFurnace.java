@@ -30,8 +30,8 @@ public class ElectricFurnace extends EnergyCompatible {
 		
 		blockRef = BlockCreator.RegisterNewBlock(cis, "core_mod.drill_idle", 250, 18, "Electric Furnace"
 				, new MachineConversion(Crusher.diamond_dust.GetMyItemStack(), new ItemStack(Material.DIAMOND, 1))
-				, new MachineConversion(Crusher.iron_dust.GetMyItemStack(), new ItemStack(Material.RAW_IRON, 1))
-				, new MachineConversion(Crusher.gold_dust.GetMyItemStack(), new ItemStack(Material.RAW_GOLD, 1))
+				, new MachineConversion(Crusher.iron_dust.GetMyItemStack(), new ItemStack(Material.IRON_INGOT, 1))
+				, new MachineConversion(Crusher.gold_dust.GetMyItemStack(), new ItemStack(Material.GOLD_INGOT, 1))
 				, new MachineConversion(Crusher.emerald_dust.GetMyItemStack(), new ItemStack(Material.EMERALD, 1))
 				, new MachineConversion(Crusher.lapis_dust.GetMyItemStack(), new ItemStack(Material.LAPIS_LAZULI, 1))
 				, new MachineConversion(Crusher.netherite_dust.GetMyItemStack(), new ItemStack(Material.NETHERITE_SCRAP, 1))

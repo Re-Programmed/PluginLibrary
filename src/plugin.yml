@@ -7,23 +7,33 @@ comments: Make sure to remove this YML, only use files in com.willm.ModAPI! Run 
 commands:
    removebrokenstand:
       description: Removes all nearby armorstands.
+      api_base_command: true
    givecustom:
       aliases: [ gc ]
       description: Gives you a custom item.
+      api_base_command: true
    enchantcustom:
       description: Enchants the held item with the specified custom enchantment.
+      api_base_command: true
    itemmenu:
       aliases: [ im, creativemenu ]
       description: Opens a creative menu of custom items.
+      api_base_command: true
    recipes:
       description: Shows a recipe for an item or a recipe menu.
-   assortedtool:
-      description: Allows the creation of an alloyed tool.
+      api_base_command: true
    setcustomblock:
       description: Setblock for custom blocks.
+      api_base_command: true
    fillcustomblock:
       description: Fill for custom blocks.
+      api_base_command: true
    rottick:
       description: Ticks all rotting items.
+      api_base_command: true
    setupdateradius:
       description: Sets the radius of the area around players where blocks will be ticked.
+      api_base_command: true
+
+   alloypick:
+      description: Creates a pickaxe alloy.

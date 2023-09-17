@@ -683,7 +683,7 @@ public class MyItems {
 	public static void RegisterCustomRecipesMenu()
 	{
 		//Brine Making
-		ItemStack mixingItemDisplay = glass_jar.GetMyItemStack(); 
+		ItemStack mixingItemDisplay = glass_jar.GetMyItemStack().clone(); 
 		ItemMeta meta = mixingItemDisplay.getItemMeta();
 		meta.setDisplayName(ChatColor.GOLD + "Mixing");
 		mixingItemDisplay.setItemMeta(meta);

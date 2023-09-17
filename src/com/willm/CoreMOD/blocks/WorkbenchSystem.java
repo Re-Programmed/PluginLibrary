@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import com.willm.CoreMOD.BlockEvents;
+import com.willm.ModAPI.Main;
+import com.willm.ModAPI.Blocks.CustomBlock;
 import com.willm.ModAPI.Items.CustomItemStack;
 
 public class WorkbenchSystem implements InventoryHolder {
@@ -69,6 +71,50 @@ public class WorkbenchSystem implements InventoryHolder {
 					}
 				}
 				
+				if(w.GetType() == WorkbenchType.MACHINE_WORKBENCH)
+				{
+					if(location.getBlock().getRelative(BlockFace.UP).getType() == Material.DISPENSER)
+					{
+						for(CustomBlock cb : Main.CustomBlockRegistry)
+						{
+							if(cb.getMachineTemplate() != null)
+							{
+								if(cb.CheckForCustomBlock(location.getBlock().getRelative(BlockFace.UP)))
+								{
+									displayName = ChatColor.BLUE + cb.getName().replace(ChatColor.WHITE + "", "");
+									displayType = new CustomItemStack(displayName, cb.getDisplayMaterial(), cb.getDisplayCustomModelData()).GetMyItemStack();
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+				if(w.GetType() == WorkbenchType.REDSTONE_TRIGGER_WORKBENCH)
+				{
+					Material mat = location.getBlock().getRelative(BlockFace.UP).getType();
+					if(mat != Material.AIR && mat != Material.CAVE_AIR && mat != Material.VOID_AIR)
+					{
+						boolean found = false;
+						for(CustomBlock cb : Main.CustomBlockRegistry)
+						{
+							if(cb.CheckForCustomBlock(location.getBlock().getRelative(BlockFace.UP)))
+							{
+								found = true;
+								displayName = ChatColor.RED + "" + cb.getRootItem().getName().replace(ChatColor.WHITE + "", "") + " Redstone Activator";
+								displayType = cb.getRootItem().GetMyItemStack().clone();
+								break;
+							}
+						}
+						
+						if(!found)
+						{
+							displayName = ChatColor.RED + "" + toTitleCase(mat.toString().toLowerCase().replace("_", " ")) + " Redstone Activator";
+							displayType = new CustomItemStack(displayName, mat, 0).GetMyItemStack();
+						}
+					}
+				}
+				
 				CustomItemStack cis = new CustomItemStack(displayName, displayType.getType(), (displayType.hasItemMeta() && displayType.getItemMeta().hasCustomModelData()) ? displayType.getItemMeta().getCustomModelData() : w.GetType().DisplayItem.getCustomModelData());
 				cis.AddLoreLine(ChatColor.DARK_GRAY + "" + location.getWorld().getName() + " " + location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ());
 				cis.AddLoreLine(ChatColor.DARK_GRAY + w.GetType().toString());
@@ -80,6 +126,18 @@ public class WorkbenchSystem implements InventoryHolder {
 			i++;
 		}
 	}
+	
+	
+	private static String toTitleCase(String givenString) {
+	    String[] arr = givenString.split(" ");
+	    StringBuffer sb = new StringBuffer();
+
+	    for (int i = 0; i < arr.length; i++) {
+	        sb.append(Character.toUpperCase(arr[i].charAt(0)))
+	            .append(arr[i].substring(1)).append(" ");
+	    }          
+	    return sb.toString().trim();
+	}  
 	
 	public static void PopulateBench(HashMap<Block, Workbench> benches, Block b)
 	{

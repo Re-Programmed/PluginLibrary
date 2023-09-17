@@ -55,7 +55,7 @@ import com.willm.ModAPI.Terrain.Ore;
 
 public class ItemEvents implements Listener {
 
-	private ArrayList<Location> wireRedstoneActiveLinks = new ArrayList<Location>();
+	public static ArrayList<Location> wireRedstoneActiveLinks = new ArrayList<Location>();
 	
 	@EventHandler
 	public void PlayerJoinRootAdvancement(PlayerJoinEvent event)
