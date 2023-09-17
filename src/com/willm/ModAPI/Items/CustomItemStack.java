@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,6 +12,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -77,6 +80,14 @@ public class CustomItemStack {
 	public CustomItemStack(String name, Material mat, int cmd)
 	{
 		setup(name, mat, cmd);
+	}
+	
+	public CustomItemStack AddEnchant(Enchantment enchant, int power, boolean ignore)
+	{
+		ItemMeta m = relatedItem.getItemMeta();
+		m.addEnchant(enchant, power, ignore);
+		relatedItem.setItemMeta(m);
+		return this;
 	}
 	
 	public CustomItemStack AddFlags(ItemFlag... flags)
@@ -153,7 +164,7 @@ public class CustomItemStack {
 	{
 		ItemStack result = relatedItem.clone();
 		result.setAmount(count);
-		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.minecraft(name), result);
+		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.fromString(name, com.willm.CoreMOD.Main.INSTANCE), result);
 		sr.shape(row1, row2, row3);
 				
 		return new RecipeBuilder(sr);
@@ -173,7 +184,7 @@ public class CustomItemStack {
 	public ShapelessRecipe GenUnshaped(String name, Material... r)
 	{
 		
-		ShapelessRecipe sr = new ShapelessRecipe(NamespacedKey.minecraft(name), relatedItem.clone());		
+		ShapelessRecipe sr = new ShapelessRecipe(NamespacedKey.fromString(name, com.willm.CoreMOD.Main.INSTANCE), relatedItem.clone());		
 		for(Material m : r)
 		{
 			sr.addIngredient(m);
@@ -187,7 +198,7 @@ public class CustomItemStack {
 	{
 		ItemStack clone = relatedItem.clone();
 		clone.setAmount(count);
-		ShapelessRecipe sr = new ShapelessRecipe(NamespacedKey.minecraft(name), clone);		
+		ShapelessRecipe sr = new ShapelessRecipe(NamespacedKey.fromString(name, com.willm.CoreMOD.Main.INSTANCE), clone);		
 				
 		return sr;
 	}
@@ -208,7 +219,7 @@ public class CustomItemStack {
 
 		ItemStack result = relatedItem.clone();
 		result.setAmount(count);
-		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.minecraft(name.toLowerCase().replace(' ', '_')), result);
+		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.fromString(name.toLowerCase().replace(' ', '_'), com.willm.CoreMOD.Main.INSTANCE), result);
 		sr.shape(row1, row2, row3);
 		
 		
@@ -220,7 +231,7 @@ public class CustomItemStack {
 
 		ItemStack result = relatedItem.clone();
 		result.setAmount(count);
-		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.minecraft(name.toLowerCase().replace(' ', '_')), result);
+		ShapedRecipe sr = new ShapedRecipe(NamespacedKey.fromString(name.toLowerCase().replace(' ', '_'), com.willm.CoreMOD.Main.INSTANCE), result);
 		sr.shape(row1, row2);
 		
 		
@@ -235,6 +246,20 @@ public class CustomItemStack {
 	public FurnaceRecipeBuilder getFurnaceRecipe(RecipeChoice.ExactChoice input, float xp, int cooktime, String name)
 	{
 		return FurnaceRecipeBuilder.createFurncaceRecipe(name, this.relatedItem, input, xp, cooktime);
+	}
+	
+	public BlastingRecipe getBlastingRecipe(RecipeChoice.ExactChoice input, float xp, int cooktime, String name)
+	{
+		BlastingRecipe br = new BlastingRecipe(NamespacedKey.fromString(name, com.willm.CoreMOD.Main.INSTANCE), this.GetMyItemStack(), input, xp, cooktime);
+		Bukkit.getServer().addRecipe(br);
+		return br;
+	}
+	
+	public BlastingRecipe getBlastingRecipe(Material input, float xp, int cooktime, String name)
+	{
+		BlastingRecipe br = new BlastingRecipe(NamespacedKey.fromString(name, com.willm.CoreMOD.Main.INSTANCE), this.GetMyItemStack(), input, xp, cooktime);
+		Bukkit.getServer().addRecipe(br);
+		return br;
 	}
 	
 	public ItemStack GetMyItemStack()

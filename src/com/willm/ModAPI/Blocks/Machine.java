@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -232,6 +233,12 @@ public class Machine implements InventoryHolder {
 	{
 		p.setCancelled(true);
 		p.getPlayer().openInventory(myInventory);
+		
+	}
+	
+	public void Interaction(Player p)
+	{
+		p.openInventory(myInventory);
 		
 	}
 	

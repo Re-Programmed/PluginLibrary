@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Timer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -16,6 +15,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.data.type.TrapDoor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -29,6 +31,7 @@ import com.willm.ModAPI.Blocks.CustomBlock;
 import com.willm.ModAPI.Blocks.LiquidBlock;
 import com.willm.ModAPI.Blocks.Machine;
 import com.willm.ModAPI.Blocks.CustomStates.CustomTrapdoorBlock;
+import com.willm.ModAPI.Blocks.CustomStates.TickBlock;
 import com.willm.ModAPI.Commands.AddEnchant;
 import com.willm.ModAPI.Commands.AddEnchantTabCompleter;
 import com.willm.ModAPI.Commands.ClearBrokenArmorstand;
@@ -44,10 +47,14 @@ import com.willm.ModAPI.Items.BlockCreator;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Items.Plant;
+import com.willm.ModAPI.RecipeDisplay.RecipeDisplayCommand;
+import com.willm.ModAPI.RecipeDisplay.RecipeDisplayEvents;
+import com.willm.ModAPI.RecipeDisplay.RecipeDisplayTabCompleter;
 import com.willm.ModAPI.Terrain.CustomPopulator;
 import com.willm.ModAPI.Terrain.OreEvents;
 
 public class Main {
+	public static float UpdateRadius = 64.f;
 
 	public static String PluginName;
 	public static ArrayList<CustomItemStack> CustomItemRegistry = new ArrayList<CustomItemStack>();
@@ -56,6 +63,8 @@ public class Main {
 	public static ArrayList<Machine> MachineRegistry = new ArrayList<Machine>();
 	public static ArrayList<CustomItemStack> ConsumableRegistry = new ArrayList<CustomItemStack>();
 	public static HashMap<Location, LiquidBlock> Liquids = new HashMap<Location, LiquidBlock>();
+	
+	public static ArrayList<TickBlock> TickBlocks = new ArrayList<TickBlock>();
 	
 	public static CustomPopulator Populator;
     static CreativeMenu CreativeMenuCommand = new CreativeMenu();
@@ -87,6 +96,41 @@ public class Main {
 		
 		jp.getCommand("fillcustomblock").setExecutor(new FillCustomBlockCommand());
 		jp.getCommand("fillcustomblock").setTabCompleter(new FillCustomBlockTabCompleter());
+		
+		jp.getCommand("recipes").setExecutor(new RecipeDisplayCommand());
+		jp.getCommand("recipes").setTabCompleter(new RecipeDisplayTabCompleter());
+		
+		jp.getCommand("setupdateradius").setExecutor(new CommandExecutor() {
+
+			@Override
+			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				if(label.equalsIgnoreCase("setupdateradius"))
+				{
+					if(args.length > 0)
+					{
+						try
+						{				
+							Integer i = Integer.parseUnsignedInt(args[0]);
+							UpdateRadius = Integer.parseUnsignedInt(args[0]);
+							sender.sendMessage(ChatColor.WHITE + "Block update radius has been updated to " + args[0] + " blocks.");
+							return true;
+						}
+						catch(NumberFormatException e)
+						{
+							sender.sendMessage(ChatColor.RED + "Enter a valid update radius.");
+							return false;
+						}
+					}
+					
+					sender.sendMessage(ChatColor.WHITE + "The update radius is currently: " + UpdateRadius);
+					return true;
+				}
+				return false;
+			}
+			
+		});
+		
+		jp.getServer().getPluginManager().registerEvents(new RecipeDisplayEvents(), jp);
 		
 		jp.getServer().getPluginManager().registerEvents(new OreEvents(), jp);
 		jp.getServer().getPluginManager().registerEvents(new BlockEvents(), jp);
@@ -131,7 +175,7 @@ public class Main {
 					
 					for(Player p : Bukkit.getOnlinePlayers())
 					{
-						for(Entity e : p.getWorld().getNearbyEntities(p.getLocation(), 25f, 25f, 25f))
+						for(Entity e : p.getWorld().getNearbyEntities(p.getLocation(), UpdateRadius, UpdateRadius, UpdateRadius))
 						{
 							if(e.getType() == EntityType.ARMOR_STAND)
 							{
@@ -178,6 +222,18 @@ public class Main {
 														}
 													}
 												}
+												
+												
+											}
+											
+											for(TickBlock tb : TickBlocks)
+											{
+												CustomBlock cb = (CustomBlock)tb;
+												if(cb.CheckForCustomBlock(as.getLocation().getBlock()))
+												{
+													tb.Tick(as.getLocation().getBlock());
+												}
+												
 											}
 											
 											for(Entry<Location, LiquidBlock> el : Main.Liquids.entrySet())

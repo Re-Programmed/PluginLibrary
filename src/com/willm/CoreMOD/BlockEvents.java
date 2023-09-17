@@ -2,6 +2,7 @@ package com.willm.CoreMOD;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -14,6 +15,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -24,11 +26,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.willm.CoreMOD.blocks.FeedingTrough;
+import com.willm.CoreMOD.blocks.Workbench;
+import com.willm.CoreMOD.blocks.WorkbenchCraftingInventory;
+import com.willm.CoreMOD.blocks.WorkbenchSystem;
+import com.willm.CoreMOD.blocks.WorkbenchType;
 import com.willm.ModAPI.Utils;
 import com.willm.ModAPI.Blocks.CustomBlock;
 import com.willm.ModAPI.Items.CustomItemStack;
@@ -38,10 +46,124 @@ public class BlockEvents implements Listener {
 	public static HashMap<ItemStack, ItemStack> CuttingBoardRecipes = new HashMap<ItemStack, ItemStack>();
 	private static Random randomInteractables = new Random();
 	
+	public static ArrayList<Workbench> Workbenches = new ArrayList<Workbench>();
+	
 	@EventHandler
 	public void ImportPack(PlayerJoinEvent event)
 	{
 		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1XgWVqLBBOBcxbI0-LTy92Cuh0HlU11Tb");
+	}
+	
+	@EventHandler
+	public void WorkbenchInventoryHandling(InventoryClickEvent event)
+	{
+		if(!(event.getWhoClicked() instanceof Player)) {return;}
+		if(event.getClickedInventory().getSize() == 54)
+		{
+			ItemStack i = event.getClickedInventory().getItem(53);
+			if(i != null)
+			{
+				if(i.hasItemMeta())
+				{
+					if(i.getItemMeta().hasDisplayName())
+					{
+						boolean craftingBench = i.getItemMeta().getDisplayName().equals(WorkbenchCraftingInventory.GetName());
+						if(craftingBench || i.getItemMeta().getDisplayName().equals(WorkbenchSystem.GetName()))
+						{
+							event.setCancelled(true);
+							
+							if(craftingBench)
+							{
+								if(event.getSlot() < 57-21) {return;}
+							}
+							
+							ItemStack cli = event.getClickedInventory().getItem(event.getSlot());
+							if(cli == null || !cli.hasItemMeta() || !cli.getItemMeta().hasLore()) {return;}
+							
+							List<String> lore = cli.getItemMeta().getLore();
+							
+							String[] locDecode = lore.get(0).replace(ChatColor.DARK_GRAY + "", "").split(" ");
+							Location location = new Location(Bukkit.getWorld(locDecode[0]), Integer.parseInt(locDecode[1]), Integer.parseInt(locDecode[2]), Integer.parseInt(locDecode[3]));
+						
+							WorkbenchType typeDecode = WorkbenchType.valueOf(lore.get(1).replace(ChatColor.DARK_GRAY + "", ""));
+							typeDecode.RelativeBench.OnInteract(location.getBlock(), (Player)event.getWhoClicked());
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void WorkbenchHandling(PlayerInteractEvent event)
+	{
+		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) {return;}
+		for(Workbench w : Workbenches)
+		{
+			if(w.CheckForCustomBlock(event.getClickedBlock()))
+			{
+				if(event.getPlayer().isSneaking()) {
+					TrapDoor trapDoor = (TrapDoor)event.getClickedBlock().getBlockData();
+					trapDoor.setOpen(false);
+					event.getClickedBlock().setBlockData(trapDoor);
+					return;
+				}
+				event.setCancelled(true);
+				w.OnInteract(event);
+				return;
+			}
+		}
+	}
+	
+	
+	static final List<Material> troughMats = List.of(Material.CARROT, Material.POTATO, Material.WHEAT, Material.BEETROOT);
+	@EventHandler
+	public void TroughHandling(PlayerInteractEvent event)
+	{
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		{
+			if(MyItems.manual_feeding_trough.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				event.setCancelled(true);
+				
+				if(event.getItem() != null) {
+					if(troughMats.contains(event.getItem().getType()))
+					{
+						if(event.getItem().getAmount() >= 32)
+						{
+							FeedingTrough ft = (FeedingTrough)MyItems.manual_feeding_trough.getRelatedBlock();
+							ArmorStand as = ft.GetMyStand(event.getClickedBlock());
+							int lvl = ft.GetFillLevel(as);
+							if(lvl < 2)
+							{
+								ft.SetFillLevel(as, lvl + 1);
+								
+								RemoveOrSubtractFromPlayersHand(event.getPlayer(), 32);
+							}
+						}
+					}
+				}
+				
+				
+			}
+		}
+	}
+	
+	//DISABLE LOG STRIPPING
+	@EventHandler
+	public void PlayerStripEvent(PlayerInteractEvent event)
+	{
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		{
+			if(event.getItem() == null) {return;}
+			if(event.getItem().getType().toString().contains("AXE") && !event.getItem().getType().toString().contains("PICKAXE"))
+			{
+				if(event.getClickedBlock().getType().toString().contains("LOG") || event.getClickedBlock().getType().toString().contains("WOOD") || event.getClickedBlock().getType().toString().contains("STEM") || event.getClickedBlock().getType().toString().contains("HYPHAE"))
+				{
+					event.setCancelled(true);
+				}
+			}
+		}
 	}
 	
 	@EventHandler

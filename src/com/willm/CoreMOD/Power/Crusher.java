@@ -4,15 +4,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import com.willm.CoreMOD.Main;
 import com.willm.CoreMOD.MyItems;
 import com.willm.ModAPI.Blocks.Machine;
 import com.willm.ModAPI.Blocks.MachineConversion;
 import com.willm.ModAPI.Items.BlockCreator;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
+import com.willm.ModAPI.RecipeDisplay.CustomRecipeType;
+import com.willm.ModAPI.RecipeDisplay.RecipeDisplay;
 import com.willm.ModAPI.Voltage.Blocks.EnergyCompatible;
 
 public class Crusher extends EnergyCompatible {
@@ -51,6 +56,15 @@ public class Crusher extends EnergyCompatible {
 				);
 
 
+		int i = 0;
+		for(MachineConversion m : blockRef.getMachineTemplate().conversions)
+		{
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Crushing", cis.GetMyItemStack(), "crusher_" + (i++), Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", cis.getType(), cis.getCustomModelData()).AddLoreLine(ChatColor.GREEN + "Speed: 150mt").AddLoreLine(ChatColor.RED + "Requires Power").AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					m.i2[0], m.i1));
+		}
 	}
 	
 

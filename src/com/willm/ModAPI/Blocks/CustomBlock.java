@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.willm.ModAPI.Main;
 import com.willm.ModAPI.Utils;
+import com.willm.ModAPI.Blocks.CustomStates.TickBlock;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 
@@ -480,6 +481,10 @@ public class CustomBlock {
 				break;
 			}
 		}
+	}
+	
+	public void RegisterAsTickBlock() {
+		Main.TickBlocks.add((TickBlock)this);
 	}
 
 }
