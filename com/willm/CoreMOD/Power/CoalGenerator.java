@@ -45,9 +45,9 @@ public class CoalGenerator extends EnergyCompatible {
 				{
 					if(m.getInventory().contains(Material.COAL))
 					{
-						cooldown = 75;
+						cooldown = 40;
 						output = true;
-						AddEnergy(1000, loc);
+						AddEnergy(2000, loc);
 						
 						for(BlockFace bf : checkFaces)
 						{
@@ -56,7 +56,7 @@ public class CoalGenerator extends EnergyCompatible {
 							{
 								if(ec.GetBlockRef().CheckForCustomBlock(b))
 								{
-									ec.AddEnergy(RemoveEnergy(575, loc), b.getLocation());
+									ec.AddEnergy(RemoveEnergy(1575, loc), b.getLocation());
 								}
 							}
 						}
@@ -75,7 +75,7 @@ public class CoalGenerator extends EnergyCompatible {
 			{
 				if(p.isSneaking())
 				{
-					p.sendMessage(ChatColor.GREEN + "[COAL GENERATOR OUTPUT]: " + (output ? "575" : "0"));
+					p.sendMessage(ChatColor.GREEN + "[COAL GENERATOR OUTPUT]: " + (output ? "1575" : "0"));
 				}
 			}
 		}

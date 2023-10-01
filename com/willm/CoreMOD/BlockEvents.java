@@ -795,17 +795,53 @@ public class BlockEvents implements Listener {
 
 							for(OvenRecipe or : ovenRecipes)
 							{
+								List<ItemStack> customRemoves = new ArrayList<ItemStack>();
 								boolean check_b = true;
 								
 								if(or.usePlate != isPlate) {check_b = false;}
 								
 								for(ItemStack check : or.inputs)
 								{
-									if(!d.getInventory().containsAtLeast(check, check.getAmount()))
+									
+									if(check.hasItemMeta() && check.getItemMeta().hasCustomModelData())
 									{
-										check_b = false;
-										break;
+										boolean found = false;
+										for(ItemStack is : d.getInventory().getContents())
+										{
+											if(is == null) {continue;}
+											
+							
+											
+											if(is.getType() == check.getType() && is.hasItemMeta())
+											{
+												if(is.getItemMeta().hasCustomModelData())
+												{
+													if(is.getItemMeta().getCustomModelData() == check.getItemMeta().getCustomModelData())
+													{
+														customRemoves.add(is);
+														found = true;
+														break;
+													}
+												}
+											}
+										}
+										
+										if(!found)
+										{
+											check_b = false;
+											break;
+										}
+										
+										
+									}else {
+										if(!d.getInventory().containsAtLeast(check, check.getAmount()))
+										{
+											check_b = false;
+											break;
+										}
 									}
+									
+									
 								}
 								
 								if(check_b)
@@ -813,6 +849,8 @@ public class BlockEvents implements Listener {
 									event.getClickedBlock().getWorld().dropItemNaturally(event.getClickedBlock().getLocation(), or.out);
 									RemoveOrSubtractFromPlayersHand(event.getPlayer(), 1);
 									d.getInventory().removeItem(or.inputs);
+									
+									if(customRemoves.size() > 0) {d.getInventory().removeItem(customRemoves.toArray(new ItemStack[0]));}
 									
 									if(d.getInventory().isEmpty())
 									{

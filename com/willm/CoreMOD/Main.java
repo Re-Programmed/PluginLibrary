@@ -30,6 +30,11 @@ public class Main extends JavaPlugin {
 	{		
 		INSTANCE = this;
 
+		for(Player p : Bukkit.getOnlinePlayers())
+		{
+			p.sendMessage(ChatColor.YELLOW + "The server was reloaded!");
+		}
+		
 		com.willm.ModAPI.Main.Launch("core_smp", this);
 		
 		com.willm.ModAPI.Voltage.Main.UseVoltage();
