@@ -5,7 +5,10 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
@@ -16,7 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.willm.CoreMOD.Alloying.CreateAlloyPickCommand;
 import com.willm.CoreMOD.Alloying.CreateAlloyPickTabCompleter;
-import com.willm.CoreMOD.AssortedTools.AssortedToolEvent;
 import com.willm.CoreMOD.DifficultyExtension.DifficultyEvents;
 import com.willm.CoreMOD.DifficultyExtension.SetDifficultyCommand;
 import com.willm.CoreMOD.ElementalItems.RegisterElementalItems;
@@ -28,6 +30,7 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable()
 	{		
+
 		INSTANCE = this;
 
 		for(Player p : Bukkit.getOnlinePlayers())
@@ -49,6 +52,8 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ItemEvents(), this);
 		getServer().getPluginManager().registerEvents(new BlockEvents(), this);
 		getServer().getPluginManager().registerEvents(new EnchantEvents(), this);
+		
+		getServer().getPluginManager().registerEvents(new CustomItemEffectsEvents(), this);
 		
 		//getServer().getPluginManager().registerEvents(new MilkFeatures(), this);
 		

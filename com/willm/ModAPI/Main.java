@@ -57,6 +57,8 @@ import com.willm.ModAPI.Terrain.CustomPopulator;
 import com.willm.ModAPI.Terrain.OreEvents;
 
 public class Main {
+	public static Block SEARCH_SIGN = new Location(Bukkit.getWorlds().get(0), 0, 0, 0).getBlock();
+	
 	public static float UpdateRadius = 64.f;
 
 	public static String PluginName, Version;
@@ -90,6 +92,13 @@ public class Main {
 	
 	public static void Launch(String pluginName, JavaPlugin jp, String version)
 	{
+		SEARCH_SIGN.setType(Material.OAK_SIGN);
+		SEARCH_SIGN.getRelative(BlockFace.UP).setType(Material.BEDROCK);
+		SEARCH_SIGN.getRelative(BlockFace.EAST).setType(Material.BEDROCK);
+		SEARCH_SIGN.getRelative(BlockFace.WEST).setType(Material.BEDROCK);
+		SEARCH_SIGN.getRelative(BlockFace.NORTH).setType(Material.BEDROCK);
+		SEARCH_SIGN.getRelative(BlockFace.SOUTH).setType(Material.BEDROCK);
+		
 		Main.PluginName = pluginName;
 		Main.Version = version;
 		

@@ -851,7 +851,7 @@ public class BlockEvents implements Listener {
 									d.getInventory().removeItem(or.inputs);
 									
 									if(customRemoves.size() > 0) {d.getInventory().removeItem(customRemoves.toArray(new ItemStack[0]));}
-									
+								 	
 									if(d.getInventory().isEmpty())
 									{
 										MyItems.oven_red.getRelatedBlock().Remove(event.getClickedBlock().getLocation());

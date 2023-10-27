@@ -74,7 +74,7 @@ public class Main {
 	
 	public static void CheckStand(ArmorStand as)
 	{		
-		if(as.getEquipment().getHelmet().getType() == Material.POLISHED_ANDESITE)
+		if(as.getEquipment().getHelmet().getType() == Material.POLISHED_ANDESITE || as.getEquipment().getHelmet().getType() == Material.ORANGE_WOOL)
 		{
 			for(EnergyCompatible ec : energyUsers)
 			{

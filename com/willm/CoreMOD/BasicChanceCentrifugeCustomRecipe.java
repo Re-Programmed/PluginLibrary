@@ -2,6 +2,7 @@ package com.willm.CoreMOD;
 
 import java.util.Random;
 
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
 import com.willm.ModAPI.Items.CustomItemStack;
@@ -25,6 +26,8 @@ public class BasicChanceCentrifugeCustomRecipe extends CentrifugeRecipe {
 		this.chance1000 = chance1000;
 	}
 	
+	
+	
 	@Override
 	public boolean CheckForRecipe(ItemStack item, int level) {
 		if(level >= this.level && level < this.maxLevel)
@@ -42,5 +45,17 @@ public class BasicChanceCentrifugeCustomRecipe extends CentrifugeRecipe {
 	@Override
 	public ItemStack Result() {
 		return out;
+	}
+
+
+
+	@Override
+	public String GetLore(int level) {
+		if(level >= this.level && level < this.maxLevel)
+		{
+			return ChatColor.GRAY + in.getName() + " -> " + ChatColor.GRAY + ((out.hasItemMeta() && out.getItemMeta().hasDisplayName()) ? out.getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "") : out.getType().toString().replace("_", " ")) + " (" + (chance1000/10) + "%)";
+		}
+		
+		return null;
 	}
 }

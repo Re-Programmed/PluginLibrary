@@ -2,6 +2,7 @@ package com.willm.ModAPI.Blocks;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +14,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -264,6 +266,9 @@ public class CustomBlock {
 			}
 		}else if(block.getType() == Material.GLASS || block.getType() == mineAs)
 		{
+			for(Player p : Bukkit.getOnlinePlayers()) {
+				p.sendMessage(ChatColor.GOLD + "YOU NMNED");}
+
 			for(Entity e : block.getWorld().getNearbyEntities(Utils.AddToLocationAsNew(block.getLocation(), 0.5f, 0, 0.5f), 0.2f, 0.2f, 0.2f))
 			{
 				if(e instanceof ArmorStand)

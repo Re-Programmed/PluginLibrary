@@ -2,6 +2,7 @@ package com.willm.CoreMOD;
 
 import java.util.Random;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,7 +11,7 @@ public class BasicChanceCentrifugeRecipe extends CentrifugeRecipe {
 	final Material in;
 	final ItemStack out;
 	final float chance1000;
-	final int level, maxLevel;
+	final int level, maxLevel; //min inclusive, max exclusive
 	
 	static final Random BasicRandom = new Random();
 	
@@ -48,6 +49,16 @@ public class BasicChanceCentrifugeRecipe extends CentrifugeRecipe {
 	@Override
 	public ItemStack Result() {
 		return out;
+	}
+
+	@Override
+	public String GetLore(int level) {
+		if(level >= this.level && level < this.maxLevel)
+		{
+			return ChatColor.GRAY + in.toString().replace("_", " ") + " -> " + ChatColor.GRAY + ((out.hasItemMeta() && out.getItemMeta().hasDisplayName()) ? out.getItemMeta().getDisplayName() : out.getType().toString().replace("_", " ")) + " (" + (chance1000/10) + "%)";
+		}
+		
+		return null;
 	}
 
 }

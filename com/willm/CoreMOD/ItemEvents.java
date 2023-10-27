@@ -27,6 +27,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -79,6 +80,24 @@ public class ItemEvents implements Listener {
 		//event.getPlayer().setResourcePack("https://download.mc-packs.net/pack/07a33ce1651ce3eac393a39dfb2e2ac60e4a2d75.zip");
 	}
 	
+	
+	@EventHandler
+	public void NoLeatherDrop(EntityDeathEvent event)
+	{
+		List<ItemStack> rem = new ArrayList<ItemStack>();
+		for(ItemStack i : event.getDrops())
+		{
+			if(i.getType() == Material.LEATHER)
+			{
+				rem.add(i);
+			}
+		}
+		
+		for(ItemStack i : rem)
+		{
+			event.getDrops().remove(i);
+		}
+	}
 	
 	private static final List<Material> ALLOWED_CURES = List.of(Material.BEEF, Material.COOKED_BEEF, Material.CHICKEN, Material.COOKED_CHICKEN, Material.PORKCHOP, Material.COOKED_PORKCHOP, Material.MUTTON, Material.COOKED_MUTTON, Material.RABBIT, Material.COOKED_RABBIT, Material.SALMON, Material.COOKED_SALMON, Material.COD, Material.COOKED_COD);
 	public static final String CURED_TEXT = ChatColor.GREEN + "Cured";
@@ -382,6 +401,8 @@ public class ItemEvents implements Listener {
 		{
 			if(cis.getRelatedBlock().CheckForCustomBlock(event.getBlock()))
 			{
+				event.getPlayer().sendMessage(ChatColor.GOLD + "YOU NMNED");
+
 				List<ArmorStand> asl = GetCentrifugeStands(event.getBlock());
 				for(ArmorStand as : asl)
 				{
@@ -406,13 +427,16 @@ public class ItemEvents implements Listener {
 		if(MyItems.centrifuge_engines[0].getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
 		{
 			event.setCancelled(true);
+			int mult = 1;
 			for(CustomItemStack cis : MyItems.centrifuge_tops)
 			{
 				if(cis.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock().getRelative(BlockFace.UP)))
 				{
-					triggerCentrifuge(event.getClickedBlock().getRelative(BlockFace.UP), cis, 30f, event.getPlayer(), 1);
+					triggerCentrifuge(event.getClickedBlock().getRelative(BlockFace.UP), cis, 10f + (20f * mult), 1);
 					return;
 				}
+				
+				mult++;
 			}
 			
 			
@@ -513,7 +537,7 @@ public class ItemEvents implements Listener {
 		return stands;
 	}
 	
-	private static void triggerCentrifuge(Block b, CustomItemStack cis, float deg, Player p, int level)
+	public static void triggerCentrifuge(Block b, CustomItemStack cis, float deg, int level)
 	{
 		List<ArmorStand> stands = GetCentrifugeStands(b);
 
@@ -617,6 +641,9 @@ public class ItemEvents implements Listener {
 				int standCmd = MyItems.glass_jar.getRelatedBlock().GetMyStand(event.getClickedBlock()).getEquipment().getHelmet().getItemMeta().getCustomModelData();
 				int fillLevel = standCmd == MyItems.glass_jar.getCustomModelData() ? -1 : standCmd % 10;
 				
+				/*
+				 * Create Salt Water.
+				 */
 				if(MyItems.salt_item.CheckForCustomItem(event.getItem()))
 				{
 					if(event.getItem().getAmount() >= 16)
@@ -636,6 +663,54 @@ public class ItemEvents implements Listener {
 						
 						
 					}
+					return;
+				}
+				
+				/*
+				 * Create Tannin.
+				 */
+				if(Cosmetics.bark.CheckForCustomItem(event.getItem()))
+				{
+					if(event.getItem().getAmount() >= 4)
+					{
+						if(standCmd == MyItems.glass_jar_water.getDisplayCustomModelData() + 2)
+						{
+							MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(new CustomBlock(new CustomItemStack("Glass Jar", Material.WARPED_TRAPDOOR, MyItems.glass_jar_tannin.getDisplayCustomModelData() + 2)), event.getClickedBlock());
+							ItemStack i = event.getItem();
+							if(i.getAmount() == 4)
+							{
+								event.getPlayer().getEquipment().setItemInMainHand(null);
+							}else {
+								i.setAmount(i.getAmount() - 4);
+								event.getPlayer().getEquipment().setItemInMainHand(i);
+							}
+						}
+					}
+					
+					return;
+				}
+				
+				if(Cosmetics.animal_hide.CheckForCustomItem(event.getItem()))
+				{
+					if(standCmd >= MyItems.glass_jar_tannin.getDisplayCustomModelData() && standCmd <= MyItems.glass_jar_tannin.getDisplayCustomModelData() + 2)
+					{
+						if(standCmd == MyItems.glass_jar_tannin.getDisplayCustomModelData())
+						{
+							MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(new CustomBlock(new CustomItemStack("Glass Jar", Material.WARPED_TRAPDOOR, MyItems.glass_jar.getCustomModelData())), event.getClickedBlock());
+						}else {
+							MyItems.glass_jar.getRelatedBlock().UpdateArmorStandTexture(new CustomBlock(new CustomItemStack("Glass Jar", Material.WARPED_TRAPDOOR, standCmd - 1)), event.getClickedBlock());
+						}
+						
+						ItemStack i = event.getItem();
+						if(i.getAmount() == 1)
+						{
+							event.getPlayer().getEquipment().setItemInMainHand(Cosmetics.soaked_animal_hide.GetMyItemStack());
+						}else {
+							i.setAmount(i.getAmount() - 1);
+							event.getPlayer().getWorld().dropItem(event.getPlayer().getLocation(), Cosmetics.soaked_animal_hide.GetMyItemStack()).setPickupDelay(0);
+						}
+					}
+					
 					return;
 				}
 				
@@ -672,7 +747,7 @@ public class ItemEvents implements Listener {
 							
 							//event.getPlayer().getWorld().playSound(event.getClickedBlock().getLocation(), MyItems.GlassOUTJarSounds.get(soundId), 1.0f, 1.0f);
 							
-							if(event.getItem().getType().toString().contains("BUCKET"))
+							if(event.getItem().getType().toString().contains("BUCKET") || event.getItem().getType().toString().contains("BROWN_DYE"))
 							{
 								if(conversion.getValue().getType() == Material.LAVA_BUCKET)
 								{

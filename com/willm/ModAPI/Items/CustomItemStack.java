@@ -340,4 +340,11 @@ public class CustomItemStack {
 		return is;
 	}
 
+	public void SetLore(List<String> lore) {
+		ItemMeta m = this.GetMyItemStack().getItemMeta();
+		m.setLore(lore);
+		
+		this.GetMyItemStack().setItemMeta(m);
+	}
+
 }

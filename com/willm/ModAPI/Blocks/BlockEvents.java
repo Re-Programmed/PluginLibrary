@@ -1,5 +1,6 @@
 package com.willm.ModAPI.Blocks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -11,15 +12,18 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -34,6 +38,7 @@ import com.willm.ModAPI.Main;
 import com.willm.ModAPI.MobDrop;
 import com.willm.ModAPI.Utils;
 import com.willm.ModAPI.Commands.CreativeMenu;
+import com.willm.ModAPI.Commands.CreativeMenuInventory;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.Plant;
 
@@ -47,24 +52,74 @@ public class BlockEvents implements Listener {
 	}
 	
 	@EventHandler
+	public void SearchSignPreventBreak(BlockBreakEvent event)
+	{
+		for(CreativeMenuInventory myInventory : CreativeMenu.myInventories)
+	    {
+	    	Sign s = myInventory.MySign;
+			if(s != null && s.getLocation().distance(event.getBlock().getLocation()) < 0.75)
+			{
+				event.setCancelled(true);
+			}
+	    }
+	}
+	
+	//Called after a sign is used to search in a creative menu.
+	@EventHandler
+	public void SearchSign(SignChangeEvent e) {
+	    for(CreativeMenuInventory myInventory : CreativeMenu.myInventories)
+	    {
+	    	Sign s = myInventory.MySign;
+			if(s != null && s.getLocation().distance(e.getBlock().getLocation()) < 0.75)
+			{
+				CreativeMenu.OpenSearch(e.getLine(0), e.getPlayer());
+				e.getBlock().setType(Material.AIR);
+				myInventory.MySign = null;
+				e.setCancelled(true);
+				return;
+			}
+			
+	    }
+	}
+	
+	@EventHandler
 	public void ClickCancel(InventoryClickEvent event)
 	{
-		if(CreativeMenu.myInventory != null)
+		ArrayList<Integer> rem = new ArrayList<Integer>();
+		int i = 0;
+		for(CreativeMenuInventory myInventory : CreativeMenu.myInventories)
 		{
-			if(event.getClickedInventory().getViewers().size() > 0 && CreativeMenu.myInventory.getViewers().size() > 0)
+			if(myInventory != null)
 			{
-				if(event.getClickedInventory().getViewers().get(0).getName().equalsIgnoreCase(CreativeMenu.myInventory.getViewers().get(0).getName()))
+				if(myInventory.getInventory().getViewers().size() > 0)
 				{
-					if(event.getSlot() != 53)
+					if(event.getClickedInventory().getViewers().get(0).getName().equalsIgnoreCase(myInventory.getInventory().getViewers().get(0).getName()))
 					{
-						if(!CreativeMenu.Allowed)
+						if(event.getClickedInventory().getViewers().size() > 0)
 						{
-							Bukkit.dispatchCommand(event.getWhoClicked(), "recipes item:" + event.getInventory().getItem(event.getSlot()).getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").replace(' ', '_').toLowerCase());
-							event.setCancelled(true);
+							if(event.getSlot() < 40)
+							{
+								if(!myInventory.Player.isOp())
+								{
+									Bukkit.dispatchCommand(event.getWhoClicked(), "recipes item:" + event.getInventory().getItem(event.getSlot()).getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "").replace(' ', '_').toLowerCase());
+									event.setCancelled(true);
+								}
+							}
 						}
 					}
+				}else if(myInventory.MySign == null) {
+					rem.add(i);
 				}
+			}else {
+				rem.add(i);
 			}
+			
+			i++;
+		}
+		
+		for(Integer r : rem)
+		{
+			CreativeMenu.myInventories.remove(r.intValue());
 		}
 	}
 	
@@ -76,6 +131,8 @@ public class BlockEvents implements Listener {
 		{
 			if(event.getItem() != null)
 			{
+				if(event.getClickedBlock().getType() == Material.WARPED_TRAPDOOR) {return;}
+				
 				if(cooldown) {cooldown = false; return;}
 				cooldown = true;
 				if(event.getItem().getType() == Material.BUCKET)

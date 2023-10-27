@@ -1,6 +1,7 @@
 package com.willm.CoreMOD.Alloying.Crucibles;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,6 +25,8 @@ public abstract class Crucible extends CustomBaseMaterialRetainingBlock {
 	
 	@Override
 	public void Interact(PlayerInteractEvent event) {
+		event.getPlayer().sendMessage(ChatColor.GRAY + "OK");
+		event.setCancelled(true);
 		if(event.getItem() != null)
 		{
 			for(AlloyMaterial am : AlloyMaterial.values())
