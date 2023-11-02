@@ -894,7 +894,7 @@ public class MyItems {
 		}
 	}
 	
-	public static CustomItemStack[] centrifuge_tops = new CustomItemStack[3];
+	public static CustomItemStack[] centrifuge_tops = new CustomItemStack[4];
 	
 	public static CustomItemStack[] centrifuge_engines = new CustomItemStack[2];
 	
@@ -950,17 +950,17 @@ public class MyItems {
 		
 		//IRON TOP
 		
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, sludge.GetAmountClone(3), 100.0f, 3, 4));	//10%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, bauxite.GetAmountClone(1), 200.0f, 3, 4));	//20%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.COAL), 250.0f, 3, 4)); //25%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.RAW_IRON), 70.0f, 3, 4)); //7%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.REDSTONE), 50.0f, 3, 4)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.RAW_GOLD), 30.0f, 3, 4)); //3%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, sludge.GetAmountClone(3), 100.0f, 3, 5));	//10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, bauxite.GetAmountClone(1), 200.0f, 3, 5));	//20%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.COAL), 250.0f, 3, 5)); //25%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.RAW_IRON), 70.0f, 3, 5)); //7%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.REDSTONE), 50.0f, 3, 5)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.RAW_GOLD), 30.0f, 3, 5)); //3%
 		
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, new ItemStack(Material.GLASS), 120.0f, 3, 4)); //12%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, MyItems.titanium_ore.GetMyItemStack(), 60.0f, 3, 4)); //6%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, new ItemStack(Material.GLASS), 120.0f, 3, 5)); //12%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, MyItems.titanium_ore.GetMyItemStack(), 60.0f, 3, 5)); //6%
 		
-		centrifugeRecipes.add(new BasicChanceCentrifugeCustomRecipe(salt_water, salt_item.GetMyItemStack(), 750.0f, 3, 4)); //75%
+		centrifugeRecipes.add(new BasicChanceCentrifugeCustomRecipe(salt_water, salt_item.GetMyItemStack(), 750.0f, 3, 5)); //75%
 		
 		CustomItemStack iron_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Iron Centrifuge Top", Material.WARPED_TRAPDOOR, 90013));
 		
@@ -969,8 +969,23 @@ public class MyItems {
 		BlockCreator.RegisterNewBlock(iron_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(iron_centrifuge_top));
 		iron_centrifuge_top.getRecipe(1, "DDD", "DSD", "DDD").AddMaterial('S', RecipeBuilder.ItemStackInput(stone_centrifuge_top)).AddMaterial('D', RecipeBuilder.ItemStackInput(iron_dish)).Finalize();
 
+		
 		centrifuge_tops[2] = iron_centrifuge_top;
 
+		//GOLD TOP
+		
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.LAPIS_LAZULI), 70.0f, 4, 5)); //7%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.REDSTONE, 5), 50.0f, 4, 5)); //5%
+
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.CLAY, bauxite.GetMyItemStack(), 500.0f, 4, 5)); //50%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, new ItemStack(Material.COAL), 300.0f, 4, 5)); //30%
+
+		CustomItemStack gold_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Gold Centrifuge Top", Material.WARPED_TRAPDOOR, 90014));
+		gold_centrifuge_top.SetLore(GenerateCentrifugeLore(4));
+		BlockCreator.RegisterNewBlock(gold_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(gold_centrifuge_top));
+		gold_centrifuge_top.getRecipe(1, "DRD", "DSD", "DRD").AddMaterial('S', RecipeBuilder.ItemStackInput(iron_centrifuge_top)).AddMaterial('D', Material.GOLD_INGOT).AddMaterial('R', RecipeBuilder.ItemStackInput(steel_rod)).Finalize();
+
+		centrifuge_tops[3] = gold_centrifuge_top;
 
 		int i = 0;
 		for(CentrifugeRecipe cr : centrifugeRecipes)

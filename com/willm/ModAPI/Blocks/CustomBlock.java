@@ -266,8 +266,6 @@ public class CustomBlock {
 			}
 		}else if(block.getType() == Material.GLASS || block.getType() == mineAs)
 		{
-			for(Player p : Bukkit.getOnlinePlayers()) {
-				p.sendMessage(ChatColor.GOLD + "YOU NMNED");}
 
 			for(Entity e : block.getWorld().getNearbyEntities(Utils.AddToLocationAsNew(block.getLocation(), 0.5f, 0, 0.5f), 0.2f, 0.2f, 0.2f))
 			{

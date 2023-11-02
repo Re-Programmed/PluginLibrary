@@ -30,16 +30,7 @@ public class BasicChanceCentrifugeCustomRecipe extends CentrifugeRecipe {
 	
 	@Override
 	public boolean CheckForRecipe(ItemStack item, int level) {
-		if(level >= this.level && level < this.maxLevel)
-		{
-			if(in.CheckForCustomItem(item))
-			{
-				return BasicRandom.nextInt(1001) < chance1000;
-			}
-			
-		}
-		
-		return false;
+		return ContainsRecipe(item, level) && BasicRandom.nextInt(1001) < chance1000;
 	}
 
 	@Override
@@ -57,5 +48,21 @@ public class BasicChanceCentrifugeCustomRecipe extends CentrifugeRecipe {
 		}
 		
 		return null;
+	}
+
+
+
+	@Override
+	public boolean ContainsRecipe(ItemStack item, int level) {
+		if(level >= this.level && level < this.maxLevel)
+		{
+			if(in.CheckForCustomItem(item))
+			{
+				return BasicRandom.nextInt(1001) < chance1000;
+			}
+			
+		}
+		
+		return false;
 	}
 }

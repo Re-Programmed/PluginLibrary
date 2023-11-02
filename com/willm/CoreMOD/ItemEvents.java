@@ -395,27 +395,6 @@ public class ItemEvents implements Listener {
 	}
 	
 	@EventHandler
-	public void CheckForBreakCentrifuge(BlockBreakEvent event)
-	{
-		for(CustomItemStack cis : MyItems.centrifuge_tops)
-		{
-			if(cis.getRelatedBlock().CheckForCustomBlock(event.getBlock()))
-			{
-				event.getPlayer().sendMessage(ChatColor.GOLD + "YOU NMNED");
-
-				List<ArmorStand> asl = GetCentrifugeStands(event.getBlock());
-				for(ArmorStand as : asl)
-				{
-					as.getWorld().dropItemNaturally(as.getLocation(), as.getEquipment().getItemInMainHand());
-					
-					as.remove();
-				}
-				break;
-			}
-		}
-	}
-	
-	@EventHandler
 	public void CentrifugeHandling(PlayerInteractEvent event)
 	{
 		if(event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getPlayer().isSneaking())
@@ -445,6 +424,7 @@ public class ItemEvents implements Listener {
 		
 			
 			//TOPS
+		int level = 1;
 		for(CustomItemStack cis : MyItems.centrifuge_tops)
 		{
 			if(cis.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
@@ -452,41 +432,67 @@ public class ItemEvents implements Listener {
 				event.setCancelled(true);
 				if(event.getItem() != null)
 				{
-					placeItemOnCentrifuge(event.getItem(), event.getPlayer(), event.getClickedBlock(), cis);	
+					if(placeItemOnCentrifuge(event.getItem(), event.getClickedBlock(), cis, level))
+					{
+						if(event.getItem().getAmount() > 1)
+						{
+							event.getItem().setAmount(event.getItem().getAmount() - 1);
+							event.getPlayer().getEquipment().setItemInMainHand(event.getItem());
+						}else {
+							event.getPlayer().getEquipment().setItemInMainHand(null);
+						}
+					}
+					
 				}
 				break;
 			}
+			
+			level++;
 		}
 
 	}
 	
+	@EventHandler
+	public void MineCentrifuge(BlockBreakEvent event)
+	{
+		if(event.getBlock().getType() != Material.WARPED_TRAPDOOR) {return;}
+		for(CustomItemStack cis : MyItems.centrifuge_tops)
+		{
+			if(cis.getRelatedBlock().CheckForCustomBlock(event.getBlock()))
+			{
+				System.out.println("MINED STAND");
+
+				List<ArmorStand> asl = GetCentrifugeStands(event.getBlock());
+				System.out.println(asl.size());
+
+				for(ArmorStand as : asl)
+				{
+					as.getWorld().dropItemNaturally(as.getLocation(), as.getEquipment().getItemInMainHand());
+					
+					as.remove();
+				}
+				break;
+			}
+		}
+	}
+	
 	public static final String CENTRIFUGE_AS_PREFIX = "centrifuge_item";
 	
-	private static void placeItemOnCentrifuge(ItemStack item, Player p, Block b, CustomItemStack cis)
+	private static boolean placeItemOnCentrifuge(ItemStack item, Block b, CustomItemStack cis, int level) //Item to put, Block to put it on, Type of centrifuge, Centrifuge level. Returns if placing successful.
 	{
 		ArmorStand check = cis.getRelatedBlock().GetMyStand(b);
 		if(check.getCustomName() != null)
 		{
 			if(Float.parseFloat(check.getCustomName()) > 0)
 			{
-				return;
+				return false;
 			}
 		}
 		
 		ItemStack put = item.clone();
-		if(item.getAmount() > 1)
-		{
-			item.setAmount(item.getAmount() - 1);
-			p.getEquipment().setItemInMainHand(item);
-			
-			put.setAmount(1);
-		}else {
-			p.getEquipment().setItemInMainHand(null);
-		}
+		put.setAmount(1);
 		
-		
-		
-		ArmorStand as = (ArmorStand)p.getWorld().spawnEntity(b.getLocation(), EntityType.ARMOR_STAND);
+		ArmorStand as = (ArmorStand)b.getWorld().spawnEntity(b.getLocation(), EntityType.ARMOR_STAND);
 		
 		
 		as.setMarker(true);
@@ -498,23 +504,30 @@ public class ItemEvents implements Listener {
 		
 		List<ArmorStand> stands = GetCentrifugeStands(b);
 		
-		switch(stands.size() - 1)
+		
+		switch(level < 4 && stands.size() > 4 ? -1 : stands.size() - 1)
 		{
 		case 0:
 			as.teleport(as.getLocation().add(1f, -0.35f, -1f));
-			break;
+			return true;
 		case 1:
 			as.teleport(as.getLocation().add(2f, -0.35f, 0f));
-			break;
+			return true;
 		case 2:
 			as.teleport(as.getLocation().add(1f, -0.35f, 1f));
-			break;
+			return true;
 		case 3:
 			as.teleport(as.getLocation().add(0f, -0.35f, 0f));
-			break;
+			return true;
+		case 4:
+			as.teleport(as.getLocation().add(0.2f, -0.35f, -0.7f));
+			return true;
+		case 5:
+			as.teleport(as.getLocation().add(1.8f, -0.35f, 0.7f));
+			return true;
 		default:
 			as.remove();
-			break;
+			return false;
 		}
 	}
 	
@@ -582,14 +595,28 @@ public class ItemEvents implements Listener {
 			
 			ItemStack is = stands.get(0).getEquipment().getItemInMainHand();
 			
+			boolean foundRecipe = false;
+			
 			for(CentrifugeRecipe cr : MyItems.centrifugeRecipes)
 			{
-				if(cr.CheckForRecipe(is, level)) {
-					Vector v = stands.get(0).getLocation().toVector().subtract(as.getLocation().toVector()).normalize().multiply(-deg/250);
+				if(cr.ContainsRecipe(is, level))
+				{
+					foundRecipe = true;
 					
-					Item i = as.getWorld().dropItem(stands.get(0).getLocation(), cr.Result());
-					i.setVelocity(v);
+					if(cr.CheckForRecipe(is, level)) {
+						Vector v = stands.get(0).getLocation().toVector().subtract(as.getLocation().toVector()).normalize().multiply(-deg/250);
+						
+						Item i = as.getWorld().dropItem(stands.get(0).getLocation(), cr.Result());
+						i.setVelocity(v);
+					}
 				}
+			}
+			
+			if(!foundRecipe)
+			{
+				Vector v = stands.get(0).getLocation().toVector().subtract(as.getLocation().toVector()).normalize().multiply(-deg/250);
+				Item i = as.getWorld().dropItem(stands.get(0).getLocation(), is.clone());
+				i.setVelocity(v);
 			}
 			
 			stands.get(0).remove();
