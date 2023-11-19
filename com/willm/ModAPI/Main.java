@@ -45,11 +45,16 @@ import com.willm.ModAPI.Commands.GiveTabCompleter;
 import com.willm.ModAPI.Commands.RepopMachinesCommand;
 import com.willm.ModAPI.Commands.SetCustomBlockCommand;
 import com.willm.ModAPI.Commands.SetCustomBlockTabCompleter;
+import com.willm.ModAPI.Commands.SummonCustom;
+import com.willm.ModAPI.Commands.SummonCustomTabCompleter;
 import com.willm.ModAPI.Enchantments.EnchantAnvils;
+import com.willm.ModAPI.Entities.CustomEntity;
+import com.willm.ModAPI.Entities.CustomVillagerEvents;
 import com.willm.ModAPI.Items.BlockCreator;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Items.Plant;
+import com.willm.ModAPI.Items.MusicDisc.MusicDiscEvents;
 import com.willm.ModAPI.RecipeDisplay.RecipeDisplayCommand;
 import com.willm.ModAPI.RecipeDisplay.RecipeDisplayEvents;
 import com.willm.ModAPI.RecipeDisplay.RecipeDisplayTabCompleter;
@@ -60,6 +65,8 @@ public class Main {
 	public static Block SEARCH_SIGN = new Location(Bukkit.getWorlds().get(0), 0, 0, 0).getBlock();
 	
 	public static float UpdateRadius = 64.f;
+	
+	public static JavaPlugin PLUGIN;
 
 	public static String PluginName, Version;
 	public static ArrayList<CustomItemStack> CustomItemRegistry = new ArrayList<CustomItemStack>();
@@ -68,6 +75,8 @@ public class Main {
 	public static ArrayList<Machine> MachineRegistry = new ArrayList<Machine>();
 	public static ArrayList<CustomItemStack> ConsumableRegistry = new ArrayList<CustomItemStack>();
 	public static HashMap<Location, LiquidBlock> Liquids = new HashMap<Location, LiquidBlock>();
+	
+	public static ArrayList<CustomEntity> CustomEntityRegistry = new ArrayList<CustomEntity>();
 	
 	public static ArrayList<TickBlock> TickBlocks = new ArrayList<TickBlock>();
 	
@@ -87,6 +96,7 @@ public class Main {
 	
 	public static void Launch(String pluginName, JavaPlugin jp)
 	{
+		PLUGIN = jp;
 		Launch(pluginName, jp, "v1.0.0");
 	}
 	
@@ -118,6 +128,9 @@ public class Main {
 		
 		jp.getCommand("recipes").setExecutor(new RecipeDisplayCommand());
 		jp.getCommand("recipes").setTabCompleter(new RecipeDisplayTabCompleter());
+		
+		jp.getCommand("summoncustom").setExecutor(new SummonCustom());
+		jp.getCommand("summoncustom").setTabCompleter(new SummonCustomTabCompleter());
 		
 		jp.getCommand("pversion").setExecutor(new CompareVersionsCommand());
 		
@@ -160,6 +173,10 @@ public class Main {
 		jp.getServer().getPluginManager().registerEvents(new EnchantAnvils(), jp);
 		
 		jp.getServer().getPluginManager().registerEvents(new CustomDeathMessages(), jp);
+		
+		jp.getServer().getPluginManager().registerEvents(new CustomVillagerEvents(), jp);
+		
+		jp.getServer().getPluginManager().registerEvents(new MusicDiscEvents(), jp);
 
 		MExtractor = ItemCreator.RegisterNewItem(new CustomItemStack("Machine Extractor", Material.GOLD_BLOCK, 21003));
 		MExtractor.AddLoreLine(ChatColor.GREEN + "Pulls items out of machines.");
@@ -190,7 +207,12 @@ public class Main {
 			}
 		}
 		
-
+Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(jp, new Runnable() {
+			
+			public void run() { 
+				MusicDiscEvents.ShowMusicNotes();
+			}
+		}, 5, 5);
 		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(jp, new Runnable() {
 			
 			@SuppressWarnings("unchecked")

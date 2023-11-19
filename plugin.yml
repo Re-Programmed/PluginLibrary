@@ -34,6 +34,9 @@ commands:
    setupdateradius:
       description: Sets the radius of the area around players where blocks will be ticked.
       api_base_command: true
+   summoncustom:
+      description: Spawns a custom mob.
+      api_base_command: true
    pversion:
       description: Checks the version of the plugin against the version of the client resource pack.
    repopulatemachines:

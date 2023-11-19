@@ -93,7 +93,7 @@ public class Cosmetics {
 
 			
 		CustomItemStack red_leather = ItemCreator.RegisterNewItem(new CustomItemStack("Red Leather", Material.LEATHER, 20016));
-		red_leather.getRecipe(2, "HH", "HS").AddMaterial('H', RecipeBuilder.ItemStackInput(soaked_animal_hide)).AddMaterial('S', Material.WOODEN_SWORD).Finalize();
+		red_leather.getRecipe(3, "HH", "HS").AddMaterial('H', RecipeBuilder.ItemStackInput(soaked_animal_hide)).AddMaterial('S', Material.WOODEN_SWORD).Finalize();
 		
 		AddAllLeathers(new String[] {"Black", "White", "Light Gray", "Gray", "Brown", "Orange", "Yellow", "Lime", "Green", "Cyan", "Light Blue", "Blue", "Magenta", "Pink", "Purple"}, red_leather);
 		

@@ -25,6 +25,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.willm.CoreMOD.Alloying.Crucibles.CrucibleItemRegistry;
+import com.willm.CoreMOD.Alloying.Molten.ForgeRegistry;
 import com.willm.CoreMOD.Power.CreeperTurret;
 import com.willm.CoreMOD.Power.GasBurningGenerator;
 import com.willm.CoreMOD.Shopping.Currency;
@@ -408,7 +409,7 @@ public class MyItems {
 		CustomItemStack unfinished_high_carbon_steel = ItemCreator.RegisterNewItem(new CustomItemStack("Unfinished High Carbon Steel", Material.IRON_INGOT, 15004));
 		unfinished_high_carbon_steel.getRecipe(1, "CCC", "CGC", "CCC").AddMaterial('C', Material.COAL_BLOCK).AddMaterial('G', RecipeBuilder.ItemStackInput(galvanisedSteel)).Finalize();
 		
-		CustomItemStack high_carbon_steel = ItemCreator.RegisterNewItem(new CustomItemStack("High Carbon Steel", Material.IRON_INGOT, 15003));
+		high_carbon_steel = ItemCreator.RegisterNewItem(new CustomItemStack("High Carbon Steel", Material.IRON_INGOT, 15003));
 		high_carbon_steel.getFurnaceRecipe(RecipeBuilder.ItemStackInput(unfinished_high_carbon_steel), 8, 400, "create_high_carbon_steel");
 		high_carbon_steel.getBlastingRecipe(RecipeBuilder.ItemStackInput(unfinished_high_carbon_steel), 8, 400, "create_high_carbon_steel_blasting");
 		
@@ -807,6 +808,11 @@ public class MyItems {
 			GlassJarInserts.put(Cosmetics.tannin.GetMyItemStack(), glass_jar_tannin);
 			GlassINJarSounds.add(Sound.ITEM_BUCKET_EMPTY);
 			GlassOUTJarSounds.add(Sound.ITEM_BUCKET_FILL);
+			
+			ForgeRegistry.RegsiterMetalItems();
+			ForgeRegistry.RegisterForge();
+			
+			SillyItems.RegisterSillyItems();
 	}
 
 	public static void RegisterCustomRecipesMenu()

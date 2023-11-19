@@ -19,4 +19,9 @@ public class Utils {
 	{
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "playsound minecraft:" + sound + " master @a " + LocationToString(location) + " 1 1");
 	}
+	
+	public static void StopCustomSound(String sound)
+	{
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stopsound @a * minecraft:" + sound);
+	}
 }
