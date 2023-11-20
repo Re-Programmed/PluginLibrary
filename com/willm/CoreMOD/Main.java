@@ -17,6 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.willm.CoreMOD.Alloying.CreateAlloyPickCommand;
 import com.willm.CoreMOD.Alloying.CreateAlloyPickTabCompleter;
 import com.willm.CoreMOD.Alloying.Crucibles.CrucibleEvents;
+import com.willm.CoreMOD.CustomCommands.CoordCommand;
+import com.willm.CoreMOD.CustomCommands.CoordsCommandCompleter;
 import com.willm.CoreMOD.DifficultyExtension.DifficultyEvents;
 import com.willm.CoreMOD.DifficultyExtension.SetDifficultyCommand;
 import com.willm.CoreMOD.ElementalItems.RegisterElementalItems;
@@ -63,7 +65,10 @@ public class Main extends JavaPlugin {
 		
 		getCommand("alloypick").setExecutor(new CreateAlloyPickCommand());
 		getCommand("alloypick").setTabCompleter(new CreateAlloyPickTabCompleter());
-
+		
+		getCommand("coordinates").setExecutor(new CoordCommand());
+		getCommand("coordinates").setTabCompleter(new CoordsCommandCompleter());
+		
 		getCommand("setdifficulty").setExecutor(new SetDifficultyCommand());
 		getServer().getPluginManager().registerEvents(new DifficultyEvents(), this);
 		
@@ -111,16 +116,29 @@ Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
 			for (BlockState state: p.getLocation().getChunk().getTileEntities()) {
 				if (state instanceof Chest) {
 					Chest c = (Chest)state;
-					for(ItemStack i : c.getInventory())
+					
+					if(c.getLock().contains("industrial_fridge"))
 					{
-						if(i == null) {continue;}
-						RotItem(i, count);
+						for(ItemStack i : c.getInventory())
+						{
+							if(i == null) {continue;}
+							RotItem(i, -count * 6);
+						}
+					}else {
+						for(ItemStack i : c.getInventory())
+						{
+							if(i == null) {continue;}
+							RotItem(i, count);
+						}
 					}
+					
+
 				}
 				
 				if(state instanceof Dispenser)
 				{
 					Dispenser d = (Dispenser)state;
+					
 					if(d.getLock().contains("fridge"))
 					{
 						for(ItemStack i : d.getInventory())

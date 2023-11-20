@@ -42,6 +42,9 @@ commands:
    repopulatemachines:
       description: Respawns bugged machines.
 
+   coordinates:
+      description: tkaljls
+
    setdifficulty:
       description: Sets the custom difficulty.
    alloypick:

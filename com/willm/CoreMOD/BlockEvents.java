@@ -660,6 +660,56 @@ public class BlockEvents implements Listener {
 	}
 	
 	@EventHandler
+	public void PlaceIndustrialFridge(BlockPlaceEvent event)
+	{
+		if(MyItems.industrial_fridge.getRelatedBlock().CheckForCustomBlock(event.getBlock()))
+		{
+			event.getBlock().getRelative(BlockFace.UP).setType(Material.CHEST);
+			
+			Chest c = (Chest)event.getBlock().getRelative(BlockFace.UP).getState();
+			c.setLock("industrial_fridge_001");
+			c.update(true);
+		}
+	}
+	
+	@EventHandler
+	public void BreakIndustrialFridge(BlockBreakEvent event)
+	{
+		if(event.getBlock().getType() == Material.CHEST)
+		{
+			if(MyItems.industrial_fridge.getRelatedBlock().CheckForCustomBlock(event.getBlock().getRelative(BlockFace.DOWN)))
+			{
+				for(ItemStack is : ((Chest)event.getBlock().getState()).getInventory())
+				{
+					if(is == null) {continue;}
+					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
+				}
+				
+				event.getBlock().setType(Material.AIR);
+				event.setCancelled(true);
+				
+				MyItems.industrial_fridge.getRelatedBlock().Remove(event.getBlock().getRelative(BlockFace.DOWN).getLocation(), true);
+			}
+			
+			return;
+		}
+		
+		if(MyItems.industrial_fridge.getRelatedBlock().CheckForCustomBlock(event.getBlock()))
+		{
+			if(event.getBlock().getRelative(BlockFace.UP).getType() == Material.CHEST)
+			{
+				for(ItemStack is : ((Chest)event.getBlock().getRelative(BlockFace.UP).getState()).getInventory())
+				{
+					if(is == null) {continue;}
+					event.getBlock().getWorld().dropItemNaturally(event.getBlock().getLocation(), is);
+				}
+				
+				event.getBlock().getRelative(BlockFace.UP).setType(Material.AIR);
+			}
+		}
+	}
+	
+	@EventHandler
 	public void UseInteractableMachine(PlayerInteractEvent event)
 	{	
 		if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
@@ -676,6 +726,20 @@ public class BlockEvents implements Listener {
 				event.getPlayer().openInventory(d.getInventory());
 				d.setLock(save);
 				d.update(true);
+			}
+			
+			if(MyItems.industrial_fridge.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				Chest c = (Chest)event.getClickedBlock().getRelative(BlockFace.UP).getState();
+				String save = c.getLock();
+				
+				c.setCustomName("Industrial Fridge");
+				
+				c.setLock("");
+				c.update(true);
+				event.getPlayer().openInventory(c.getInventory());
+				c.setLock(save);
+				c.update(true);
 			}
 			
 			if(MyItems.cooling_unit.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))

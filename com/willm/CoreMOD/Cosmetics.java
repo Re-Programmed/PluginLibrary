@@ -103,7 +103,7 @@ public class Cosmetics {
 		AddColoredCosmetic("Cap", 12105, 12114, new char[0], new CustomItemStack[0], "CCC", "C C", "   ");
 		AddColoredCosmetic("Sun Glasses", 12205, 12205, new char[] {'L', 'I'}, new CustomItemStack[] {MyItems.lens, MyItems.iron_rod}, "ICI", "L L", "   "); 
 		AddColoredCosmetic("Goggles", 12305, 12315, new char[] {'L', 'S'}, new CustomItemStack[] {MyItems.lens}, new Material[] {Material.STRING}, "SSS", "C C", "LCL");
-		AddColoredCosmetic("Crown", 12405, 12416, new char[] {'G'}, new CustomItemStack[0], new Material[] {Material.GOLD_INGOT}, "   ", "GCG", "GGG");
+		AddColoredCosmetic("Crown", 12405, 12416, new char[] {'B', 'G'}, new CustomItemStack[] {MyItems.bismuth}, new Material[] {Material.GOLD_INGOT}, "   ", "GCG", "BGB");
 		AddColoredCosmetic("Mustache Glasses", 12505, 12505, new char[] {'R', 'L'}, new CustomItemStack[] {MyItems.iron_rod, leatherColorMap.get(Material.BLACK_DYE)}, new Material[0], "   ", "RLR", "CCC");
 
 		//red_top_hat = ItemCreator.RegisterNewItem(new CustomItemStack("Top Hat", Material.WOODEN_SWORD, 12005)).AddFlags(ItemFlag.HIDE_ATTRIBUTES);

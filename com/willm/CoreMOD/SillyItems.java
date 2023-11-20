@@ -7,6 +7,7 @@ import com.willm.ModAPI.Items.BlockCreator;
 import com.willm.ModAPI.Items.CustomItemStack;
 import com.willm.ModAPI.Items.ItemCreator;
 import com.willm.ModAPI.Items.MusicDisc.MusicDisc;
+import com.willm.ModAPI.Items.Recipes.RecipeBuilder;
 
 public class SillyItems {
 
@@ -20,6 +21,8 @@ public class SillyItems {
 		MusicDisc md = new MusicDisc(Material.STONE_SWORD, 15002, "William McGlumphy - Game Time", "core_mod.music.game_time", 2);
 		md.AddFlags(ItemFlag.HIDE_ATTRIBUTES);
 		ItemCreator.RegisterNewItem(md);
+		
+		md.getRecipe(1, " G ", "GLG", " G ", "craft_md_disc").AddMaterial('G', Material.GOLD_INGOT).AddMaterial('L', RecipeBuilder.ItemStackInput(MyItems.lead_ingot)).Finalize();
 	}
 	
 }

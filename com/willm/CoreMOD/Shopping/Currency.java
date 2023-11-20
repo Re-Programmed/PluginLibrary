@@ -29,7 +29,7 @@ public class Currency {
 		coin_stack.getRecipe(1, RecipeTemplates.Ingot_Block, "coin_stack").AddMaterial('I', RecipeBuilder.ItemStackInput(coin)).Finalize();
 		coin.createSingleItemRecipe("coin_from_stack", 9, RecipeBuilder.ItemStackInput(coin_stack));
 				
-		coin_stack.createSingleItemRecipe("coin_from_emerald", 3, Material.EMERALD);
+		//coin_stack.createSingleItemRecipe("coin_from_emerald", 3, Material.EMERALD);
 
 		coin_pouch = ItemCreator.RegisterNewItem(new CustomItemStack("Coin Pouch", Material.GOLD_NUGGET, 10003));
 		coin_pouch.getRecipe(1, RecipeTemplates.Ingot_Block, "coin_pouch").AddMaterial('I', RecipeBuilder.ItemStackInput(coin_stack)).Finalize();

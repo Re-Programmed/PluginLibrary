@@ -149,7 +149,7 @@ public class MyItems {
 	
 	public static CustomItemStack gear, gearshift, electronic_gearshift, engine;
 	
-	public static CustomItemStack fridge, cooling_unit, brine_cauldron, brine, salt_water, sludge;
+	public static CustomItemStack industrial_fridge, fridge, cooling_unit, brine_cauldron, brine, salt_water, sludge;
 	
 	public static CustomItemStack glass_jar;
 	public static CustomBlock glass_jar_water, glass_jar_lava, glass_jar_brine, glass_jar_cookies, glass_jar_salt_water, glass_jar_tannin;
@@ -811,6 +811,10 @@ public class MyItems {
 			
 			ForgeRegistry.RegsiterMetalItems();
 			ForgeRegistry.RegisterForge();
+			
+			industrial_fridge = ItemCreator.RegisterNewItem(new CustomItemStack("Industrial Fridge", Material.IRON_BLOCK, 56203));
+			BlockCreator.RegisterNewBlock(industrial_fridge).SetDirectional(BlockDirectionData.PLAYER_RELATIVE);
+			industrial_fridge.getRecipe(1, "HQQ", "HCS", "Hcc").AddMaterial('H', RecipeBuilder.ItemStackInput(hinge)).AddMaterial('Q', RecipeBuilder.ItemStackInput(steel_enforced_gray_concrete)).AddMaterial('C', Material.CHEST).AddMaterial('S', RecipeBuilder.ItemStackInput(lead_ingot)).AddMaterial('c', RecipeBuilder.ItemStackInput(cooling_unit)).Finalize();
 			
 			SillyItems.RegisterSillyItems();
 	}
