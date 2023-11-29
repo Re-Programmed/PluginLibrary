@@ -43,14 +43,16 @@ import com.willm.CoreMOD.Shopping.Currency;
 import com.willm.CoreMOD.Shopping.PlotProtector;
 import com.willm.CoreMOD.Shopping.ShopBlock;
 import com.willm.CoreMOD.blocks.ChestLock;
+import com.willm.CoreMOD.blocks.CompostBin;
+import com.willm.CoreMOD.blocks.CompostPile;
 import com.willm.CoreMOD.blocks.FeedingTrough;
 import com.willm.CoreMOD.blocks.Workbench;
 import com.willm.CoreMOD.blocks.WorkbenchCraftingInventory;
 import com.willm.CoreMOD.blocks.WorkbenchSystem;
 import com.willm.CoreMOD.blocks.WorkbenchType;
+import com.willm.CoreMOD.blocks.piles.SaltPile;
 import com.willm.ModAPI.Utils;
 import com.willm.ModAPI.Blocks.CustomBlock;
-import com.willm.ModAPI.Enchantments.CustomEnchantment;
 import com.willm.ModAPI.Items.CustomItemStack;
 
 public class BlockEvents implements Listener {
@@ -68,7 +70,7 @@ public class BlockEvents implements Listener {
 	@EventHandler
 	public void ImportPack(PlayerJoinEvent event)
 	{
-		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1XgWVqLBBOBcxbI0-LTy92Cuh0HlU11Tb");
+		//event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1XgWVqLBBOBcxbI0-LTy92Cuh0HlU11Tb");
 	}
 	
 	@EventHandler
@@ -608,6 +610,68 @@ public class BlockEvents implements Listener {
 		}
 	}
 	
+	@EventHandler
+	public void CompostBinHandling(PlayerInteractEvent event)
+	{
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
+		{
+			if(event.getClickedBlock().getType() == Material.DISPENSER) {return;}
+			
+			if(event.getClickedBlock().getType() == Material.WARPED_TRAPDOOR)
+			{
+					
+				
+				if(CompostBin.BASE_BIN.CheckForCustomBlock(event.getClickedBlock()))
+				{
+					CompostBin.BASE_BIN.Interact(event);
+					return;
+				}
+				
+				
+				if(CompostPile.INSTANCE.CheckForCustomBlock(event.getClickedBlock()))
+				{				
+					CompostPile.INSTANCE.Interact(event);
+					return;
+				}
+				
+				if(SaltPile.SALT_PILE.CheckForCustomBlock(event.getClickedBlock()))
+				{				
+					SaltPile.SALT_PILE.Interact(event);
+					return;
+				}
+				
+				return;
+			}
+			
+			if(event.getItem() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK)
+			{
+				if(MyItems.sludge.CheckForCustomItem(event.getItem()))
+				{
+					Block placeAt = event.getClickedBlock().getRelative(event.getBlockFace());
+					CompostPile.INSTANCE.Place(placeAt.getLocation());
+					RemoveOrSubtractFromPlayersHand(event.getPlayer(), 1);
+					return;
+				}
+				
+				if(MyItems.salt_item.CheckForCustomItem(event.getItem()))
+				{
+					Block placeAt = event.getClickedBlock().getRelative(event.getBlockFace());
+					SaltPile.SALT_PILE.Place(placeAt.getLocation());
+					RemoveOrSubtractFromPlayersHand(event.getPlayer(), 1);
+					return;
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void CompostBinPlacing(BlockPlaceEvent event)
+	{
+		if(CompostBin.BASE_BIN.CheckForCustomBlock(event.getBlock()))
+		{
+			CompostBin.BASE_BIN.OnPlace(event);
+		}
+	}
 	
 	static final List<Material> troughMats = List.of(Material.CARROT, Material.POTATO, Material.WHEAT, Material.BEETROOT);
 	@EventHandler
@@ -971,6 +1035,7 @@ public class BlockEvents implements Listener {
 			
 		}
 	}
+	
 	
 	private void SetOven(PlayerInteractEvent event, ItemStack hi, CustomBlock cb)
 	{

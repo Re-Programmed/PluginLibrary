@@ -44,7 +44,11 @@ commands:
 
    coordinates:
       description: tkaljls
+   backslot:
+      description: Back slot command.
 
+   lukemode:
+      description: Luke Mode
    setdifficulty:
       description: Sets the custom difficulty.
    alloypick:

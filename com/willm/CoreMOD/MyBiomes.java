@@ -13,11 +13,11 @@ public class MyBiomes {
 
 	public static void InitBiomes()
 	{
-		CustomPopulator.GetPM().AddBiome(new Biome(1000, org.bukkit.block.Biome.FOREST, org.bukkit.block.Biome.BIRCH_FOREST).AddFeature(new Feature(1000, Material.GRASS_BLOCK)
+		CustomPopulator.GetPM().AddBiome(new Biome(150, org.bukkit.block.Biome.FOREST, org.bukkit.block.Biome.BIRCH_FOREST).AddFeature(new Feature(500, Material.GRASS_BLOCK)
 				.AddElement(new CustomFeature(RelativeLocation.Zero, MyItems.tomato_plant.getRelatedBlock()))
 				));
 		
-		CustomPopulator.GetPM().AddBiome(new Biome(150, org.bukkit.block.Biome.FOREST, org.bukkit.block.Biome.PLAINS, org.bukkit.block.Biome.BIRCH_FOREST).AddFeature(new Feature(250, Material.GRASS_BLOCK)
+		CustomPopulator.GetPM().AddBiome(new Biome(150, org.bukkit.block.Biome.FOREST, org.bukkit.block.Biome.PLAINS, org.bukkit.block.Biome.BIRCH_FOREST).AddFeature(new Feature(70, Material.GRASS_BLOCK)
 				.AddElement(new CustomFeature(RelativeLocation.Zero, MyItems.spring_water_source.getRelatedBlock()))
 				));
 		
@@ -97,7 +97,10 @@ public class MyBiomes {
 
 						));
 		
-		CustomPopulator.GetPM().AddBiome(new Biome(250, org.bukkit.block.Biome.TAIGA, org.bukkit.block.Biome.SNOWY_TAIGA).AddFeature(new Feature(1000, Material.GRASS_BLOCK).AddElement(new CustomFeature(RelativeLocation.Zero, MyItems.pepper_plant.getRelatedBlock()))));
+		CustomPopulator.GetPM().AddBiome(new Biome(250, org.bukkit.block.Biome.TAIGA, org.bukkit.block.Biome.SNOWY_TAIGA).AddFeature(new Feature(500, Material.GRASS_BLOCK).AddElement(new CustomFeature(RelativeLocation.Zero, MyItems.pepper_plant.getRelatedBlock()))));
+	
+		CustomPopulator.GetPM().AddBiome(new Biome(250, org.bukkit.block.Biome.RIVER).AddFeature(new Feature(600, Material.GRASS_BLOCK, Material.DIRT).AddElement(new CustomFeature(RelativeLocation.Zero, MyItems.onion_plant.getRelatedBlock()))));
+
 	}
 	
 }

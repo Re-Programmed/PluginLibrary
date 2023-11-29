@@ -17,8 +17,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.willm.CoreMOD.Alloying.CreateAlloyPickCommand;
 import com.willm.CoreMOD.Alloying.CreateAlloyPickTabCompleter;
 import com.willm.CoreMOD.Alloying.Crucibles.CrucibleEvents;
+import com.willm.CoreMOD.BackSlot.BackSlotCommand;
+import com.willm.CoreMOD.BackSlot.BackSlotEvents;
 import com.willm.CoreMOD.CustomCommands.CoordCommand;
 import com.willm.CoreMOD.CustomCommands.CoordsCommandCompleter;
+import com.willm.CoreMOD.CustomCommands.LukeModeCommand;
 import com.willm.CoreMOD.DifficultyExtension.DifficultyEvents;
 import com.willm.CoreMOD.DifficultyExtension.SetDifficultyCommand;
 import com.willm.CoreMOD.ElementalItems.RegisterElementalItems;
@@ -69,13 +72,23 @@ public class Main extends JavaPlugin {
 		getCommand("coordinates").setExecutor(new CoordCommand());
 		getCommand("coordinates").setTabCompleter(new CoordsCommandCompleter());
 		
+		getCommand("lukemode").setExecutor(new LukeModeCommand());
+		
 		getCommand("setdifficulty").setExecutor(new SetDifficultyCommand());
+		
+		getCommand("backslot").setExecutor(new BackSlotCommand());
+		getServer().getPluginManager().registerEvents(new BackSlotEvents(), this);
+
 		getServer().getPluginManager().registerEvents(new DifficultyEvents(), this);
+		
+		getServer().getPluginManager().registerEvents(new MessageEvents(), this);
+
 		
 		RegisterElementalItems.Register();
 
 		MyEntities.RegisterEntities();
 		
+		//Elevator Runnable
 		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			
 			public void run() { 
@@ -89,6 +102,15 @@ public class Main extends JavaPlugin {
 			}
 		}, 1, 1);
 		
+		//Ice Box Open Inventory Updates Runnable
+		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+			
+			public void run() { 
+				ItemEvents.IceBoxInventoryHandling();
+			}
+		}, 3, 3);
+		
+		//Rotting Food Runnable
 Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			
 			public void run() { 
@@ -174,6 +196,38 @@ Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
 	
 	public static void RotItem(ItemStack i, int amnt)
 	{
+		if(MyItems.ice_box.CheckForCustomItem(i))
+		{
+			if(i.getItemMeta().hasLore())
+			{
+				List<String> newLore = new ArrayList<String>();
+				for(String s : i.getItemMeta().getLore())
+				{
+					if(s.split(" x ")[1].contains(" ("))
+					{
+						String ageText = s.substring(s.indexOf(" (") + 2);
+						ageText = ageText.split("/")[0];
+						
+						int age = Integer.parseInt(ageText);
+						age -= amnt * 2.5;
+						
+						if(age < 0) {age = 0;}
+						
+						String newS = new String(s);
+						newS = newS.substring(0, s.indexOf(" (") + 2) + age + s.substring(s.indexOf("/"));
+						newLore.add(newS);
+						
+					}
+				}
+				
+				ItemMeta m = i.getItemMeta();
+				m.setLore(newLore);
+				i.setItemMeta(m);
+			}
+			
+			return;
+		}
+		
 		if(MyItems.parishables.containsKey(i.getType()))
 		{
 			int parishMax = MyItems.parishables.get(i.getType());

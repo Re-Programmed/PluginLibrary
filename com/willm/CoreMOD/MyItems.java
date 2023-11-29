@@ -32,7 +32,11 @@ import com.willm.CoreMOD.Shopping.Currency;
 import com.willm.CoreMOD.Shopping.PlotProtector;
 import com.willm.CoreMOD.Shopping.ShopBlock;
 import com.willm.CoreMOD.blocks.ChestLock;
+import com.willm.CoreMOD.blocks.CompostBin;
+import com.willm.CoreMOD.blocks.CompostPile;
+import com.willm.CoreMOD.blocks.SaltBlock;
 import com.willm.CoreMOD.blocks.WorkbenchItemRegistry;
+import com.willm.CoreMOD.blocks.piles.SaltPile;
 import com.willm.ModAPI.MobDrop;
 import com.willm.ModAPI.Blocks.BlockDirectionData;
 import com.willm.ModAPI.Blocks.CustomBlock;
@@ -149,7 +153,7 @@ public class MyItems {
 	
 	public static CustomItemStack gear, gearshift, electronic_gearshift, engine;
 	
-	public static CustomItemStack industrial_fridge, fridge, cooling_unit, brine_cauldron, brine, salt_water, sludge;
+	public static CustomItemStack ice_box, industrial_fridge, fridge, cooling_unit, brine_cauldron, brine, salt_water, sludge;
 	
 	public static CustomItemStack glass_jar;
 	public static CustomBlock glass_jar_water, glass_jar_lava, glass_jar_brine, glass_jar_cookies, glass_jar_salt_water, glass_jar_tannin;
@@ -250,9 +254,9 @@ public class MyItems {
 				salt_item.GetAmountClone(4), salt_block.GetMyItemStack()));
 		
 		
-		BlockCreator.RegisterNewBlock(salt_block).SetConstBlock(false).SetMineAs(Material.DIRT).SetCustomDrops(salt_item, salt_item, salt_item, salt_item);
+		BlockCreator.RegisterNewBlock(salt_block, new SaltBlock(salt_block)).SetConstBlock(false).SetMineAs(Material.DIRT).SetCustomDrops(salt_item, salt_item, salt_item, salt_item);
 		
-		new Ore(salt_block, 10, true, 6, 128, 45, true, true);
+		new Ore(salt_block, 20, true, 6, 128, 45, true, true);
 		
 
 		brine_cauldron = ItemCreator.RegisterNewItem(new CustomItemStack("Cauldron (Brine)", Material.CAULDRON, 10001));
@@ -609,6 +613,7 @@ public class MyItems {
 		com.willm.ModAPI.Blocks.BlockEvents.RegisterBucket(spring_water, spring_water_source_b);
 				
 		CustomItemStack cement_powder = ItemCreator.RegisterNewItem(new CustomItemStack("Cement Powder", Material.BROWN_CONCRETE, 51023));
+		cement_powder.AddLoreLine(ChatColor.GRAY + "Made in the Rotary Kiln.");
 		BlockCreator.RegisterNewBlock(cement_powder).SetConstBlock(false).SetMineAs(Material.CLAY);
 		
 		
@@ -647,8 +652,7 @@ public class MyItems {
 				ItemCreator.RegisterNewItem(new CustomItemStack("Cobalt Boots", Material.DIAMOND_BOOTS, 20001)).AddLoreLine(ChatColor.GRAY + "*Cobalt Armor*").getRecipe(1, "   ", "I I", "I I").AddMaterial('I', RecipeBuilder.ItemStackInput(cobalt_ingot)).Finalize();
 				
 				
-		cement_powder.AddLoreLine(ChatColor.GRAY + "Made in the Rotary Kiln.");
-		Bukkit.getServer().addRecipe(unfinished_concrete_powder.GenUnshaped("craft_concrete_pow_from_cement_pow", 4).addIngredient(Material.GRAVEL).addIngredient(Material.SAND).addIngredient(Material.GRAVEL).addIngredient(Material.SAND).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)).addIngredient(RecipeBuilder.ItemStackInput(cement_powder)));
+		unfinished_concrete_powder.getRecipe(4, "GGM", "SSC", "CCC").AddMaterial('G', Material.GRAVEL).AddMaterial('S', Material.SAND).AddMaterial('C', RecipeBuilder.ItemStackInput(cement_powder)).AddMaterial('M', Material.WATER_BUCKET).Finalize();
 		
 		gear = ItemCreator.RegisterNewItem(new CustomItemStack("Gear", Material.BLUE_DYE, 60001));
 		gear.getRecipe(4, "SW ", "WRW", " WS").AddMaterial('W', RecipeBuilder.MultiMaterialInput(Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.DARK_OAK_PLANKS, Material.ACACIA_PLANKS, Material.JUNGLE_PLANKS, Material.CHERRY_PLANKS, Material.BAMBOO_PLANKS, Material.BIRCH_PLANKS, Material.CRIMSON_PLANKS, Material.WARPED_PLANKS, Material.MANGROVE_PLANKS)).AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('R', RecipeBuilder.ItemStackInput(iron_rod)).Finalize();
@@ -726,7 +730,7 @@ public class MyItems {
 			
 			concrete_powder = ItemCreator.RegisterNewItem(new CustomItemStack("Concrete Powder", Material.BROWN_CONCRETE, 51025));
 			BlockCreator.RegisterNewBlock(concrete_powder).SetConstBlock(false).SetMineAs(Material.CLAY);
-			Bukkit.getServer().addRecipe(concrete_powder.GenUnshaped("concrete_powder", 32).addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder)).addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder)).addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder)).addIngredient(RecipeBuilder.ItemStackInput(unfinished_concrete_powder)).addIngredient(Material.SAND).addIngredient(Material.SAND).addIngredient(Material.GRAVEL).addIngredient(Material.GRAVEL));
+			concrete_powder.getRecipe(32, "CCC", "GGC", "SS ").AddMaterial('C', RecipeBuilder.ItemStackInput(unfinished_concrete_powder)).AddMaterial('G', Material.GRAVEL).AddMaterial('S', Material.SAND).Finalize();
 			
 			steel_rod = ItemCreator.RegisterNewItem(new CustomItemStack("Steel Rod", Material.IRON_INGOT, 20003));
 			steel_rod.getRecipe(3, "S", "s", "S").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('s', RecipeBuilder.ItemStackInput(steel_ingot)).Finalize();
@@ -817,8 +821,36 @@ public class MyItems {
 			industrial_fridge.getRecipe(1, "HQQ", "HCS", "Hcc").AddMaterial('H', RecipeBuilder.ItemStackInput(hinge)).AddMaterial('Q', RecipeBuilder.ItemStackInput(steel_enforced_gray_concrete)).AddMaterial('C', Material.CHEST).AddMaterial('S', RecipeBuilder.ItemStackInput(lead_ingot)).AddMaterial('c', RecipeBuilder.ItemStackInput(cooling_unit)).Finalize();
 			
 			SillyItems.RegisterSillyItems();
+			
+			//Ice Box
+			ice_box = ItemCreator.RegisterNewItem(new CustomItemStack("Ice Box", Material.ORANGE_DYE, 52031));
+			ice_box.getRecipe(1, "AAA", "LCD", "Pce").AddMaterial('A', RecipeBuilder.ItemStackInput(aluminum_alloy)).AddMaterial('L', RecipeBuilder.ItemStackInput(padlock)).AddMaterial('C', RecipeBuilder.ItemStackInput(cobalt_ingot)).AddMaterial('D', Material.DIAMOND).AddMaterial('P', RecipeBuilder.ItemStackInput(tubing_pump)).AddMaterial('c', RecipeBuilder.ItemStackInput(cooling_unit)).AddMaterial('e', RecipeBuilder.ItemStackInput(tubing_cap)).Finalize();
+			
+			PPItems();
+			
+			//Compost Bin
+			CompostBin.RegisterItem();
+			
+			//Piles
+			CompostPile.RegisterItem();
+			SaltPile.RegisterItem();
 	}
 
+	public static CustomItemStack baguette, baguette_b1, baguette_b2;
+	
+	public static void PPItems()
+	{
+		baguette = ItemCreator.RegisterNewItem(new CustomItemStack("Baguette", Material.STONE_SWORD, 16002));
+		baguette.getRecipe(1, "  B", " B ", "B  ").AddMaterial('B', Material.BREAD).Finalize();
+		
+		baguette_b1 = new CustomItemStack("Baguette", Material.STONE_SWORD, 16003);
+		baguette_b2 = new CustomItemStack("Baguette", Material.STONE_SWORD, 16004);
+
+		CustomItemStack honeyBun = ItemCreator.RegisterNewItem(new CustomItemStack("Cold Honey Bun", Material.BREAD, 51230));
+		
+		
+	}
+	
 	public static void RegisterCustomRecipesMenu()
 	{
 		//Brine Making
@@ -1138,7 +1170,7 @@ public class MyItems {
 		(new CustomItemStack("Fired Lamb", Material.COOKED_MUTTON, 50002)).getCampfireRecipe(RecipeBuilder.ItemStackInput(lamb), 2.f, 20 * 5, "campfire_cook_lamb");
 		
 		oven = ItemCreator.RegisterNewItem(new CustomItemStack("Oven", Material.SMOOTH_STONE, 10001));
-		BlockCreator.RegisterNewBlock(oven);
+		BlockCreator.RegisterNewBlock(oven).SetDirectional(BlockDirectionData.PLAYER_RELATIVE);
 		
 		pan_oven = ItemCreator.RegisterNewItem(new CustomItemStack("Oven With Pan", Material.SMOOTH_STONE, 10002));
 		BlockCreator.RegisterNewBlock(pan_oven).SetDrops(false);
@@ -1160,10 +1192,8 @@ public class MyItems {
 		CustomItemStack tomato_plant_3 = ItemCreator.RegisterNewItem(new CustomItemStack("Tomato Plant", Material.DIRT, 10003));
 		
 		tomato = ItemCreator.RegisterNewItem(new CustomItemStack("Tomato", Material.BEETROOT, 10001));
-				
-		Bukkit.getServer().addRecipe(tomato_plant_3.GenUnshaped("tomato_plant_craft").addIngredient(RecipeBuilder.ItemStackInput(tomato)).addIngredient(RecipeBuilder.ItemStackInput(tomato)).addIngredient(RecipeBuilder.ItemStackInput(tomato)).addIngredient(RecipeBuilder.ItemStackInput(tomato)));
-		
-		ItemCreator.RegisterPlant(tomato, 6, 50, BlockCreator.RegisterNewBlock(tomato_plant), BlockCreator.RegisterNewBlock(tomato_plant_2), BlockCreator.RegisterNewBlock(tomato_plant_3));
+						
+		ItemCreator.RegisterPlant(tomato, 2, 20, BlockCreator.RegisterNewBlock(tomato_plant).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(tomato_plant_2).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(tomato_plant_3).SetMineAs(Material.GRASS));
 		
 		//Pepper
 			pepper_plant = ItemCreator.RegisterNewItem(new CustomItemStack("Pepper Plant (Stage 4)", Material.DIRT, 10005));
@@ -1172,10 +1202,8 @@ public class MyItems {
 			CustomItemStack pepper_plant_4 = ItemCreator.RegisterNewItem(new CustomItemStack("Pepper Plant", Material.DIRT, 10008));
 
 			peppercorn = ItemCreator.RegisterNewItem(new CustomItemStack("Peppercorn", Material.BEETROOT, 10002));
-			
-			Bukkit.getServer().addRecipe(pepper_plant_4.GenUnshaped("pepper_plant_craft").addIngredient(RecipeBuilder.ItemStackInput(peppercorn)).addIngredient(RecipeBuilder.ItemStackInput(peppercorn)).addIngredient(RecipeBuilder.ItemStackInput(peppercorn)));
-			
-			ItemCreator.RegisterPlant(peppercorn, 6, 55, BlockCreator.RegisterNewBlock(pepper_plant), BlockCreator.RegisterNewBlock(pepper_plant_2), BlockCreator.RegisterNewBlock(pepper_plant_3), BlockCreator.RegisterNewBlock(pepper_plant_4));
+						
+			ItemCreator.RegisterPlant(peppercorn, 3, 15, BlockCreator.RegisterNewBlock(pepper_plant).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(pepper_plant_2).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(pepper_plant_3).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(pepper_plant_4).SetMineAs(Material.GRASS));
 			
 			pepper_sack = ItemCreator.RegisterNewItem(new CustomItemStack("Pepper Pouch", Material.BEETROOT, 10003));
 			pepper_sack.AddLoreLine(ChatColor.BLUE + "Peppercorn -> Cutting Board");
@@ -1197,7 +1225,7 @@ public class MyItems {
 	
 			onion = ItemCreator.RegisterNewItem(new CustomItemStack("Onion", Material.CARROT, 15001));
 			
-			ItemCreator.RegisterPlant(onion, 5, 15, BlockCreator.RegisterNewBlock(onion_plant), BlockCreator.RegisterNewBlock(onion_plant_2), BlockCreator.RegisterNewBlock(onion_plant_3), BlockCreator.RegisterNewBlock(onion_plant_4));
+			ItemCreator.RegisterPlant(onion, 3, 17, BlockCreator.RegisterNewBlock(onion_plant).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(onion_plant_2).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(onion_plant_3).SetMineAs(Material.GRASS), BlockCreator.RegisterNewBlock(onion_plant_4).SetMineAs(Material.GRASS));
 				
 		CustomItemStack lambchop = ItemCreator.RegisterNewItem(new CustomItemStack("Lamb Chop", Material.COOKED_MUTTON, 10001));
 		lambchop.AddFoodModifier(1, 1).AddLoreLine(ChatColor.BLUE + "Lamb + Pepper Pouch -> Oven (Plate)");

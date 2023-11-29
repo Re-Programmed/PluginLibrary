@@ -46,7 +46,7 @@ public class RotaryEngine extends EnergyCompatible {
 			{
 				if(cis.getRelatedBlock().CheckForCustomBlock(loc.getBlock().getRelative(BlockFace.UP)))
 				{
-					ItemEvents.triggerCentrifuge(loc.getBlock().getRelative(BlockFace.UP), cis, rotationForce, i);
+					ItemEvents.triggerCentrifuge(loc.getBlock().getRelative(BlockFace.UP), cis, rotationForce + 0.01f, i, true);
 					break;
 				}
 				i++;

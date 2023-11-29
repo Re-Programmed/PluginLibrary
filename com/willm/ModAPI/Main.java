@@ -97,7 +97,7 @@ public class Main {
 	public static void Launch(String pluginName, JavaPlugin jp)
 	{
 		PLUGIN = jp;
-		Launch(pluginName, jp, "v1.0.0");
+		Launch(pluginName, jp, "v1.2.0");
 	}
 	
 	public static void Launch(String pluginName, JavaPlugin jp, String version)

@@ -2,6 +2,7 @@ package com.willm.ModAPI.Items;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -17,9 +18,15 @@ public class ItemCreator {
 		return item;
 	}
 	
+	//Uses the drop as the source.
 	public static Plant RegisterPlant(CustomItemStack drop, int amount, int growth_chance, CustomBlock... block)
 	{
-		Plant p = new Plant(drop, amount, growth_chance, block);
+		return RegisterPlant(drop, amount, growth_chance, drop, block);
+	}
+	
+	public static Plant RegisterPlant(CustomItemStack drop, int amount, int growth_chance, CustomItemStack crop_source, CustomBlock... block)
+	{
+		Plant p = new Plant(drop, amount, growth_chance, crop_source, block);
 		Main.PlantRegistry.add(p);
 		return p;
 	}

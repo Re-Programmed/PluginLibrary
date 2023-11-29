@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.willm.CoreMOD.ItemEvents;
 import com.willm.ModAPI.Main;
 import com.willm.ModAPI.MobDrop;
 import com.willm.ModAPI.Utils;
@@ -72,7 +73,10 @@ public class BlockEvents implements Listener {
 	    	Sign s = myInventory.MySign;
 			if(s != null && s.getLocation().distance(e.getBlock().getLocation()) < 0.75)
 			{
-				CreativeMenu.OpenSearch(e.getLine(0), e.getPlayer());
+				if(!e.getLine(0).isEmpty()) {
+					CreativeMenu.OpenSearch(e.getLine(0), e.getPlayer());
+				}
+				
 				e.getBlock().setType(Material.AIR);
 				myInventory.MySign = null;
 				e.setCancelled(true);
@@ -278,24 +282,25 @@ public class BlockEvents implements Listener {
 				
 			
 		}*/
+		for(Plant p : Main.PlantRegistry)
+		{
+			int i = 0;
+			for(CustomBlock cb : p.GetCustomBlock())
+			{
+				if(cb.CheckForCustomBlock(event.getBlock()))
+				{
+					p.BreakPlant(event, i);
+					cb.SetDrops(false).Remove(event);
+					event.setDropItems(false);
+					p.FinishBreakPlant(event, i);
+					return;
+				}
+				i++;
+			}
+		}
 		
 		if(event.getBlock().getType() == Material.DISPENSER)
 		{
-			for(Plant p : Main.PlantRegistry)
-			{
-				int i = 0;
-				for(CustomBlock cb : p.GetCustomBlock())
-				{
-					if(cb.CheckForCustomBlock(event.getBlock()))
-					{
-						p.BreakPlant(event, i);
-						cb.SetDrops(false).Remove(event);
-						event.setDropItems(false);
-						return;
-					}
-					i++;
-				}
-			}
 			
 			Dispenser d = (Dispenser)event.getBlock().getState();
 		
@@ -536,7 +541,50 @@ public class BlockEvents implements Listener {
 		}
 	}
 	
-
+	@EventHandler
+	public void PlayerPlantCrop(PlayerInteractEvent event)
+	{
+		if(event.getAction() != Action.RIGHT_CLICK_BLOCK) {return;}
+		if(event.getItem() == null) {return;}
+		if(event.getClickedBlock().getType() == Material.FARMLAND)
+		{
+			for(Plant p : Main.PlantRegistry)
+			{
+				if(p.GetCropSource().CheckForCustomItem(event.getItem()))
+				{
+					BlockFace bf = BlockFace.NORTH;
+					
+					int rand = new Random().nextInt(4);
+					
+					switch(rand)
+					{
+					case 0:
+						bf = BlockFace.NORTH;
+						break;
+					case 1:
+						bf = BlockFace.EAST;
+						break;
+					case 2:
+						bf = BlockFace.SOUTH;
+						break;
+					case 3:
+						bf = BlockFace.WEST;
+						break;
+					}
+					
+					p.GetCustomBlock()[p.GetCustomBlock().length - 1].Place(event.getClickedBlock().getLocation(), bf);
+					
+					ItemStack mh = event.getPlayer().getEquipment().getItemInMainHand();
+					if(mh.getAmount() > 1)
+					{
+						mh.setAmount(mh.getAmount() - 1);
+					}else {
+						event.getPlayer().getEquipment().setItemInMainHand(null);
+					}
+				}
+			}
+		}
+	}
 	
 	
 }

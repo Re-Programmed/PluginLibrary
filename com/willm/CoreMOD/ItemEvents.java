@@ -1,6 +1,7 @@
 package com.willm.CoreMOD;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -38,6 +39,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
@@ -58,6 +60,12 @@ import com.willm.ModAPI.Terrain.Ore;
 
 public class ItemEvents implements Listener {
 
+	@EventHandler
+	public void Playerpack(PlayerJoinEvent event)
+	{
+		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1ecEkSCyXQxyMRS6yeUoB2W9Cn_5P3qln");
+	}
+	
 	private static String toTitleCase(String givenString) {
 	    String[] arr = givenString.split(" ");
 	    StringBuffer sb = new StringBuffer();
@@ -70,6 +78,199 @@ public class ItemEvents implements Listener {
 	}  
 	
 	public static ArrayList<Location> wireRedstoneActiveLinks = new ArrayList<Location>();
+	
+	//List of all open IceBox Inventories.
+	private static HashMap<Inventory, ItemStack> iceBoxInventories = new HashMap<Inventory, ItemStack>();
+	
+	//When the player opens an ice box inventory.
+	@EventHandler
+	public void IceBoxHandling(PlayerInteractEvent event)
+	{
+		if(event.getItem() != null)
+		{
+			if(MyItems.ice_box.CheckForCustomItem(event.getItem()))
+			{
+				Inventory iceBoxInventory = Bukkit.createInventory(event.getPlayer(), 9, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Ice Box");
+				event.getPlayer().openInventory(iceBoxInventory);
+				
+				if(event.getItem().hasItemMeta())
+				{
+					if(event.getItem().getItemMeta().hasLore())
+					{
+					outerloop:
+						for(String s : event.getItem().getItemMeta().getLore())
+						{
+							boolean cured = false;
+							if(s.startsWith(ChatColor.WHITE + "Cured "))
+							{
+								cured = true;
+								s = s.substring(new String(ChatColor.WHITE + "Cured ").length());
+							}
+							
+							boolean sv_splitVal = s.split(" x ")[1].contains(" (");
+							int amount = Integer.parseInt(sv_splitVal ? s.split(" x ")[1].substring(0, s.split(" x ")[1].indexOf(" (")) : s.split(" x ")[1]);
+							String nameType = s.split(" x ")[0].replace(ChatColor.WHITE + "", "");
+							
+							int age = 0;
+							
+							if(sv_splitVal)
+							{
+								String parseAge = s.substring(s.indexOf(" ("));
+								parseAge = parseAge.substring(0, parseAge.indexOf("/"));
+								parseAge = parseAge.substring(2, parseAge.length());
+								
+								age = Integer.parseInt(parseAge);
+							}
+							
+							for(CustomItemStack cis : com.willm.ModAPI.Main.CustomItemRegistry)
+							{
+								if(cis.getName().equalsIgnoreCase(nameType.toLowerCase()))
+								{
+									ItemStack is = cis.GetAmountClone(amount);
+									if(cured)
+									{
+										ItemMeta im = is.getItemMeta();
+										List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<String>();
+										lore.add(CURED_TEXT);
+										im.setLore(lore);
+										is.setItemMeta(im);
+									}
+									
+									Main.RotItem(is, age);
+									Main.RotItem(is, age);
+									iceBoxInventory.addItem(is);
+									continue outerloop;
+								}
+							}
+							
+							ItemStack is = new ItemStack(Material.valueOf(nameType.toUpperCase().replace(' ', '_')), amount);
+							if(cured)
+							{
+								ItemMeta im = is.getItemMeta();
+								List<String> lore = im.hasLore() ? im.getLore() : new ArrayList<String>();
+								lore.add(CURED_TEXT);
+								im.setLore(lore);
+								is.setItemMeta(im);
+							}
+							
+							Main.RotItem(is, age);
+							Main.RotItem(is, age);
+							iceBoxInventory.addItem(is);
+						}
+					}
+				}
+				
+				iceBoxInventories.put(iceBoxInventory, event.getPlayer().getEquipment().getItemInMainHand());
+			}
+		}
+	}
+	
+	@EventHandler
+	public void PlayerConsumeBaguette(PlayerInteractEvent event)
+	{
+		if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		{
+			if(event.getItem() != null)
+			{
+				if(MyItems.baguette_b2.CheckForCustomItem(event.getItem()))
+				{
+					event.getPlayer().getEquipment().setItemInMainHand(null);
+					
+					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "particle item bread " + event.getPlayer().getEyeLocation().getX() + " " + (event.getPlayer().getEyeLocation().getY() - 0.6) + " " + event.getPlayer().getEyeLocation().getZ() + " 0 -1 0 0.2 45 force");
+					event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() + 3 < 20 ? event.getPlayer().getFoodLevel() + 3 : 20);
+					event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 3.2f);
+					return;
+				}
+				
+				if(MyItems.baguette_b1.CheckForCustomItem(event.getItem()))
+				{
+					event.getPlayer().getEquipment().setItemInMainHand(MyItems.baguette_b2.GetMyItemStack());
+					
+					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "particle item bread " + event.getPlayer().getEyeLocation().getX() + " " + (event.getPlayer().getEyeLocation().getY() - 0.6) + " " + event.getPlayer().getEyeLocation().getZ() + " 0 -1 0 0.2 45 force");
+					event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() + 3 < 20 ? event.getPlayer().getFoodLevel() + 3 : 20);
+					event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 3.2f);
+					return;
+				}
+				
+				if(MyItems.baguette.CheckForCustomItem(event.getItem()))
+				{
+					event.getPlayer().getEquipment().setItemInMainHand(MyItems.baguette_b1.GetMyItemStack());
+					
+					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_PLAYER_BURP, 1, 1);
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "particle item bread " + event.getPlayer().getEyeLocation().getX() + " " + (event.getPlayer().getEyeLocation().getY() - 0.6) + " " + event.getPlayer().getEyeLocation().getZ() + " 0 -1 0 0.2 45 force");
+					event.getPlayer().setFoodLevel(event.getPlayer().getFoodLevel() + 3 < 20 ? event.getPlayer().getFoodLevel() + 3 : 20);
+					event.getPlayer().setSaturation(event.getPlayer().getSaturation() + 3.2f);
+					return;
+					
+				}
+			}
+		}
+	}
+	
+	//Called every 3 ticks for updating ice box inventories.
+	public static void IceBoxInventoryHandling()
+	{
+		for(Inventory inventory : iceBoxInventories.keySet())
+		{	
+			if(inventory.getViewers().size() < 1) {iceBoxInventories.remove(inventory);break;}
+			
+			if(!MyItems.ice_box.CheckForCustomItem(inventory.getViewers().get(0).getEquipment().getItemInMainHand()))
+			{
+				inventory.getViewers().get(0).closeInventory();
+				iceBoxInventories.remove(inventory);
+				break;
+			}
+			
+			List<String> newLore = new ArrayList<String>();
+			
+			for(ItemStack is : inventory)
+			{				
+				if(is == null) {continue;}
+				
+				if(!MyItems.parishables.containsKey(is.getType()))
+				{
+					Item i = inventory.getViewers().get(0).getWorld().dropItem(inventory.getViewers().get(0).getLocation(), is);
+					i.setPickupDelay(0);
+					i.setOwner(inventory.getViewers().get(0).getUniqueId());
+					
+					inventory.getViewers().get(0).sendMessage(ChatColor.RED + "That is not a parishable item.");
+					
+					inventory.remove(is);
+					continue;
+				}
+				
+				if(is.getItemMeta().hasCustomModelData())
+				{	
+					newLore.add(ChatColor.WHITE + toTitleCase(is.getItemMeta().getDisplayName()) + " x " + is.getAmount());
+				}else {
+					newLore.add(ChatColor.WHITE + toTitleCase(is.getType().toString().replace('_', ' ').toLowerCase()) + " x " + is.getAmount());
+				}
+				
+				if(is.getItemMeta().hasLore())
+				{
+					if(is.getItemMeta().getLore().get(is.getItemMeta().getLore().size() - 1).contains("Age: "))
+					{
+						String ageText = is.getItemMeta().getLore().get(is.getItemMeta().getLore().size() - 1).replace(ChatColor.RED + "Age: ", "").replace(ChatColor.YELLOW + "Age: ", "").replace(ChatColor.GREEN + "Age: ", "");
+						
+						
+						newLore.set(newLore.size() - 1, newLore.get(newLore.size() - 1) + " (" + ageText + ")");
+						
+					}
+					
+					if(is.getItemMeta().getLore().contains(CURED_TEXT))
+					{
+						newLore.set(newLore.size() - 1, ChatColor.WHITE + "Cured " + newLore.get(newLore.size() - 1));
+					}
+				}
+			}
+						
+			ItemMeta meta = iceBoxInventories.get(inventory).getItemMeta();
+			meta.setLore(newLore);
+			iceBoxInventories.get(inventory).setItemMeta(meta);
+		}
+	}
 	
 	@EventHandler
 	public void PlayerJoinRootAdvancement(PlayerJoinEvent event)
@@ -550,10 +751,11 @@ public class ItemEvents implements Listener {
 		return stands;
 	}
 	
-	public static void triggerCentrifuge(Block b, CustomItemStack cis, float deg, int level)
+	public static void triggerCentrifuge(Block b, CustomItemStack cis, float deg, int level) {triggerCentrifuge(b, cis, deg, level, false);}
+	public static void triggerCentrifuge(Block b, CustomItemStack cis, float deg, int level, boolean require4)
 	{
 		List<ArmorStand> stands = GetCentrifugeStands(b);
-
+		
 		if(stands.size() == 0)
 		{
 			return;
@@ -564,6 +766,13 @@ public class ItemEvents implements Listener {
 		float prevDeg = 0;
 		prevDeg += deg;
 		
+		if(cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[3].getName().toLowerCase()))
+		{
+			if(require4) {if(stands.size() < 6 && as.getLocation().getYaw() == 0) {return;}}
+		}else {
+			if(require4) {if(stands.size() < 4 && as.getLocation().getYaw() == 0) {return;}}
+		}
+		
 		if(as.getCustomName() == null)
 		{
 			as.setCustomName("0");
@@ -572,7 +781,6 @@ public class ItemEvents implements Listener {
 		prevDeg += Float.parseFloat(as.getCustomName());
 		
 		as.setCustomName("" + prevDeg);
-
 		
 		as.setRotation(as.getLocation().getYaw() + deg, 0);
 		
