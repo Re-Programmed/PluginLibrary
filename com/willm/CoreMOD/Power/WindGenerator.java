@@ -28,7 +28,7 @@ public class WindGenerator extends EnergyCompatible {
 	@Override
 	public void Tick(Location loc) {
 		
-		int power = Math.floorDiv(loc.getBlockY(), 20);
+		int power = Math.floorDiv(loc.getBlockY(), 12);
 		
 		for(Player p : Bukkit.getOnlinePlayers())
 		{

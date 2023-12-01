@@ -46,7 +46,8 @@ commands:
       description: tkaljls
    backslot:
       description: Back slot command.
-
+   viewinventory:
+      description: Gaming
    lukemode:
       description: Luke Mode
    setdifficulty:

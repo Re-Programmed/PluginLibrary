@@ -95,7 +95,7 @@ public class CreativeMenu implements CommandExecutor {
 		
 		myInventory.getInventory().setItem(53, nextArrow);
 		myInventory.getInventory().setItem(45, backArrow);
-		myInventory.getInventory().setItem(49, search);
+		//myInventory.getInventory().setItem(49, search);
 
 		myInventory.Content = myInventory.getInventory().getContents().clone();
 		
@@ -109,6 +109,21 @@ public class CreativeMenu implements CommandExecutor {
 		ArrayList<CreativeMenuInventory> modInv = new ArrayList<CreativeMenuInventory>();
 		for(CreativeMenuInventory myInventory : myInventories)
 		{
+			for(ItemStack is : myInventory.Player.getInventory())
+			{
+				if(is == null) {continue;}
+				if(is.hasItemMeta())
+				{
+					if(is.getItemMeta().hasLore())
+					{
+						if(is.getItemMeta().getLore().get(0).equalsIgnoreCase(ChatColor.DARK_GRAY + "RMB/LMB - View recipes"))
+						{
+							is.setType(Material.AIR);
+						}
+					}
+				}
+			}
+			
 			if(myInventory != null)
 			{
 				
@@ -131,7 +146,7 @@ public class CreativeMenu implements CommandExecutor {
 							modInv.add(myInventory);
 							continue;
 						}
-						
+					/*	
 						if(myInventory.getInventory().getItem(49) == null)
 						{
 							myInventory.Player.setItemOnCursor(null);
@@ -141,7 +156,7 @@ public class CreativeMenu implements CommandExecutor {
 								myInventory.MySign = (Sign)myInventory.Player.getLocation().getBlock().getState();
 								myInventory.Player.openSign(myInventory.MySign);
 							}
-						}
+						}*/
 					}
 					
 					myInventory.getInventory().setContents(myInventory.Content);

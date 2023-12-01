@@ -44,7 +44,7 @@ public class BasicChanceCentrifugeCustomRecipe extends CentrifugeRecipe {
 	public String GetLore(int level) {
 		if(level >= this.level && level < this.maxLevel)
 		{
-			return ChatColor.GRAY + in.getName() + " -> " + ChatColor.GRAY + ((out.hasItemMeta() && out.getItemMeta().hasDisplayName()) ? out.getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "") : out.getType().toString().replace("_", " ")) + " (" + (chance1000/10) + "%)";
+			return ChatColor.GRAY + ItemEvents.toTitleCase(in.getName().replace(ChatColor.WHITE + "", "").toLowerCase()) + " -> " + ChatColor.GRAY + ((out.hasItemMeta() && out.getItemMeta().hasDisplayName()) ? out.getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "") : out.getType().toString().replace("_", " ")) + " (" + (chance1000/10) + "%)";
 		}
 		
 		return null;

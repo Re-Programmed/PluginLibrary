@@ -22,7 +22,7 @@ public class CreativeEnergySource extends EnergyCompatible {
 	@Override
 	public void Tick(Location loc) {
 
-		AddEnergy(60, loc);
+	//	AddEnergy(60, loc);
 		
 		for(BlockFace bf : checkFaces)
 		{
@@ -31,7 +31,7 @@ public class CreativeEnergySource extends EnergyCompatible {
 			{
 				if(ec.GetBlockRef().CheckForCustomBlock(b))
 				{
-					ec.AddEnergy(RemoveEnergy(10, loc), b.getLocation());
+				//	ec.AddEnergy(RemoveEnergy(10, loc), b.getLocation());
 				}
 			}
 		}

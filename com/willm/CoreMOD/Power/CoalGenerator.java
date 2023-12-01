@@ -1,5 +1,7 @@
 package com.willm.CoreMOD.Power;
 
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -45,7 +47,7 @@ public class CoalGenerator extends EnergyCompatible {
 				{
 					if(m.getInventory().contains(Material.COAL))
 					{
-						cooldown = 40;
+						cooldown = 10;
 						output = true;
 						AddEnergy(2000, loc);
 						
@@ -61,7 +63,10 @@ public class CoalGenerator extends EnergyCompatible {
 							}
 						}
 						
-						m.getInventory().removeItem(new ItemStack(Material.COAL, 1));
+						if(new Random().nextInt(7) == 1)
+						{
+							m.getInventory().removeItem(new ItemStack(Material.COAL, 1));
+						}
 					}
 	
 					

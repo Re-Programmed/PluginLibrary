@@ -1,5 +1,7 @@
 package com.willm.CoreMOD.Power;
 
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -43,9 +45,9 @@ public class HydrogenGenerator extends EnergyCompatible {
 				{
 					if(m.getInventory().containsAtLeast(MyItems.hydrogen.GetMyItemStack(), 1))
 					{
-						cooldown = 75;
+						cooldown = 13;
 						output = true;
-						AddEnergy(1000, loc);
+						AddEnergy(1200, loc);
 						
 						for(BlockFace bf : checkFaces)
 						{
@@ -54,12 +56,15 @@ public class HydrogenGenerator extends EnergyCompatible {
 							{
 								if(ec.GetBlockRef().CheckForCustomBlock(b))
 								{
-									ec.AddEnergy(RemoveEnergy(350, loc), b.getLocation());
+									ec.AddEnergy(RemoveEnergy(700, loc), b.getLocation());
 								}
 							}
 						}
 						
-						m.getInventory().removeItem(MyItems.hydrogen.GetMyItemStack());
+						if(new Random().nextInt(4) == 1)
+						{
+							m.getInventory().removeItem(MyItems.hydrogen.GetMyItemStack());
+						}
 					}
 	
 					

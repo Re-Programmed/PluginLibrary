@@ -6,14 +6,22 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Furnace;
+import org.bukkit.block.Smoker;
+import org.bukkit.entity.ChestBoat;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.willm.CoreMOD.AdvancedCrafter.AdvancedCrafter;
 import com.willm.CoreMOD.Alloying.CreateAlloyPickCommand;
 import com.willm.CoreMOD.Alloying.CreateAlloyPickTabCompleter;
 import com.willm.CoreMOD.Alloying.Crucibles.CrucibleEvents;
@@ -22,6 +30,7 @@ import com.willm.CoreMOD.BackSlot.BackSlotEvents;
 import com.willm.CoreMOD.CustomCommands.CoordCommand;
 import com.willm.CoreMOD.CustomCommands.CoordsCommandCompleter;
 import com.willm.CoreMOD.CustomCommands.LukeModeCommand;
+import com.willm.CoreMOD.CustomCommands.ViewInventoryCommand;
 import com.willm.CoreMOD.DifficultyExtension.DifficultyEvents;
 import com.willm.CoreMOD.DifficultyExtension.SetDifficultyCommand;
 import com.willm.CoreMOD.ElementalItems.RegisterElementalItems;
@@ -65,7 +74,8 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new CrucibleEvents(), this);
 		
 		getCommand("rottick").setExecutor(new RotTickCommand());
-		
+		getCommand("viewinventory").setExecutor(new ViewInventoryCommand());
+
 		getCommand("alloypick").setExecutor(new CreateAlloyPickCommand());
 		getCommand("alloypick").setTabCompleter(new CreateAlloyPickTabCompleter());
 		
@@ -107,6 +117,10 @@ public class Main extends JavaPlugin {
 			
 			public void run() { 
 				ItemEvents.IceBoxInventoryHandling();
+				
+				AdvancedCrafter.Tick();
+				
+				ViewInventoryCommand.Tick();
 			}
 		}, 3, 3);
 		
@@ -135,7 +149,71 @@ Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
 	{
 		for(Player p : Bukkit.getOnlinePlayers())
 		{
+			for(Entity e : p.getWorld().getNearbyEntities(p.getLocation(), 25f, 25f, 25f))
+			{
+				if(e instanceof ChestBoat)
+				{
+					ChestBoat cb = (ChestBoat)e;
+					for(ItemStack i : cb.getInventory())
+					{
+						if(i == null) {continue;}
+						RotItem(i, count);
+					}
+				}
+				
+				if(e instanceof StorageMinecart)
+				{
+					StorageMinecart cb = (StorageMinecart)e;
+					for(ItemStack i : cb.getInventory())
+					{
+						if(i == null) {continue;}
+						RotItem(i, count);
+					}
+				}
+				
+				if(e instanceof HopperMinecart)
+				{
+					HopperMinecart cb = (HopperMinecart)e;
+					for(ItemStack i : cb.getInventory())
+					{
+						if(i == null) {continue;}
+						RotItem(i, count);
+					}
+				}
+			}
+			
 			for (BlockState state: p.getLocation().getChunk().getTileEntities()) {
+				
+				if(state instanceof Furnace)
+				{
+					Furnace c = (Furnace)state;
+					for(ItemStack i : c.getInventory())
+					{
+						if(i == null) {continue;}
+						RotItem(i, count);
+					}
+				}
+				
+				if(state instanceof Smoker)
+				{
+					Smoker c = (Smoker)state;
+					for(ItemStack i : c.getInventory())
+					{
+						if(i == null) {continue;}
+						RotItem(i, count);
+					}
+				}
+				
+				if(state instanceof BlastFurnace)
+				{
+					BlastFurnace c = (BlastFurnace)state;
+					for(ItemStack i : c.getInventory())
+					{
+						if(i == null) {continue;}
+						RotItem(i, count);
+					}
+				}
+				
 				if (state instanceof Chest) {
 					Chest c = (Chest)state;
 					

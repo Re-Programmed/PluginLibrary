@@ -57,6 +57,8 @@ public class RecipeSelectorMenu extends DisplayInventoryHolder {
 	
 	private void initRecipe(CustomRecipeType r, int currSlot)
 	{
+		if(currSlot > 53) {return;}
+
 		ItemStack recipeChoice = r.GetResult().clone();
 		ItemMeta meta = recipeChoice.getItemMeta();
 		
@@ -117,7 +119,7 @@ public class RecipeSelectorMenu extends DisplayInventoryHolder {
 		
 		meta.setLore(newLore);
 		recipeChoice.setItemMeta(meta);
-		
+				
 		myInventory.setItem(currSlot, recipeChoice);
 	}
 	

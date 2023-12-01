@@ -15,6 +15,8 @@ import org.bukkit.Sound;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Hopper;
+import org.bukkit.block.data.Directional;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -47,6 +49,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import com.willm.CoreMOD.AdvancedCrafter.AdvancedCrafter;
 import com.willm.CoreMOD.ElementalItems.Nonmetals;
 import com.willm.CoreMOD.ElementalItems.RegisterElementalItems;
 import com.willm.CoreMOD.Power.Injector;
@@ -66,7 +69,7 @@ public class ItemEvents implements Listener {
 		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1ecEkSCyXQxyMRS6yeUoB2W9Cn_5P3qln");
 	}
 	
-	private static String toTitleCase(String givenString) {
+	public static String toTitleCase(String givenString) {
 	    String[] arr = givenString.split(" ");
 	    StringBuffer sb = new StringBuffer();
 
@@ -81,6 +84,45 @@ public class ItemEvents implements Listener {
 	
 	//List of all open IceBox Inventories.
 	private static HashMap<Inventory, ItemStack> iceBoxInventories = new HashMap<Inventory, ItemStack>();
+	
+	@EventHandler
+	public void AdvancedCrafterHandling_INTERACT(PlayerInteractEvent event)
+	{
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		{
+			if(MyItems.advanced_crafter.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				AdvancedCrafter.OpenInventory(event.getPlayer(), event.getClickedBlock());
+			}	
+		}
+	}
+	
+	@EventHandler
+	public void AdvancedCrafter_INVCLICK(InventoryClickEvent event)
+	{
+		if(event.getClickedInventory().getItem(event.getSlot()) != null && event.getClickedInventory().getItem(event.getSlot()).getType() == Material.RED_STAINED_GLASS_PANE)
+		{
+			if(event.getClickedInventory().getItem(event.getSlot()).hasItemMeta()  && event.getClickedInventory().getItem(event.getSlot()).getItemMeta().hasDisplayName())
+			{
+				if(event.getClickedInventory().getItem(event.getSlot()).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.WHITE + ""))
+				{
+					event.setCancelled(true);
+					return;
+				}
+			}
+		}
+		
+		if(event.getClickedInventory().getItem(0) != null && event.getClickedInventory().getItem(0).getType() == Material.GREEN_STAINED_GLASS_PANE)
+		{
+			if(event.getClickedInventory().getItem(0).hasItemMeta()  && event.getClickedInventory().getItem(0).getItemMeta().hasDisplayName())
+			{
+				if(event.getClickedInventory().getItem(0).getItemMeta().getDisplayName().equalsIgnoreCase(ChatColor.WHITE + ""))
+				{
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
 	
 	//When the player opens an ice box inventory.
 	@EventHandler
@@ -448,6 +490,20 @@ public class ItemEvents implements Listener {
 	}
 	
 	@EventHandler
+	public void ClickToViewPatternItem(InventoryClickEvent event)
+	{
+		ItemStack is = event.getClickedInventory().getItem(event.getSlot());
+		if(is != null && is.getType() == Material.CRAFTING_TABLE && is.hasItemMeta() && is.getItemMeta().hasCustomModelData() && is.getItemMeta().getCustomModelData() == 1523)
+		{
+			Inventory inv = Bukkit.createInventory(event.getWhoClicked(), 9 * 5);
+			
+			AdvancedCrafter.GenCraftingView(inv, Integer.parseInt(is.getItemMeta().getLore().get(0)));
+			
+			event.getWhoClicked().openInventory(inv);
+		}
+	}
+	
+	@EventHandler
 	public void AnyHeadItem(InventoryClickEvent event)
 	{
 		if(event.getClickedInventory().getType() == InventoryType.PLAYER)
@@ -578,6 +634,24 @@ public class ItemEvents implements Listener {
 							return;
 						}
 					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void InventoryViewEdit(InventoryClickEvent event)
+	{
+		ItemStack dispItem = event.getClickedInventory().getItem(event.getClickedInventory().getSize() - 1);
+		if(dispItem != null && dispItem.getType() == Material.CHEST)
+		{
+			if(dispItem.hasItemMeta())
+			{
+				if(dispItem.getItemMeta().hasCustomModelData() && dispItem.getItemMeta().getCustomModelData() == 1502)
+				{
+					Player p = Bukkit.getPlayer(dispItem.getItemMeta().getDisplayName().replace(ChatColor.WHITE + "Viewing Inventory: ", ""));
+					
+					p.getInventory().setItem(event.getSlot(), event.getWhoClicked().getItemOnCursor());
 				}
 			}
 		}
@@ -766,7 +840,7 @@ public class ItemEvents implements Listener {
 		float prevDeg = 0;
 		prevDeg += deg;
 		
-		if(cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[3].getName().toLowerCase()))
+		if(!(cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[2].getName().toLowerCase()) || cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[1].getName().toLowerCase()) || cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[0].getName().toLowerCase())))
 		{
 			if(require4) {if(stands.size() < 6 && as.getLocation().getYaw() == 0) {return;}}
 		}else {
@@ -791,12 +865,19 @@ public class ItemEvents implements Listener {
 			stand.teleport(newloc);
 		}
 		
+		boolean doPlaceAfter = false;
+		
 		if(prevDeg > 1000)
 		{
 			if(stands.size() == 1)
 			{
 				as.setRotation(0, 0);
 				as.setCustomName("0");
+				
+				if(level > 7)
+				{
+					doPlaceAfter = true;
+				}
 			}else {
 				as.setCustomName("1");
 			}
@@ -828,6 +909,40 @@ public class ItemEvents implements Listener {
 			}
 			
 			stands.get(0).remove();
+			
+			if(doPlaceAfter)
+			{
+				if(b.getRelative(BlockFace.UP).getType() == Material.HOPPER)
+				{
+					Hopper h = (Hopper)b.getRelative(BlockFace.UP).getState();
+					
+					if(((Directional)h.getBlockData()).getFacing() == BlockFace.DOWN)
+					{
+						int itemsPlaced = 0;
+						int nullItems = 0;
+						while(itemsPlaced < 6 && nullItems < 5) {
+							for(ItemStack isc : h.getInventory())
+							{
+								if(isc != null && isc.getType() != Material.AIR)
+								{
+									placeItemOnCentrifuge(isc.clone(), b, cis, level);
+									itemsPlaced++;
+									
+									if(isc.getAmount() == 1)
+									{
+										isc.setType(Material.AIR);
+									}else {
+										isc.setAmount(isc.getAmount() - 1);
+									}
+								}else {
+									nullItems++;
+								}
+							}
+							nullItems = 0;
+						}
+					}
+				}
+			}
 		}
 	}
 	

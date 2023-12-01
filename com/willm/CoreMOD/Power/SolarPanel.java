@@ -37,7 +37,7 @@ public class SolarPanel extends EnergyCompatible {
 			}
 		}
 		
-		AddEnergy(3, loc);
+		AddEnergy(5, loc);
 		
 		for(BlockFace bf : checkFaces)
 		{
@@ -46,7 +46,7 @@ public class SolarPanel extends EnergyCompatible {
 			{
 				if(ec.GetBlockRef().CheckForCustomBlock(b))
 				{
-					ec.AddEnergy(RemoveEnergy(1, loc), b.getLocation());
+					ec.AddEnergy(RemoveEnergy(2, loc), b.getLocation());
 				}
 			}
 		}
