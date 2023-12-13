@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -35,9 +36,13 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import com.willm.CoreMOD.Shopping.Currency;
 import com.willm.CoreMOD.Shopping.PlotProtector;
@@ -72,6 +77,210 @@ public class BlockEvents implements Listener {
 	{
 		//event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1XgWVqLBBOBcxbI0-LTy92Cuh0HlU11Tb");
 	}
+	
+	ArrayList<Inventory> teleportInventories = new ArrayList<Inventory>();
+	
+	@EventHandler
+	public void TeleportInventoryHandling(InventoryClickEvent event)
+	{
+		if(teleportInventories.contains(event.getClickedInventory()))
+		{
+			ItemStack is = event.getClickedInventory().getItem(event.getSlot());
+			
+			if(is != null && is.hasItemMeta() && is.getItemMeta().hasDisplayName())
+			{
+				String coords = is.getItemMeta().getDisplayName().replace(ChatColor.GREEN + "", "");
+				int x = Integer.parseInt(coords.split(", ")[0]);
+				int y = Integer.parseInt(coords.split(", ")[1]);
+				int z = Integer.parseInt(coords.split(", ")[2]);
+
+				World w = Bukkit.getWorld(coords.split(", ")[3]);
+				
+				Location loc = new Location(w, x, y, z);
+
+					final Player p = (Player)event.getWhoClicked();
+					final Location pOg = p.getLocation().clone();
+					
+					p.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 100, 1, true));
+
+					for(int i = 0; i < 100; i++)
+					{
+						final int rate = i;
+						
+						Bukkit.getScheduler().scheduleSyncDelayedTask(Main.INSTANCE, new Runnable() {
+
+							@Override
+							public void run() {
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tp " + p.getName() + " " + p.getLocation().getX() + " " + p.getLocation().getY() + " " + p.getLocation().getZ() + " " + (p.getLocation().getYaw() + ((rate > 60 ? 60 : rate) * 3)) + " " + p.getLocation().getPitch());
+								
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at " + p.getName() + " run particle minecraft:happy_villager ~ ~1 ~ 0.5 2 0.5 1 5 normal");
+								Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at " + p.getName() + " run particle minecraft:sonic_boom ~ ~ ~ 0.5 1 0.5 1 2 normal");
+
+								if(rate > 70)
+								{
+									
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at " + p.getName() + " run particle minecraft:explosion ~ ~ ~ 1.75 1.75 1.75 1 7 normal");
+									p.getWorld().createExplosion(p.getLocation(), 0f, false, false);
+								}
+								
+								if(rate > 60)
+								{
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at " + p.getName() + " run particle minecraft:electric_spark ~ ~1 ~ 0.5 2 0.5 0.75 10 normal");
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "execute at " + p.getName() + " run particle minecraft:campfire_signal_smoke ~ ~1 ~ 0.5 2 0.5 0 5 normal");
+									p.setVelocity(new Vector(p.getVelocity().getX(), rate/20, p.getVelocity().getZ()));
+								}
+								
+								if(rate > 95)
+								{
+									p.getWorld().strikeLightningEffect(p.getLocation());
+								}
+							}	
+							
+						}, i);
+					}
+					
+					Bukkit.getScheduler().scheduleSyncDelayedTask(Main.INSTANCE, new Runnable() {
+
+						@Override
+						public void run() {
+							Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "particle minecraft:campfire_signal_smoke " + loc.getX() + " " + loc.getY() + " " + loc.getZ() + " 0.5 2 0.5 0 5 normal");
+							p.getWorld().strikeLightningEffect(loc);
+
+							p.teleport(loc);
+						}	
+						
+					}, 118);
+					
+				
+								
+				event.getWhoClicked().closeInventory();
+				teleportInventories.remove(event.getClickedInventory());
+			}
+			
+			event.setCancelled(true);
+		}
+	}
+	
+	@EventHandler
+	public void TeleportPadHandling(PlayerInteractEvent event)
+	{
+		if(event.getAction() == Action.RIGHT_CLICK_AIR && event.getItem() != null)
+		{
+			if(MyItems.teleport_remote.CheckForCustomItem(event.getItem()) && event.getItem().hasItemMeta() && event.getItem().getItemMeta().hasLore())
+			{
+				Inventory chooseTeleportInventory = Bukkit.createInventory(event.getPlayer(), 18, "Choose Location");
+				
+				for(String s : event.getItem().getItemMeta().getLore())
+				{
+					if(s.startsWith(ChatColor.DARK_AQUA + "")) {continue;}
+					
+					String coords = s.replace(ChatColor.GREEN + "", "");
+					int x = Integer.parseInt(coords.split(", ")[0]);
+					int y = Integer.parseInt(coords.split(", ")[1]);
+					int z = Integer.parseInt(coords.split(", ")[2]);
+
+					World w = Bukkit.getWorld(coords.split(", ")[3]);
+					
+					Location loc = new Location(w, x, y, z);
+					
+					
+					CustomItemStack displayItem = new CustomItemStack(s, loc.getBlock().getRelative(BlockFace.DOWN).getType() == Material.AIR ? Material.COMPASS : loc.getBlock().getRelative(BlockFace.DOWN).getType(), 0);
+					
+					
+					chooseTeleportInventory.addItem(displayItem.AddLoreLine(ChatColor.YELLOW + "Click to teleport.").GetMyItemStack());
+				}
+				
+				teleportInventories.add(chooseTeleportInventory);
+				event.getPlayer().openInventory(chooseTeleportInventory);
+			}
+			
+			return;
+		}
+		
+		if(event.getAction() == Action.LEFT_CLICK_BLOCK) {return;}
+		
+		if(event.getClickedBlock() != null)
+		{
+			if(MyItems.teleport_block.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+			{
+				event.setCancelled(true);
+			}
+		}
+		
+		if(event.getItem() != null)
+		{
+		
+			
+			if(MyItems.teleport_remote.CheckForCustomItem(event.getItem()))
+			{
+				ItemMeta m = event.getItem().getItemMeta();
+
+				if(m.hasLore())
+				{
+					List<String> pudLore = new ArrayList<String>();
+					for(String s : m.getLore())
+					{
+						if(s.startsWith(ChatColor.DARK_AQUA + "")) {pudLore.add(s);continue;}
+						String coords = s.replace(ChatColor.GREEN + "", "");
+						int x = Integer.parseInt(coords.split(", ")[0]);
+						int y = Integer.parseInt(coords.split(", ")[1]);
+						int z = Integer.parseInt(coords.split(", ")[2]);
+
+						World w = Bukkit.getWorld(coords.split(", ")[3]);
+						
+						Location loc = new Location(w, x, y, z);
+						
+						if(MyItems.teleport_block.getRelatedBlock().CheckForCustomBlock(loc.getBlock()))
+						{
+							pudLore.add(s);
+						}
+					}
+					
+					m.setLore(pudLore);
+				}
+				
+				if(event.getClickedBlock() != null)
+				{
+					if(MyItems.teleport_block.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+					{
+						
+						List<String> lore = m.hasLore() ? m.getLore() : new ArrayList<String>();
+						
+						String loc = ChatColor.GREEN + "" + event.getClickedBlock().getX() + ", " + event.getClickedBlock().getY() + ", " + event.getClickedBlock().getZ() + ", " + event.getClickedBlock().getWorld().getName();
+						
+						if(lore.contains(loc))
+						{
+							return;
+						}
+						
+						lore.add(loc);
+						
+						m.setLore(lore);
+						event.getItem().setItemMeta(m);
+					}
+				}
+			}else {
+				if(event.getClickedBlock() != null)
+				{
+					if(MyItems.teleport_block.getRelatedBlock().CheckForCustomBlock(event.getClickedBlock()))
+					{
+						ArmorStand as = MyItems.teleport_block.getRelatedBlock().GetMyStand(event.getClickedBlock());
+						
+						ItemStack helm = as.getEquipment().getHelmet();
+						
+						ItemMeta helm_meta = helm.getItemMeta();
+						
+						helm_meta.setDisplayName("ITEM_" + event.getItem().getType().toString() + " " + ((event.getItem().hasItemMeta() && event.getItem().getItemMeta().hasCustomModelData()) ? event.getItem().getItemMeta().getCustomModelData() : 0));
+						
+						helm.setItemMeta(helm_meta);
+						
+						as.getEquipment().setHelmet(helm);
+					}
+				}
+			}
+		}
+	}
+	
 	
 	@EventHandler
 	public void ChestLock(PlayerInteractEvent event)
@@ -686,7 +895,7 @@ public class BlockEvents implements Listener {
 				if(event.getItem() != null) {
 					if(troughMats.contains(event.getItem().getType()))
 					{
-						if(event.getItem().getAmount() >= 32)
+						if(event.getItem().getAmount() >= 24)
 						{
 							FeedingTrough ft = (FeedingTrough)MyItems.manual_feeding_trough.getRelatedBlock();
 							ArmorStand as = ft.GetMyStand(event.getClickedBlock());
@@ -695,7 +904,7 @@ public class BlockEvents implements Listener {
 							{
 								ft.SetFillLevel(as, lvl + 1);
 								
-								RemoveOrSubtractFromPlayersHand(event.getPlayer(), 32);
+								RemoveOrSubtractFromPlayersHand(event.getPlayer(), 24);
 							}
 						}
 					}
@@ -715,9 +924,12 @@ public class BlockEvents implements Listener {
 			if(event.getItem() == null) {return;}
 			if(event.getItem().getType().toString().contains("AXE") && !event.getItem().getType().toString().contains("PICKAXE"))
 			{
-				if(event.getClickedBlock().getType().toString().contains("LOG") || event.getClickedBlock().getType().toString().contains("WOOD") || event.getClickedBlock().getType().toString().contains("STEM") || event.getClickedBlock().getType().toString().contains("HYPHAE"))
+				if(new Random().nextInt(101) < 33)
 				{
-					event.setCancelled(true);
+					if(event.getClickedBlock().getType().toString().contains("LOG") || event.getClickedBlock().getType().toString().contains("WOOD") || event.getClickedBlock().getType().toString().contains("STEM") || event.getClickedBlock().getType().toString().contains("HYPHAE"))
+					{
+						event.setCancelled(true);
+					}
 				}
 			}
 		}

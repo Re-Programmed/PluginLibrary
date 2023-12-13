@@ -164,13 +164,13 @@ public class MyItems {
 	
 	public static CustomItemStack manual_feeding_trough, enforced_strut;
 	
-	public static CustomItemStack high_carbon_steel;
+	public static CustomItemStack high_carbon_steel, high_carbon_steel_rod;
 	
 	public static CustomItemStack lens, combustion_acceleration_chamber;
 	
 	public static CustomItemStack cobalt_ingot;
 	
-	public static CustomItemStack lead_ore, lead_ingot, lead_powder, bismuth, lead_bullion, zinc_lead_alloy, pure_lead_powder;
+	public static CustomItemStack lead_ore, lead_ingot, lead_powder, bismuth, lead_bullion, zinc_lead_alloy, pure_lead_powder, lead_padlock;
 	
 	public static HashMap<Integer, ItemStack> GlassJarConversions = new HashMap<Integer, ItemStack>();
 	public static HashMap<ItemStack, CustomBlock> GlassJarInserts = new HashMap<ItemStack, CustomBlock>();
@@ -179,7 +179,9 @@ public class MyItems {
 
 	public static CustomItemStack iron_dish, tubing, tubing_cap, tubing_pump, tubing_component;
 		
-	public static CustomItemStack redstone_dish;
+	public static CustomItemStack redstone_dish, lapis_dish;
+	
+	public static CustomItemStack hinge, brass;
 	
 	public static void RegisterMyItems() {
 		
@@ -427,7 +429,7 @@ public class MyItems {
 		galvanisedNetheriteSword.getRecipe(1, "GGG", "GSG", "GGG", "craft_gal_n_sword").AddMaterial('G', RecipeBuilder.ItemStackInput(galvanisedSteel)).AddMaterial('S', Material.NETHERITE_SWORD).Finalize();
 		
 		
-		CustomItemStack brass = ItemCreator.RegisterNewItem(new CustomItemStack("Brass Ingot", Material.IRON_INGOT, 11001));
+		brass = ItemCreator.RegisterNewItem(new CustomItemStack("Brass Ingot", Material.IRON_INGOT, 11001));
 		Bukkit.getServer().addRecipe(brass.GenUnshaped("brass_ingot_craft").addIngredient(RecipeBuilder.ItemStackInput(zinc)).addIngredient(RecipeBuilder.ItemStackInput(tungsten_ingot)));
 		trumpet = ItemCreator.RegisterNewItem(new CustomItemStack("Trumpet", Material.IRON_SWORD, 60001)); 
 		trumpet.getRecipe(1, "IBB", "B B", "BBB").AddMaterial('I', Material.IRON_INGOT).AddMaterial('B', RecipeBuilder.ItemStackInput(brass)).Finalize();
@@ -445,7 +447,7 @@ public class MyItems {
 		screw.getRecipe(10, "MMM", "M M", "MMM", "brass_screw").AddMaterial('M', RecipeBuilder.ItemStackInput(brass)).Finalize();
 		screw.getRecipe(10, "MMM", "M M", "MMM", "steel_screw").AddMaterial('M', RecipeBuilder.ItemStackInput(steel)).Finalize();
 
-		CustomItemStack hinge = ItemCreator.RegisterNewItem(new CustomItemStack("Hinge", Material.RED_DYE, 10001));
+		hinge = ItemCreator.RegisterNewItem(new CustomItemStack("Hinge", Material.RED_DYE, 10001));
 		hinge.getRecipe(5, "SBS", " B ", "SBS").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('B', RecipeBuilder.ItemStackInput(brass)).Finalize();
 		
 		CustomItemStack casing = ItemCreator.RegisterNewItem(new CustomItemStack("Casing", Material.GOLD_BLOCK, 10005));
@@ -499,7 +501,7 @@ public class MyItems {
 		crusher.GetBlockRef().getRootItem().getRecipe(1, "ZCZ", "cFc", "ZCZ", "crusher_craft").AddMaterial('Z', RecipeBuilder.ItemStackInput(zinc)).AddMaterial('C', RecipeBuilder.ItemStackInput(casing)).AddMaterial('F', RecipeBuilder.ItemStackInput(netherite_core)).AddMaterial('c', Material.PISTON).Finalize();
 
 		//HIHGH CARBON STEEL ROD
-			CustomItemStack high_carbon_steel_rod = ItemCreator.RegisterNewItem(new CustomItemStack("High Carbon Steel Rod", Material.IRON_INGOT, 15005));
+			high_carbon_steel_rod = ItemCreator.RegisterNewItem(new CustomItemStack("High Carbon Steel Rod", Material.IRON_INGOT, 15005));
 			high_carbon_steel_rod.getRecipe(4, "S", "I", "S").AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('I', RecipeBuilder.ItemStackInput(high_carbon_steel)).Finalize();
 		
 		//WINDOW SHADE
@@ -784,7 +786,6 @@ public class MyItems {
 			combustion_acceleration_chamber = ItemCreator.RegisterNewItem(new CustomItemStack("Combustion Acceleration Chamber", Material.IRON_INGOT, 61208));
 			combustion_acceleration_chamber.getRecipe(1, "SCS", "HBG", "SCS").AddMaterial('S', RecipeBuilder.ItemStackInput(steel_ingot)).AddMaterial('C', RecipeBuilder.ItemStackInput(high_carbon_steel)).AddMaterial('H', RecipeBuilder.ItemStackInput(hinge)).AddMaterial('B', Material.BUCKET).AddMaterial('G', RecipeBuilder.ItemStackInput(diesel)).Finalize();
 			
-			WorkbenchItemRegistry.Register();
 			
 			//Shopping addon
 			Currency.RegisterCoins();
@@ -804,6 +805,8 @@ public class MyItems {
 			
 			CustomItemStack padlock = ItemCreator.RegisterNewItem(new CustomItemStack("Lead Padlock", Material.GOLD_INGOT, 11001));
 			padlock.getRecipe(2, "PPP", "S S", "HLH").AddMaterial('P', RecipeBuilder.ItemStackInput(platinum_ingot)).AddMaterial('S', RecipeBuilder.ItemStackInput(screw)).AddMaterial('H', RecipeBuilder.ItemStackInput(hinge)).AddMaterial('L', RecipeBuilder.ItemStackInput(lead_ingot)).Finalize();
+			
+			lead_padlock = padlock;
 			
 			//ChestLock.CHEST_LOCK.getRecipe(2, "PPP", "PpP", "PPP").AddMaterial('P', RecipeBuilder.MultiMaterialInput(Material.OAK_PLANKS, Material.DARK_OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS, Material.ACACIA_PLANKS, Material.CHERRY_PLANKS, Material.BAMBOO_PLANKS, Material.WARPED_PLANKS, Material.JUNGLE_PLANKS, Material.CRIMSON_PLANKS)).AddMaterial('p', RecipeBuilder.ItemStackInput(padlock)).Finalize();
 			
@@ -836,7 +839,7 @@ public class MyItems {
 			advanced_crafter = ItemCreator.RegisterNewItem(new CustomItemStack("Industrial Crafter", Material.DARK_OAK_LOG, 53043));
 			advanced_crafter.getRecipe(1, "CMC", "McM", "CMC").AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('M', RecipeBuilder.ItemStackInput(electronic_gearshift)).AddMaterial('c', Material.CRAFTING_TABLE).Finalize();
 			
-			BlockCreator.RegisterNewBlock(advanced_crafter);
+			BlockCreator.RegisterNewBlock(advanced_crafter).SetDirectional(BlockDirectionData.PLAYER_RELATIVE);
 			
 			PPItems();
 			
@@ -849,7 +852,20 @@ public class MyItems {
 			AdvancedCrafter.RegisterRecipes();
 
 			SaltPile.RegisterItem();
+			
+			WorkbenchItemRegistry.Register();
+			
+			teleport_block = ItemCreator.RegisterNewItem(new CustomItemStack("Teleport Pad", Material.WARPED_TRAPDOOR, 15651));
+			BlockCreator.RegisterNewBlock(teleport_block, new CustomBaseMaterialRetainingBlock(teleport_block));
+			
+			teleport_block.getRecipe(1, "TTT", "CCR", "tSS").AddMaterial('T', RecipeBuilder.ItemStackInput(tungsten_block)).AddMaterial('C', RecipeBuilder.ItemStackInput(capacitor)).AddMaterial('R', RecipeBuilder.ItemStackInput(resistor)).AddMaterial('t', RecipeBuilder.ItemStackInput(tubing_cap)).AddMaterial('S', RecipeBuilder.ItemStackInput(steel_ingot)).Finalize();
+			
+			teleport_remote = ItemCreator.RegisterNewItem(new CustomItemStack("Teleport Remote", Material.GREEN_DYE, 16612)).AddLoreLine(ChatColor.DARK_AQUA + "Right click a teleport pad to add it as a link.").AddLoreLine(ChatColor.DARK_AQUA + "Right clicking with this item will open the teleport menu.").AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS);
+			
+			teleport_remote.getRecipe(1, "LWL", "LCL", "DID").AddMaterial('L', RecipeBuilder.ItemStackInput(lead_ingot)).AddMaterial('W', RecipeBuilder.ItemStackInput(wireless_redstone_activator)).AddMaterial('C', RecipeBuilder.ItemStackInput(photovoltaic_cell)).AddMaterial('D', Material.DIAMOND).AddMaterial('I', RecipeBuilder.ItemStackInput(capacitor)).Finalize();
 	}
+	
+	public static CustomItemStack teleport_block, teleport_remote;
 
 	public static CustomItemStack baguette, baguette_b1, baguette_b2;
 	
@@ -951,7 +967,7 @@ public class MyItems {
 		}
 	}
 	
-	public static CustomItemStack[] centrifuge_tops = new CustomItemStack[8];
+	public static CustomItemStack[] centrifuge_tops = new CustomItemStack[16];
 	
 	public static CustomItemStack[] centrifuge_engines = new CustomItemStack[2];
 	
@@ -959,6 +975,12 @@ public class MyItems {
 
 	private static void CentrifugeRegistry()
 	{
+		
+		redstone_dish = ItemCreator.RegisterNewItem(new CustomItemStack("Redstone Dish", Material.REDSTONE, 10001));
+		redstone_dish.getRecipe(1, " B ", "B B", " B ").AddMaterial('B', Material.REDSTONE_BLOCK).Finalize();
+		lapis_dish = ItemCreator.RegisterNewItem(new CustomItemStack("Lapis Dish", Material.LAPIS_LAZULI, 10001));
+		lapis_dish.getRecipe(1, " B ", "B B", " B ").AddMaterial('B', Material.LAPIS_BLOCK).Finalize();
+
 		CustomItemStack wooden_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Wooden Centrifuge Top", Material.WARPED_TRAPDOOR, 90011));
 		BlockCreator.RegisterNewBlock(wooden_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(wooden_centrifuge_top));
 		
@@ -1014,10 +1036,10 @@ public class MyItems {
 		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.REDSTONE), 50.0f, 3, 5)); //5%
 		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.RAW_GOLD), 30.0f, 3, 5)); //3%
 		
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, new ItemStack(Material.GLASS), 120.0f, 3, 9)); //12%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, MyItems.titanium_ore.GetMyItemStack(), 60.0f, 3, 9)); //6%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, new ItemStack(Material.GLASS), 120.0f, 3, 11)); //12%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, MyItems.titanium_ore.GetMyItemStack(), 60.0f, 3, 11)); //6%
 		
-		centrifugeRecipes.add(new BasicChanceCentrifugeCustomRecipe(salt_water, salt_item.GetMyItemStack(), 750.0f, 3, 9)); //75%
+		centrifugeRecipes.add(new BasicChanceCentrifugeCustomRecipe(salt_water, salt_item.GetMyItemStack(), 750.0f, 3, 11)); //75%
 		
 		CustomItemStack iron_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Iron Centrifuge Top", Material.WARPED_TRAPDOOR, 90013));
 		
@@ -1044,47 +1066,47 @@ public class MyItems {
 
 		centrifuge_tops[3] = gold_centrifuge_top;
 		
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, sludge.GetAmountClone(1), 300.0f, 5, 9));	//40%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.MOSS_BLOCK, sludge.GetAmountClone(1), 300.0f, 5, 9));	//40%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, new ItemStack(Material.CHARCOAL), 125.0f, 5, 9));	//25%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, zinc.GetAmountClone(1), 50.0f, 5, 9));	//5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, sludge.GetAmountClone(1), 300.0f, 5, 12));	//40%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.MOSS_BLOCK, sludge.GetAmountClone(1), 300.0f, 5, 12));	//40%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, new ItemStack(Material.CHARCOAL), 125.0f, 5, 12));	//25%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, zinc.GetAmountClone(1), 50.0f, 5, 12));	//5%
 
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, bauxite.GetAmountClone(1), 300.0f, 5, 9));	//30%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, new ItemStack(Material.FLINT), 300.0f, 5, 9));	//30%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.CLAY_BALL, zinc.GetAmountClone(1), 75.0f, 5, 9));	//15%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.COAL), 164.0f, 5, 9)); //45%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.iron_dust.GetAmountClone(2), 75.0f, 5, 9)); //10%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.emerald_dust.GetAmountClone(1), 44.0f, 5, 9)); //7.5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.REDSTONE, 3), 95.0f, 5, 9)); //7.5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.gold_dust.GetAmountClone(2), 35.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.lapis_dust.GetAmountClone(5), 50.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.diamond_dust.GetAmountClone(1), 0.02f, 5, 9)); //0.002%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.wolframite_dust.GetAmountClone(2), 50.0f, 5, 9)); //7.5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.titanium_dust.GetAmountClone(2), 45.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.platinum_dust.GetAmountClone(2), 38.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, crude_oil_deposit.GetMyItemStack(), 25.0f, 5, 9)); //2.5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, new ItemStack(Material.COAL), 164.0f, 5, 9)); //45%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.iron_dust.GetAmountClone(2), 75.0f, 5, 9)); //10%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, new ItemStack(Material.REDSTONE, 3), 95.0f, 5, 9)); //7.5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.gold_dust.GetAmountClone(2), 35.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.lapis_dust.GetAmountClone(5), 50.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.diamond_dust.GetAmountClone(1), 0.02f, 5, 9)); //0.002%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.wolframite_dust.GetAmountClone(2), 50.0f, 5, 9)); //7.5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.emerald_dust.GetAmountClone(1), 45.0f, 5, 9)); //7.5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.titanium_dust.GetAmountClone(2), 40.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.platinum_dust.GetAmountClone(2), 35.0f, 5, 9)); //5%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, crude_oil_deposit.GetMyItemStack(), 20.0f, 5, 9)); //2.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, bauxite.GetAmountClone(1), 300.0f, 5, 12));	//30%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, new ItemStack(Material.FLINT), 300.0f, 5, 12));	//30%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.CLAY_BALL, zinc.GetAmountClone(1), 75.0f, 5, 12));	//15%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.COAL), 164.0f, 5, 12)); //45%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.iron_dust.GetAmountClone(2), 75.0f, 5, 12)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.emerald_dust.GetAmountClone(1), 44.0f, 5, 12)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.REDSTONE, 3), 95.0f, 5, 12)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.gold_dust.GetAmountClone(2), 35.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.lapis_dust.GetAmountClone(5), 50.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.diamond_dust.GetAmountClone(1), 0.02f, 5, 12)); //0.002%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.wolframite_dust.GetAmountClone(2), 50.0f, 5, 12)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.titanium_dust.GetAmountClone(2), 45.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.platinum_dust.GetAmountClone(2), 38.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, crude_oil_deposit.GetMyItemStack(), 25.0f, 5, 12)); //2.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, new ItemStack(Material.COAL), 164.0f, 5, 12)); //45%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.iron_dust.GetAmountClone(2), 75.0f, 5, 12)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, new ItemStack(Material.REDSTONE, 3), 95.0f, 5, 12)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.gold_dust.GetAmountClone(2), 35.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.lapis_dust.GetAmountClone(5), 50.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.diamond_dust.GetAmountClone(1), 0.02f, 5, 12)); //0.002%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.wolframite_dust.GetAmountClone(2), 50.0f, 5, 12)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.emerald_dust.GetAmountClone(1), 45.0f, 5, 12)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.titanium_dust.GetAmountClone(2), 40.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.platinum_dust.GetAmountClone(2), 35.0f, 5, 12)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, crude_oil_deposit.GetMyItemStack(), 20.0f, 5, 12)); //2.5%
 		
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.ANDESITE, Crusher.gold_dust.GetAmountClone(2), 180.0f, 5, 9)); //20%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIORITE, Crusher.iron_dust.GetAmountClone(2), 225.0f, 5, 9)); //30%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRANITE, new ItemStack(Material.REDSTONE, 2), 525.0f, 5, 9)); //66.6%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.RED_SAND, new ItemStack(Material.REDSTONE, 2), 525.0f, 5, 9)); //66.6%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.TUFF, Crusher.wolframite_dust.GetAmountClone(2), 200.0f, 5, 9)); //35%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SANDSTONE, Crusher.titanium_dust.GetAmountClone(1), 60.0f, 5, 9)); //10%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.RED_SANDSTONE, Crusher.titanium_dust.GetAmountClone(1), 60.0f, 5, 9)); //10%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.CALCITE, Crusher.platinum_dust.GetAmountClone(1), 165.0f, 5, 9)); //25%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DRIPSTONE_BLOCK, MyItems.crude_oil_deposit.GetAmountClone(1), 100.0f, 5, 9)); //10%
-		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.POINTED_DRIPSTONE, MyItems.crude_oil_deposit.GetAmountClone(1), 200.0f, 5, 9)); //20%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.ANDESITE, Crusher.gold_dust.GetAmountClone(2), 180.0f, 5, 12)); //20%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIORITE, Crusher.iron_dust.GetAmountClone(2), 225.0f, 5, 12)); //30%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRANITE, new ItemStack(Material.REDSTONE, 2), 525.0f, 5, 12)); //66.6%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.RED_SAND, new ItemStack(Material.REDSTONE, 2), 525.0f, 5, 12)); //66.6%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.TUFF, Crusher.wolframite_dust.GetAmountClone(2), 200.0f, 5, 12)); //35%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SANDSTONE, Crusher.titanium_dust.GetAmountClone(1), 60.0f, 5, 12)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.RED_SANDSTONE, Crusher.titanium_dust.GetAmountClone(1), 60.0f, 5, 12)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.CALCITE, Crusher.platinum_dust.GetAmountClone(1), 165.0f, 5, 12)); //25%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DRIPSTONE_BLOCK, MyItems.crude_oil_deposit.GetAmountClone(1), 100.0f, 5, 12)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.POINTED_DRIPSTONE, MyItems.crude_oil_deposit.GetAmountClone(1), 200.0f, 5, 12)); //20%
 
 		CustomItemStack copper_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Copper Centrifuge Top", Material.WARPED_TRAPDOOR, 90015));
 		List<String> lore = new ArrayList<String>();
@@ -1125,13 +1147,11 @@ public class MyItems {
 		centrifuge_tops[6] = aluminum_centrifuge_top;
 		
 		aluminum_centrifuge_top.getRecipe(1, "AaA", "SBS", "AaA").AddMaterial('A', RecipeBuilder.ItemStackInput(MyItems.aluminum_alloy)).AddMaterial('a', RecipeBuilder.ItemStackInput(aluminum)).AddMaterial('S', RecipeBuilder.ItemStackInput(steel_rod)).AddMaterial('B', RecipeBuilder.ItemStackInput(centrifuge_tops[5])).Finalize();
-		
-		redstone_dish = ItemCreator.RegisterNewItem(new CustomItemStack("Redstone Dish", Material.REDSTONE, 10001));
-		redstone_dish.getRecipe(1, " B ", "B B", " B ").AddMaterial('B', Material.REDSTONE_BLOCK).Finalize();
+
 		
 		CustomItemStack redstone_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Redstone Centrifuge Top", Material.WARPED_TRAPDOOR, 90018));
 		lore = new ArrayList<String>();
-		lore.add(ChatColor.GREEN + "Works with hoppers.");
+		lore.add(ChatColor.GREEN + "Works with input hopper.");
 		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
 		lore.add(ChatColor.YELLOW + "Accepts: ");
 		lore.addAll(GenerateCentrifugeAcceptsLore(8));
@@ -1141,6 +1161,165 @@ public class MyItems {
 		
 		centrifuge_tops[7] = redstone_centrifuge_top;
 		
+		
+		CustomItemStack lapis_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Lapis Centrifuge Top", Material.WARPED_TRAPDOOR, 90019));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.GREEN + "Works with input hopper.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(9));
+		lapis_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(lapis_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(lapis_centrifuge_top));
+		
+		centrifuge_tops[8] = lapis_centrifuge_top;
+		
+		CustomItemStack brass_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Brass Centrifuge Top", Material.WARPED_TRAPDOOR, 90020));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.GREEN + "Works with input & output hoppers.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(10));
+		brass_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(brass_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(brass_centrifuge_top));
+		
+		centrifuge_tops[9] = brass_centrifuge_top;
+		
+		
+		CustomItemStack platinum_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Platinum Centrifuge Top", Material.WARPED_TRAPDOOR, 90021));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.YELLOW + "Output Multiplier: 1.2x");
+		lore.add(ChatColor.GREEN + "Works with input & output hoppers.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(11));
+		platinum_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(platinum_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(platinum_centrifuge_top));
+		
+		centrifuge_tops[10] = platinum_centrifuge_top;
+		
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.NETHERRACK, lead_powder.GetAmountClone(1), 5.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.NETHERRACK, new ItemStack(Material.QUARTZ), 100.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.NETHERRACK, new ItemStack(Material.GOLD_INGOT), 55.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.NETHERRACK, new ItemStack(Material.COAL_BLOCK), 45.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.NETHERRACK, new ItemStack(Material.OBSIDIAN), 75.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SOUL_SAND, lead_powder.GetAmountClone(1), 10.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.MAGMA_BLOCK, MyItems.limestone_powder.GetAmountClone(6), 50.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.BLACKSTONE, MyItems.limestone_powder.GetAmountClone(6), 50.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.LAVA_BUCKET, new ItemStack(Material.OBSIDIAN), 800.0f, 11, 20));
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.LAVA_BUCKET, new ItemStack(Material.DIAMOND), 0.4f, 11, 20));
+
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, sludge.GetAmountClone(1), 600.0f, 11, 20));	//40%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.MOSS_BLOCK, sludge.GetAmountClone(1), 500.0f, 11, 20));	//40%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, new ItemStack(Material.CHARCOAL), 225.0f, 11, 20));	//25%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIRT, zinc.GetAmountClone(1), 250.0f, 11, 20));	//5%
+
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, bauxite.GetAmountClone(1), 500.0f, 11, 20));	//30%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRAVEL, new ItemStack(Material.FLINT), 500.0f, 11, 20));	//30%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.CLAY_BALL, zinc.GetAmountClone(1), 175.0f, 11, 20));	//15%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.COAL), 464.0f, 11, 20)); //45%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.iron_dust.GetAmountClone(2), 155.0f, 11, 20)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.emerald_dust.GetAmountClone(1), 64.0f, 11, 20)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, new ItemStack(Material.REDSTONE, 3), 200.0f, 11, 20)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.gold_dust.GetAmountClone(2), 50.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.lapis_dust.GetAmountClone(5), 75.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.diamond_dust.GetAmountClone(1), 0.4f, 11, 20)); //0.7%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.wolframite_dust.GetAmountClone(2), 100.0f, 11, 20)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.titanium_dust.GetAmountClone(2), 90.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, Crusher.platinum_dust.GetAmountClone(2), 90.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLESTONE, crude_oil_deposit.GetMyItemStack(), 40.0f, 11, 20)); //2.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, new ItemStack(Material.COAL), 264.0f, 11, 20)); //45%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.iron_dust.GetAmountClone(2), 175.0f, 11, 20)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, new ItemStack(Material.REDSTONE, 3), 195.0f, 11, 20)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.gold_dust.GetAmountClone(2), 75.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.lapis_dust.GetAmountClone(5), 100.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.diamond_dust.GetAmountClone(1), 0.4f, 11, 20)); //0.002%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.wolframite_dust.GetAmountClone(2), 100.0f, 11, 20)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.emerald_dust.GetAmountClone(1), 65.0f, 11, 20)); //7.5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.titanium_dust.GetAmountClone(2), 80.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, Crusher.platinum_dust.GetAmountClone(2), 80.0f, 11, 20)); //5%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.COBBLED_DEEPSLATE, crude_oil_deposit.GetMyItemStack(), 50.0f, 11, 20)); //2.5%
+		
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.ANDESITE, Crusher.gold_dust.GetAmountClone(2), 240.0f, 11, 20)); //20%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DIORITE, Crusher.iron_dust.GetAmountClone(2), 300.0f, 11, 20)); //30%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.GRANITE, new ItemStack(Material.REDSTONE, 2), 625.0f, 11, 20)); //66.6%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.RED_SAND, new ItemStack(Material.REDSTONE, 2), 625.0f, 11, 20)); //66.6%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SAND, MyItems.titanium_ore.GetAmountClone(1), 225.0f, 11, 20)); //66.6%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.TUFF, Crusher.wolframite_dust.GetAmountClone(2), 200.0f, 11, 20)); //35%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.SANDSTONE, Crusher.titanium_dust.GetAmountClone(1), 100.0f, 11, 20)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.RED_SANDSTONE, Crusher.titanium_dust.GetAmountClone(1), 100.0f, 11, 20)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.CALCITE, Crusher.platinum_dust.GetAmountClone(1), 165.0f, 11, 20)); //25%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.DRIPSTONE_BLOCK, MyItems.crude_oil_deposit.GetAmountClone(1), 120.0f, 11, 20)); //10%
+		centrifugeRecipes.add(new BasicChanceCentrifugeRecipe(Material.POINTED_DRIPSTONE, MyItems.crude_oil_deposit.GetAmountClone(1), 220.0f, 11, 20)); //20%
+		
+		CustomItemStack titanium_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack("Titanium Centrifuge Top", Material.WARPED_TRAPDOOR, 90022));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.YELLOW + "Output Multiplier: 1.5x");
+		lore.add(ChatColor.GREEN + "Works with input & output hoppers.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(12));
+		titanium_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(titanium_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(titanium_centrifuge_top));
+		
+		centrifuge_tops[11] = titanium_centrifuge_top;
+		
+		//NEW RECIPES
+		
+		CustomItemStack diamond_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack(ChatColor.AQUA + "" + ChatColor.BOLD + "Diamond Centrifuge Top", Material.WARPED_TRAPDOOR, 90023));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.YELLOW + "Output Multiplier: 2x");
+		lore.add(ChatColor.GREEN + "Works with input & output hoppers.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(13));
+		diamond_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(diamond_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(diamond_centrifuge_top));
+		
+		centrifuge_tops[12] = diamond_centrifuge_top;
+		
+		CustomItemStack lead_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack(ChatColor.BLUE + "" + ChatColor.BOLD + "Lead Centrifuge Top", Material.WARPED_TRAPDOOR, 90024));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.YELLOW + "Output Multiplier: 2.25x");
+		lore.add(ChatColor.GREEN + "Works with input & output hoppers.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(14));
+		lead_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(lead_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(lead_centrifuge_top));
+		
+		centrifuge_tops[13] = lead_centrifuge_top;
+		
+		CustomItemStack netherite_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack(ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "Netherite Centrifuge Top", Material.WARPED_TRAPDOOR, 90025));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.YELLOW + "Output Multiplier: 2.5x");
+		lore.add(ChatColor.GREEN + "Works with input & output hoppers.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(15));
+		netherite_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(netherite_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(netherite_centrifuge_top));
+		
+		centrifuge_tops[14] = netherite_centrifuge_top;
+		
+		CustomItemStack cobalt_centrifuge_top = ItemCreator.RegisterNewItem(new CustomItemStack(ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "" + ChatColor.UNDERLINE + "Cobalt Centrifuge Top", Material.WARPED_TRAPDOOR, 90026));
+		lore = new ArrayList<String>();
+		lore.add(ChatColor.YELLOW + "Output Multiplier: 3x");
+		lore.add(ChatColor.GREEN + "Works with input & output hoppers.");
+		lore.add(ChatColor.GRAY + "View recipes to see conversions...");
+		lore.add(ChatColor.YELLOW + "Accepts: ");
+		lore.addAll(GenerateCentrifugeAcceptsLore(16));
+		cobalt_centrifuge_top.SetLore(lore);
+		
+		BlockCreator.RegisterNewBlock(cobalt_centrifuge_top, new com.willm.ModAPI.Blocks.CustomStates.CustomBaseMaterialRetainingBlock(cobalt_centrifuge_top));
+		
+		centrifuge_tops[15] = cobalt_centrifuge_top;
 		
 		int i = 0;
 		for(CentrifugeRecipe cr : centrifugeRecipes)

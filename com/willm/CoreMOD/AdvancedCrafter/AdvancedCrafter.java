@@ -53,6 +53,119 @@ public class AdvancedCrafter {
 				new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
 				
 				MyItems.centrifuge_tops[7].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("0").GetMyItemStack()));
+		
+		//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//
+		
+		recipes.add(new AdvancedCrafterRecipe(MyItems.centrifuge_tops[8].GetAmountClone(1),
+				new AdvancedCrafterRecipeInput(MyItems.engine), new AdvancedCrafterRecipeInput(MyItems.tubing_cap), new AdvancedCrafterRecipeInput(MyItems.steel_ingot), new AdvancedCrafterRecipeInput(MyItems.tubing_cap), new AdvancedCrafterRecipeInput(Material.DIAMOND),
+				new AdvancedCrafterRecipeInput(MyItems.tubing_cap), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.tubing_cap),
+				new AdvancedCrafterRecipeInput(MyItems.steel_ingot), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.centrifuge_tops[7]), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.steel_ingot),
+				new AdvancedCrafterRecipeInput(MyItems.tubing_cap), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.lapis_dish), new AdvancedCrafterRecipeInput(MyItems.tubing_cap),
+				new AdvancedCrafterRecipeInput(Material.DIAMOND), new AdvancedCrafterRecipeInput(MyItems.tubing_cap), new AdvancedCrafterRecipeInput(MyItems.steel_ingot), new AdvancedCrafterRecipeInput(MyItems.tubing_cap), new AdvancedCrafterRecipeInput(MyItems.engine)
+			));
+			
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Industrial Crafting", MyItems.advanced_crafter.GetMyItemStack(), "advanced_crafting_lapis_centrifuge", Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					MyItems.centrifuge_tops[8].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("1").GetMyItemStack()));
+			
+			
+		//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//
+		
+		recipes.add(new AdvancedCrafterRecipe(MyItems.centrifuge_tops[9].GetAmountClone(1),
+				new AdvancedCrafterRecipeInput(MyItems.Casing), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.Casing),
+				new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.hinge), new AdvancedCrafterRecipeInput(MyItems.brass), new AdvancedCrafterRecipeInput(MyItems.hinge), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod),
+				new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.brass), new AdvancedCrafterRecipeInput(MyItems.centrifuge_tops[8]), new AdvancedCrafterRecipeInput(MyItems.brass), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod),
+				new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.hinge), new AdvancedCrafterRecipeInput(MyItems.brass), new AdvancedCrafterRecipeInput(MyItems.hinge), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod),
+				new AdvancedCrafterRecipeInput(MyItems.Casing), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel_rod), new AdvancedCrafterRecipeInput(MyItems.Casing)
+			));
+			
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Industrial Crafting", MyItems.advanced_crafter.GetMyItemStack(), "advanced_crafting_brass_centrifuge", Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					MyItems.centrifuge_tops[9].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("2").GetMyItemStack()));
+			
+		//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//
+		
+		recipes.add(new AdvancedCrafterRecipe(MyItems.centrifuge_tops[10].GetAmountClone(1),
+				new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete), new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete),
+				new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.engine), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(MyItems.platinum_block),
+				new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(MyItems.centrifuge_tops[9]), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(MyItems.platinum_block),
+				new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(MyItems.engine), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.platinum_block),
+				new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete), new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.platinum_block), new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete)
+			));
+			
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Industrial Crafting", MyItems.advanced_crafter.GetMyItemStack(), "advanced_crafting_platinum_centrifuge", Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					MyItems.centrifuge_tops[10].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("3").GetMyItemStack()));
+			
+		//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//
+		
+		recipes.add(new AdvancedCrafterRecipe(MyItems.centrifuge_tops[11].GetAmountClone(1),
+				new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete), new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete),
+				new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(MyItems.titanium_block),
+				new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(MyItems.centrifuge_tops[10]), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(MyItems.titanium_block),
+				new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.diesel), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.titanium_block),
+				new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete), new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.titanium_block), new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete)
+			));
+			
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Industrial Crafting", MyItems.advanced_crafter.GetMyItemStack(), "advanced_crafting_titanium_centrifuge", Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					MyItems.centrifuge_tops[11].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("4").GetMyItemStack()));
+		
+		//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//
+
+		recipes.add(new AdvancedCrafterRecipe(MyItems.centrifuge_tops[12].GetAmountClone(1),
+				new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete),
+				new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel),
+				new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.centrifuge_tops[11]), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel),
+				new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel),
+				new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.high_carbon_steel), new AdvancedCrafterRecipeInput(MyItems.steel_enforced_gray_concrete)
+			));
+			
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Industrial Crafting", MyItems.advanced_crafter.GetMyItemStack(), "advanced_crafting_diamond_centrifuge", Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					MyItems.centrifuge_tops[12].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("5").GetMyItemStack()));
+	
+		//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//
+
+		recipes.add(new AdvancedCrafterRecipe(MyItems.centrifuge_tops[13].GetAmountClone(1),
+				new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot),
+				new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.combustion_acceleration_chamber), new AdvancedCrafterRecipeInput(Material.DIAMOND_BLOCK), new AdvancedCrafterRecipeInput(MyItems.lead_ingot),
+				new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.tubing_component), new AdvancedCrafterRecipeInput(MyItems.centrifuge_tops[11]), new AdvancedCrafterRecipeInput(MyItems.tubing_component), new AdvancedCrafterRecipeInput(MyItems.lead_ingot),
+				new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(Material.NETHERITE_SCRAP), new AdvancedCrafterRecipeInput(MyItems.combustion_acceleration_chamber), new AdvancedCrafterRecipeInput(Material.NETHERITE_SCRAP), new AdvancedCrafterRecipeInput(MyItems.lead_ingot),
+				new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot), new AdvancedCrafterRecipeInput(MyItems.lead_ingot)
+			));
+			
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Industrial Crafting", MyItems.advanced_crafter.GetMyItemStack(), "advanced_crafting_lead_centrifuge", Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					MyItems.centrifuge_tops[13].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("6").GetMyItemStack()));
+			
+		//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//----------//
+
+		recipes.add(new AdvancedCrafterRecipe(MyItems.centrifuge_tops[14].GetAmountClone(1),
+				new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift),
+				new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(Material.NETHERITE_SCRAP), new AdvancedCrafterRecipeInput(MyItems.combustion_acceleration_chamber), new AdvancedCrafterRecipeInput(Material.NETHERITE_SCRAP), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift),
+				new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.netherite_core), new AdvancedCrafterRecipeInput(MyItems.centrifuge_tops[11]), new AdvancedCrafterRecipeInput(MyItems.netherite_core), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift),
+				new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(Material.NETHERITE_SCRAP), new AdvancedCrafterRecipeInput(MyItems.generator_core), new AdvancedCrafterRecipeInput(Material.NETHERITE_SCRAP), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift),
+				new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift), new AdvancedCrafterRecipeInput(MyItems.electronic_gearshift)
+			));
+			
+			RecipeDisplay.CUSTOM_RECIPES.add(new CustomRecipeType("Industrial Crafting", MyItems.advanced_crafter.GetMyItemStack(), "advanced_crafting_netherite_centrifuge", Main.INSTANCE, 
+					
+					new CustomItemStack(ChatColor.RED + "-->", MyItems.advanced_crafter.getType(), MyItems.advanced_crafter.getCustomModelData()).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS).GetMyItemStack(),
+					
+					MyItems.centrifuge_tops[14].GetMyItemStack(), new CustomItemStack(ChatColor.YELLOW + "Click To View Pattern...", Material.CRAFTING_TABLE, 1523).AddLoreLine("7").GetMyItemStack()));
 	}
 
 	public static void GenCraftingView(Inventory i, int recipe)

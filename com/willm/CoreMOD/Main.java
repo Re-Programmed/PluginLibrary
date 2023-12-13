@@ -34,6 +34,9 @@ import com.willm.CoreMOD.CustomCommands.ViewInventoryCommand;
 import com.willm.CoreMOD.DifficultyExtension.DifficultyEvents;
 import com.willm.CoreMOD.DifficultyExtension.SetDifficultyCommand;
 import com.willm.CoreMOD.ElementalItems.RegisterElementalItems;
+import com.willm.CoreMOD.blocks.CraftingWorkbenchEvents;
+import com.willm.CoreMOD.blocks.StorageKeyCommand;
+import com.willm.CoreMOD.blocks.StorageTerminalEvents;
 
 public class Main extends JavaPlugin {
 
@@ -56,6 +59,8 @@ public class Main extends JavaPlugin {
 
 		MyItems.RegisterMyItems();
 		MyEnchants.RegisterEnchants();
+		
+		com.willm.CoreMOD.Holiday.WinterStuff.RegisterWinterStuff();
 	
 		com.willm.ModAPI.WorldCraft.Main.LaunchWorldCraft();
 		
@@ -72,6 +77,8 @@ public class Main extends JavaPlugin {
 		//getServer().getPluginManager().registerEvents(new AssortedToolEvent(), this);
 		
 		getServer().getPluginManager().registerEvents(new CrucibleEvents(), this);
+		
+		getCommand("storagekey").setExecutor(new StorageKeyCommand());
 		
 		getCommand("rottick").setExecutor(new RotTickCommand());
 		getCommand("viewinventory").setExecutor(new ViewInventoryCommand());
@@ -92,6 +99,9 @@ public class Main extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new DifficultyEvents(), this);
 		
 		getServer().getPluginManager().registerEvents(new MessageEvents(), this);
+		
+		getServer().getPluginManager().registerEvents(new StorageTerminalEvents(), this);
+		getServer().getPluginManager().registerEvents(new CraftingWorkbenchEvents(), this);
 
 		
 		RegisterElementalItems.Register();

@@ -1,6 +1,5 @@
 package com.willm.CoreMOD;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -105,6 +104,8 @@ public class Cosmetics {
 		AddColoredCosmetic("Goggles", 12305, 12315, new char[] {'L', 'S'}, new CustomItemStack[] {MyItems.lens}, new Material[] {Material.STRING}, "SSS", "C C", "LCL");
 		AddColoredCosmetic("Crown", 12405, 12416, new char[] {'B', 'G'}, new CustomItemStack[] {MyItems.bismuth}, new Material[] {Material.GOLD_INGOT}, "   ", "GCG", "BGB");
 		AddColoredCosmetic("Mustache Glasses", 12505, 12505, new char[] {'R', 'L'}, new CustomItemStack[] {MyItems.iron_rod, leatherColorMap.get(Material.BLACK_DYE)}, new Material[0], "   ", "RLR", "CCC");
+		
+		AddColoredCosmetic("Santa Hat", 12605, 12605, new char[] {'W'}, new CustomItemStack[] {leatherColorMap.get(Material.WHITE_DYE)}, new Material[0], " C ", "CCC", "WWW");
 
 		//red_top_hat = ItemCreator.RegisterNewItem(new CustomItemStack("Top Hat", Material.WOODEN_SWORD, 12005)).AddFlags(ItemFlag.HIDE_ATTRIBUTES);
 		//red_top_hat.getRecipe(1, "B B", "R R", "BBB").AddMaterial('B', RecipeBuilder.ItemStackInput(leatherColorMap.get(Material.BLACK_DYE))).AddMaterial('R', RecipeBuilder.ItemStackInput(red_leather)).Finalize();

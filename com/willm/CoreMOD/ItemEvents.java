@@ -66,7 +66,7 @@ public class ItemEvents implements Listener {
 	@EventHandler
 	public void Playerpack(PlayerJoinEvent event)
 	{
-		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1ecEkSCyXQxyMRS6yeUoB2W9Cn_5P3qln");
+		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=19WFhOlFS3fGOVXl87ZcQrjB1VJACL3fK");
 	}
 	
 	public static String toTitleCase(String givenString) {
@@ -490,6 +490,25 @@ public class ItemEvents implements Listener {
 	}
 	
 	@EventHandler
+	public void SleepThroughTheDay(PlayerInteractEvent event)
+	{
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		{
+			if(event.getClickedBlock().getType().toString().contains("BED") && !(event.getClickedBlock().getType() == Material.BEDROCK))
+			{
+				if(event.getClickedBlock().getWorld().getTime() == 1)
+				{
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "title @a actionbar {\"text\":\"Sleeping through this day\",\"color\":\"white\"}");
+					
+					event.getPlayer().teleport(new Location(event.getClickedBlock().getLocation().getWorld(), event.getClickedBlock().getLocation().getX() + 0.5, event.getClickedBlock().getLocation().getY(), event.getClickedBlock().getLocation().getZ() + 0.5));
+				
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "time set night");
+				}
+			}
+		}
+	}
+	
+	@EventHandler
 	public void ClickToViewPatternItem(InventoryClickEvent event)
 	{
 		ItemStack is = event.getClickedInventory().getItem(event.getSlot());
@@ -800,6 +819,12 @@ public class ItemEvents implements Listener {
 		case 5:
 			as.teleport(as.getLocation().add(1.8f, -0.35f, 0.7f));
 			return true;
+		case 6:
+			as.teleport(as.getLocation().add(0.2f, -0.35f, 0.7f));
+			return true;
+		case 7:
+			as.teleport(as.getLocation().add(1.8f, -0.35f, -0.7f));
+			return true;
 		default:
 			as.remove();
 			return false;
@@ -842,7 +867,17 @@ public class ItemEvents implements Listener {
 		
 		if(!(cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[2].getName().toLowerCase()) || cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[1].getName().toLowerCase()) || cis.getName().toLowerCase().equalsIgnoreCase(MyItems.centrifuge_tops[0].getName().toLowerCase())))
 		{
-			if(require4) {if(stands.size() < 6 && as.getLocation().getYaw() == 0) {return;}}
+			if(cis.getCustomModelData() < 90019)
+			{
+				if(require4) {if(stands.size() < 6 && as.getLocation().getYaw() == 0) {return;}}
+			}else {
+				if(cis.getCustomModelData() < 90023)
+				{
+					if(require4) {if(stands.size() < 7 && as.getLocation().getYaw() == 0) {return;}}
+				}else {
+					if(require4) {if(stands.size() < 8 && as.getLocation().getYaw() == 0) {return;}}
+				}
+			}
 		}else {
 			if(require4) {if(stands.size() < 4 && as.getLocation().getYaw() == 0) {return;}}
 		}
@@ -893,10 +928,65 @@ public class ItemEvents implements Listener {
 					foundRecipe = true;
 					
 					if(cr.CheckForRecipe(is, level)) {
-						Vector v = stands.get(0).getLocation().toVector().subtract(as.getLocation().toVector()).normalize().multiply(-deg/250);
 						
-						Item i = as.getWorld().dropItem(stands.get(0).getLocation(), cr.Result());
-						i.setVelocity(v);
+						boolean hoppedItem = false;
+						
+						if(level > 9)
+						{
+							if(b.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getType() == Material.HOPPER)
+							{
+								Hopper h = (Hopper)b.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getState();
+								
+								for(ItemStack isc : h.getInventory())
+								{
+									if(isc == null) {continue;}
+									
+									if(cr.Result().hasItemMeta() && cr.Result().getItemMeta().hasCustomModelData())
+									{
+										if(isc.hasItemMeta() && isc.getItemMeta().hasCustomModelData())
+										{
+											if(isc.getItemMeta().getCustomModelData() == cr.Result().getItemMeta().getCustomModelData())
+											{
+												isc.setAmount(isc.getAmount() + 1 + (new Random().nextInt(15) < (13 - level) ? 1 : 0));
+												hoppedItem = true;
+												break;
+											}
+										}
+									}else {
+										if(isc.hasItemMeta() && isc.getItemMeta().hasCustomModelData())
+										{
+											continue;
+										}
+										
+										isc.setAmount(isc.getAmount() + 1 + (new Random().nextInt(15) < (13 - level) ? 1 : 0));
+										hoppedItem = true;
+										break;
+									}
+								}
+								
+								if(!hoppedItem)
+								{
+									for(ItemStack isc : h.getInventory())
+									{
+										if(isc == null)
+										{
+											hoppedItem = true;
+											h.getInventory().addItem(cr.Result());
+											break;
+										}
+									}
+								}
+							}
+						}
+						
+						
+						if(!hoppedItem)
+						{
+							Vector v = stands.get(0).getLocation().toVector().subtract(as.getLocation().toVector()).normalize().multiply(-deg/250);
+							Item i = as.getWorld().dropItem(stands.get(0).getLocation(), cr.Result());
+							i.getItemStack().setAmount(i.getItemStack().getAmount() + (new Random().nextInt(15) < (13 - level) ? 1 : 0));
+							i.setVelocity(v);
+						}
 					}
 				}
 			}
@@ -905,6 +995,7 @@ public class ItemEvents implements Listener {
 			{
 				Vector v = stands.get(0).getLocation().toVector().subtract(as.getLocation().toVector()).normalize().multiply(-deg/250);
 				Item i = as.getWorld().dropItem(stands.get(0).getLocation(), is.clone());
+				i.getItemStack().setAmount(i.getItemStack().getAmount() + (new Random().nextInt(15) < (13 - level) ? 1 : 0));
 				i.setVelocity(v);
 			}
 			
@@ -912,6 +1003,7 @@ public class ItemEvents implements Listener {
 			
 			if(doPlaceAfter)
 			{
+				
 				if(b.getRelative(BlockFace.UP).getType() == Material.HOPPER)
 				{
 					Hopper h = (Hopper)b.getRelative(BlockFace.UP).getState();
@@ -920,23 +1012,32 @@ public class ItemEvents implements Listener {
 					{
 						int itemsPlaced = 0;
 						int nullItems = 0;
-						while(itemsPlaced < 6 && nullItems < 5) {
+												
+						while(itemsPlaced < (cis.getCustomModelData() < 90019 ? 6 : 7) && nullItems < 5) {
+							int itemsInside = 0;
 							for(ItemStack isc : h.getInventory())
 							{
 								if(isc != null && isc.getType() != Material.AIR)
 								{
+									itemsInside += isc.getAmount() - 1;
+									
 									placeItemOnCentrifuge(isc.clone(), b, cis, level);
 									itemsPlaced++;
 									
 									if(isc.getAmount() == 1)
 									{
-										isc.setType(Material.AIR);
+										h.getInventory().remove(isc);
 									}else {
 										isc.setAmount(isc.getAmount() - 1);
 									}
 								}else {
 									nullItems++;
 								}
+							}
+							
+							if(itemsInside < 1)
+							{
+								break;
 							}
 							nullItems = 0;
 						}

@@ -36,7 +36,7 @@ public class FeedingTrough extends CustomBaseMaterialRetainingBlock implements T
 		
 		this.getRootItem().AddLoreLine(ChatColor.GRAY + "Place and fill with food to");
 		this.getRootItem().AddLoreLine(ChatColor.GRAY + "feed nearby animals. ").AddLoreLine(ChatColor.GRAY + "Can also connect to other troughs in a line.");
-		this.getRootItem().AddLoreLine(ChatColor.DARK_GREEN + "Uses: Carrot x 32, Potato x 32").AddLoreLine(ChatColor.DARK_GREEN + "Wheat x 32, Beetroot x 32.");
+		this.getRootItem().AddLoreLine(ChatColor.DARK_GREEN + "Uses: Carrot x 24, Potato x 24").AddLoreLine(ChatColor.DARK_GREEN + "Wheat x 24, Beetroot x 24.");
 
 		RegisterAsTickBlock();
 	}
@@ -257,7 +257,7 @@ public class FeedingTrough extends CustomBaseMaterialRetainingBlock implements T
 
 					c.setLoveModeTicks(3000);
 					
-					if(feedingRand.nextInt(101) < 12)
+					if(feedingRand.nextInt(101) < 5)
 					{
 						SetFillLevel(as, (fl--) - 1);
 					}

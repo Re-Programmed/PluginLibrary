@@ -9,13 +9,19 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.willm.CoreMOD.BlockEvents;
+import com.willm.CoreMOD.ItemEvents;
 import com.willm.ModAPI.Main;
 import com.willm.ModAPI.Blocks.CustomBlock;
 import com.willm.ModAPI.Items.CustomItemStack;
@@ -57,9 +63,15 @@ public class WorkbenchSystem implements InventoryHolder {
 							displayName = ChatColor.GREEN + "Unnamed Storage";
 						}
 						
-						if(c.getBlockInventory().getStorageContents().length > 0)
+						Inventory cbinv = c.getBlockInventory();
+						if(c.getInventory().getHolder() instanceof DoubleChest)
 						{
-							for(ItemStack is : c.getBlockInventory().getStorageContents())
+							cbinv = ((DoubleChest)c.getInventory().getHolder()).getInventory();
+						}
+						
+						if(cbinv.getStorageContents().length > 0)
+						{
+							for(ItemStack is : cbinv.getStorageContents())
 							{
 								if(is != null)
 								{
@@ -85,6 +97,31 @@ public class WorkbenchSystem implements InventoryHolder {
 									displayType = new CustomItemStack(displayName, cb.getDisplayMaterial(), cb.getDisplayCustomModelData()).GetMyItemStack();
 									break;
 								}
+							}
+						}
+					}
+				}
+				
+				if(w.GetType() == WorkbenchType.ITEM_TERMINAL)
+				{
+					for(Entity e : location.getWorld().getNearbyEntities(location, 1.0f, 1.5f, 1.0f))
+					{
+						if(e instanceof ItemFrame)
+						{
+							ItemFrame iFrame = (ItemFrame)e;
+							
+							if(iFrame.getItem() != null)
+							{								
+								ItemStack nIf = iFrame.getItem().clone();
+								
+								displayName = displayName + " - " + ((nIf.hasItemMeta() && nIf.getItemMeta().hasDisplayName()) ? nIf.getItemMeta().getDisplayName().replace(ChatColor.WHITE + "", "") : ItemEvents.toTitleCase(nIf.getType().toString().toLowerCase().replace('_', ' ')));
+								
+								ItemMeta im = nIf.getItemMeta();
+								im.setDisplayName(displayName);
+								nIf.setItemMeta(im);
+								displayType = nIf;
+								
+								break;
 							}
 						}
 					}
@@ -146,11 +183,47 @@ public class WorkbenchSystem implements InventoryHolder {
 		{
 			if(w.CheckForCustomBlock(b))
 			{
+				//Check for wireless connections.
+				if(w.GetType() == WorkbenchType.WORKBENCH_NETWORK_CONNECTOR)
+				{
+					//Determine if benches are on same network.
+					Material checkMat = b.getRelative(BlockFace.UP).getType();
+					if(!(checkMat == Material.AIR || checkMat == Material.CAVE_AIR || checkMat == Material.VOID_AIR))
+					{
+						for(Entity e : b.getWorld().getNearbyEntities(b.getLocation(), 30f, 30f, 30f))
+						{
+							if(e instanceof ArmorStand)
+							{
+								ArmorStand as = (ArmorStand)e;
+								
+								Block wConnection = as.getLocation().getBlock();
+								if(w.CheckForCustomBlock(wConnection))
+								{
+									if(wConnection.getRelative(BlockFace.UP).getType() == checkMat)
+									{
+										benches.put(wConnection, w);
+										PopulateBench(benches, wConnection.getRelative(BlockFace.EAST));
+										PopulateBench(benches, wConnection.getRelative(BlockFace.WEST));
+										PopulateBench(benches, wConnection.getRelative(BlockFace.NORTH));
+										PopulateBench(benches, wConnection.getRelative(BlockFace.SOUTH));
+										PopulateBench(benches, wConnection.getRelative(BlockFace.UP));
+										PopulateBench(benches, wConnection.getRelative(BlockFace.DOWN));	
+									}
+								}
+							}
+						}
+					}
+					
+
+				}
+				
 				benches.put(b, w);
 				PopulateBench(benches, b.getRelative(BlockFace.EAST));
 				PopulateBench(benches, b.getRelative(BlockFace.WEST));
 				PopulateBench(benches, b.getRelative(BlockFace.NORTH));
 				PopulateBench(benches, b.getRelative(BlockFace.SOUTH));
+				PopulateBench(benches, b.getRelative(BlockFace.UP));
+				PopulateBench(benches, b.getRelative(BlockFace.DOWN));
 				break;
 			}
 		}

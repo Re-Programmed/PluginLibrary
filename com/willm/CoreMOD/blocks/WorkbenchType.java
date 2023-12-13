@@ -14,6 +14,9 @@ public enum WorkbenchType {
 	WORKBENCH_INPUT(new CustomItemStack(ChatColor.GOLD + "Workbench Source", Material.HOPPER, 0).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS)),
 	MACHINE_WORKBENCH(new CustomItemStack(ChatColor.BLUE + "Empty Machine Workbench", Material.SMITHING_TABLE, 0).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS)),
 	REDSTONE_TRIGGER_WORKBENCH(new CustomItemStack(ChatColor.RED + "Redstone Trigger", Material.REDSTONE_TORCH, 0).AddEnchant(Enchantment.LUCK, 0, true).AddFlags(ItemFlag.HIDE_ENCHANTS)),
+	STORAGE_TERMINAL(new CustomItemStack(ChatColor.GOLD + "Storage Terminal", Material.DROPPER, 0).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS)),
+	ITEM_TERMINAL(new CustomItemStack(ChatColor.GOLD + "Item Terminal", Material.ENDER_PEARL, 0).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS)),
+	WORKBENCH_NETWORK_CONNECTOR(new CustomItemStack(ChatColor.YELLOW + "Workbench Network Connector", Material.REDSTONE_TORCH, 10001).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS)),
 	NONE(null);
 	
 	public final CustomItemStack DisplayItem;

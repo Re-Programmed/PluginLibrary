@@ -54,3 +54,6 @@ commands:
       description: Sets the custom difficulty.
    alloypick:
       description: Creates a pickaxe alloy.
+   storagekey:
+      aliases: [ sk ]
+      description: Used with the storage key item.
