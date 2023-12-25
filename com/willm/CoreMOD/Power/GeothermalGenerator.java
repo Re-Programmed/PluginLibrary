@@ -110,6 +110,8 @@ public class GeothermalGenerator extends EnergyCompatible {
 			}
 		}
 		
+		lavaBoost *= 6;
+		
 		AddEnergy(lavaBoost * 2, loc);
 		
 		for(BlockFace bf : checkFaces)

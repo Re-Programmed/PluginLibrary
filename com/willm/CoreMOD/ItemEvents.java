@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,6 +17,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Hopper;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.Directional;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
@@ -30,8 +32,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -43,6 +48,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -66,7 +72,7 @@ public class ItemEvents implements Listener {
 	@EventHandler
 	public void Playerpack(PlayerJoinEvent event)
 	{
-		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=19WFhOlFS3fGOVXl87ZcQrjB1VJACL3fK");
+		event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1G4I0JeiH_mEkDuWx7jusaLYGrFsXr5OE");
 	}
 	
 	public static String toTitleCase(String givenString) {
@@ -94,6 +100,103 @@ public class ItemEvents implements Listener {
 			{
 				AdvancedCrafter.OpenInventory(event.getPlayer(), event.getClickedBlock());
 			}	
+		}
+	}
+	
+	@EventHandler
+	public void PouchInteraction(PlayerInteractEvent event)
+	{
+		if(event.getItem() != null)
+		{
+			if(MyItems.ender_pouch.CheckForCustomItem(event.getItem()))
+			{
+				event.setCancelled(true);
+				if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+				{
+					event.getPlayer().openInventory(event.getPlayer().getEnderChest());
+				}
+			}
+			
+			if(MyItems.shulker_pouch.CheckForCustomItem(event.getItem()))
+			{				
+				if(event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+				{
+					event.setCancelled(true);
+					ItemStack item = event.getItem();
+					if(item.getItemMeta() instanceof BlockStateMeta)
+					{
+						BlockStateMeta im = (BlockStateMeta)item.getItemMeta();
+						if(im.getBlockState() instanceof ShulkerBox)
+						{
+							ShulkerBox shulker = (ShulkerBox) im.getBlockState();
+			                event.getPlayer().openInventory(shulker.getInventory());
+			                
+							shulkerPouches.put(shulker.getInventory(), item);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static HashMap<Inventory, ItemStack> shulkerPouches = new HashMap<Inventory, ItemStack>();
+	
+	@EventHandler
+	public void PouchInventoryInteraction(InventoryClickEvent event)
+	{
+		if(event.getClickedInventory() != null)
+		{	
+			if(event.getWhoClicked() instanceof Player)
+			{
+				Player player = (Player)event.getWhoClicked();
+				
+				if(event.getCurrentItem() != null)
+				{
+					if(MyItems.ender_pouch.CheckForCustomItem(event.getCurrentItem()))
+					{
+						if(event.getClick() == ClickType.RIGHT || event.getClick() == ClickType.SHIFT_RIGHT)
+						{
+							event.setCancelled(true);
+							player.openInventory(player.getEnderChest());
+						}
+					}
+					
+					if(MyItems.shulker_pouch.CheckForCustomItem(event.getCurrentItem()))
+					{						
+						if(event.getClick() == ClickType.RIGHT || event.getClick() == ClickType.SHIFT_RIGHT)
+						{
+							ItemStack item = event.getCurrentItem();
+							if(item.getItemMeta() instanceof BlockStateMeta)
+							{
+								BlockStateMeta im = (BlockStateMeta)item.getItemMeta();
+								if(im.getBlockState() instanceof ShulkerBox)
+								{
+									event.setCancelled(true);
+									ShulkerBox shulker = (ShulkerBox) im.getBlockState();
+									player.openInventory(shulker.getInventory());
+									
+									shulkerPouches.put(shulker.getInventory(), item);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void FallDamageClang(EntityDamageEvent event)
+	{
+		if(event.getEntity().getType() == EntityType.PLAYER)
+		{
+			if(event.getCause() == DamageCause.FALL)
+			{
+				if(event.getDamage() > 12)
+				{
+					Utils.PlayCustomSound("core_mod.sfx.metal_pipe_clang", event.getEntity().getLocation());
+				}
+			}
 		}
 	}
 	
@@ -1539,12 +1642,46 @@ public class ItemEvents implements Listener {
 	}
 	
 	@EventHandler
+	public void SetJetpackMode(InventoryClickEvent event)
+	{
+		if(event.getClickedInventory() != null)
+		{
+			if(event.getCurrentItem() != null)
+			{
+				if(event.getClick() == ClickType.RIGHT)
+				{
+					if(MyItems.jetpack.CheckForCustomItem(event.getCurrentItem()))
+					{
+						ItemMeta im = event.getCurrentItem().getItemMeta();
+						List<String> lore = im.getLore();
+						
+						String mode = lore.get(lore.size() - 1).replace(ChatColor.GREEN + "Mode: ", "");
+						
+						if(mode.equalsIgnoreCase("rocket"))
+						{
+							lore.set(lore.size() - 1, ChatColor.GREEN + "Mode: Hover");
+						}else if(mode.equalsIgnoreCase("hover"))
+						{
+							lore.set(lore.size() - 1, ChatColor.GREEN + "Mode: Lift");
+						}else if(mode.equalsIgnoreCase("lift"))
+						{
+							lore.set(lore.size() - 1, ChatColor.GREEN + "Mode: Rocket");
+						}
+						
+						im.setLore(lore);
+						event.getCurrentItem().setItemMeta(im);
+						event.setCancelled(true);
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler
 	public void UseJetpack(PlayerMoveEvent event)
 	{
-		if(event.getPlayer().isSneaking())
-		{
-			if(event.getPlayer().isGliding())
-			{
+			boolean allowedFlight = false;
+
 				ItemStack chestplate = event.getPlayer().getEquipment().getChestplate();
 				
 				if(chestplate != null)
@@ -1557,19 +1694,75 @@ public class ItemEvents implements Listener {
 						
 						if(currFuel > 0)
 						{
-							event.getPlayer().getWorld().spawnParticle(Particle.FLAME, AddToLocation(event.getPlayer().getLocation(), 0, 0.5f, 0), 1,0,0,0,0);
+							String mode = lore.get(lore.size() - 1).replace(ChatColor.GREEN + "Mode: ", "");
 							
-							event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
 							
-							if(event.getPlayer().getVelocity().getY() < 1f)
+							if(mode.equalsIgnoreCase("rocket"))
 							{
-								event.getPlayer().setVelocity(event.getPlayer().getVelocity().add(new Vector(0, 0.2f, 0)));
+								if(event.getPlayer().isSneaking())
+								{
+									if(event.getPlayer().isGliding())
+									{
+										event.getPlayer().getWorld().spawnParticle(Particle.FLAME, AddToLocation(event.getPlayer().getLocation(), 0, 0.5f, 0), 1,0,0,0,0);
+										
+										event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
+										event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 100);
+		
+										if(event.getPlayer().getVelocity().getY() < 1f)
+										{
+											event.getPlayer().setVelocity(event.getPlayer().getVelocity().add(new Vector(0, 0.2f, 0)));
+											Vector v = event.getPlayer().getLocation().getDirection();
+											event.getPlayer().setVelocity(event.getPlayer().getVelocity().add(v.multiply(0.5f)));
+											
+										}
+										
+										lore.set(0, Injector.SetJetpackFuel(currFuel - 3));
+										im.setLore(lore);
+										chestplate.setItemMeta(im);
+									}
+								}
+							} else if (mode.equalsIgnoreCase("hover"))
+							{
+								if(event.getPlayer().isFlying())
+								{
+									lore.set(0, Injector.SetJetpackFuel(currFuel - 1));
+									im.setLore(lore);
+									chestplate.setItemMeta(im);
+									
+									event.getPlayer().getWorld().spawnParticle(Particle.SLIME, event.getPlayer().getLocation(), 1,0,0,0,0);
+									
+									event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.BLOCK_SCULK_CHARGE, 1, 1);
+								}
 								
+								if(event.getPlayer().getGameMode() == GameMode.SURVIVAL)
+								{
+									allowedFlight = true;
+									event.getPlayer().setAllowFlight(true);
+								}
+							}else if(mode.equalsIgnoreCase("lift"))
+							{
+								if(event.getPlayer().isSneaking())
+								{
+									if(event.getPlayer().isGliding())
+									{
+										event.getPlayer().getWorld().spawnParticle(Particle.FLAME, AddToLocation(event.getPlayer().getLocation(), 0, 0.5f, 0), 1,0,0,0,0);
+										
+										event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 1);
+										event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1, 100);
+		
+										if(event.getPlayer().getVelocity().getY() < 1f)
+										{
+											event.getPlayer().setVelocity(event.getPlayer().getVelocity().add(new Vector(0, 0.5f, 0)));
+											
+										}
+										
+										lore.set(0, Injector.SetJetpackFuel(currFuel - 2));
+										im.setLore(lore);
+										chestplate.setItemMeta(im);
+									}
+								}
 							}
 							
-							lore.set(0, Injector.SetJetpackFuel(currFuel - 1));
-							im.setLore(lore);
-							chestplate.setItemMeta(im);
 						}else {
 							event.getPlayer().getWorld().spawnParticle(Particle.SMOKE_NORMAL, AddToLocation(event.getPlayer().getLocation(), 0, 0.5f, 0), 1,0,0,0,0);
 							event.getPlayer().getWorld().playSound(event.getPlayer().getLocation(), Sound.BLOCK_CHAIN_BREAK, 1, 1);
@@ -1579,8 +1772,16 @@ public class ItemEvents implements Listener {
 						
 					}
 				}
-			}
-		}
+			
+				if(!allowedFlight)
+				{
+					if(event.getPlayer().getGameMode() == GameMode.SURVIVAL)
+					{
+						event.getPlayer().setAllowFlight(false);
+					}
+					
+				}
+		
 	}
 	
 	private static Location AddToLocation(Location l, float x, float y, float z)

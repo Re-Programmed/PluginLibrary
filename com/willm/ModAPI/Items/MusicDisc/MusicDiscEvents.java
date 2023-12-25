@@ -14,7 +14,7 @@ import com.willm.ModAPI.Utils;
 
 public class MusicDiscEvents implements Listener {
 
-	static HashMap<Jukebox, MusicDisc> playingJukeboxes = new HashMap<Jukebox, MusicDisc>();
+	public static HashMap<Jukebox, MusicDisc> playingJukeboxes = new HashMap<Jukebox, MusicDisc>();
 	
 	int rcDelay = 0;
 	

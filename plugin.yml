@@ -57,3 +57,5 @@ commands:
    storagekey:
       aliases: [ sk ]
       description: Used with the storage key item.
+   cmap:
+      description: Give a custom map.

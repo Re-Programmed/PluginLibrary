@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -17,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Jukebox;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -36,6 +38,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.world.GenericGameEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
@@ -59,6 +62,8 @@ import com.willm.CoreMOD.blocks.piles.SaltPile;
 import com.willm.ModAPI.Utils;
 import com.willm.ModAPI.Blocks.CustomBlock;
 import com.willm.ModAPI.Items.CustomItemStack;
+import com.willm.ModAPI.Items.MusicDisc.MusicDisc;
+import com.willm.ModAPI.Items.MusicDisc.MusicDiscEvents;
 
 public class BlockEvents implements Listener {
 
@@ -76,6 +81,239 @@ public class BlockEvents implements Listener {
 	public void ImportPack(PlayerJoinEvent event)
 	{
 		//event.getPlayer().setResourcePack("https://drive.google.com/uc?export=download&id=1XgWVqLBBOBcxbI0-LTy92Cuh0HlU11Tb");
+	}
+	
+	ArrayList<Location> PlayingSpeakers = new ArrayList<Location>();
+	ArrayList<Location> SpeakerSystemsSearched = new ArrayList<Location>();
+
+	@EventHandler
+	public void JukeboxEvent(GenericGameEvent event)
+	{
+		
+		if(event.getEvent() == GameEvent.JUKEBOX_PLAY || event.getEvent() == GameEvent.JUKEBOX_STOP_PLAY)
+		{
+			Block speaker = null;
+			
+			if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(event.getLocation().getBlock().getRelative(BlockFace.EAST)))
+			{
+				speaker = event.getLocation().getBlock().getRelative(BlockFace.EAST);
+			}else if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(event.getLocation().getBlock().getRelative(BlockFace.WEST)))
+			{
+				speaker = event.getLocation().getBlock().getRelative(BlockFace.WEST);
+			}else if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(event.getLocation().getBlock().getRelative(BlockFace.SOUTH)))
+			{
+				speaker = event.getLocation().getBlock().getRelative(BlockFace.SOUTH);
+			}else if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(event.getLocation().getBlock().getRelative(BlockFace.NORTH)))
+			{
+				speaker = event.getLocation().getBlock().getRelative(BlockFace.NORTH);
+			}else if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(event.getLocation().getBlock().getRelative(BlockFace.UP)))
+			{
+				speaker = event.getLocation().getBlock().getRelative(BlockFace.UP);
+			}else if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(event.getLocation().getBlock().getRelative(BlockFace.DOWN)))
+			{
+				speaker = event.getLocation().getBlock().getRelative(BlockFace.DOWN);
+			}
+			
+			if(speaker != null)
+			{
+				Jukebox j = (Jukebox)event.getLocation().getBlock().getState();
+				/*for(Jukebox jb : MusicDiscEvents.playingJukeboxes.keySet())
+				{
+					if(jb.getLocation().distance(j.getLocation()) < 0.5)
+					{
+						MusicDisc md = MusicDiscEvents.playingJukeboxes.get(j);
+						
+					}
+				}*/
+				
+				if(j.hasRecord())
+				{
+					if(j.getPlaying() != null)
+					{
+						if(SpeakerSystemsSearched.contains(j.getLocation())) {return;}
+						
+						SpeakerSystemsSearched.add(j.getLocation());
+						
+						String name = j.getPlaying().toString();
+
+						CheckSpeakerLoc(speaker, name);
+					}
+				}else {
+					if(SpeakerSystemsSearched.contains(j.getLocation())) {
+						SpeakerSystemsSearched.remove(j.getLocation());
+						CheckSpeakerLocRemove(speaker);
+						
+						Utils.BroadcastMessage(ChatColor.RED + "LEFT: " + SpeakerSystemsSearched.size() + ", " + PlayingSpeakers.size());
+					}
+
+				}
+				
+				
+			}
+		}
+	}
+	
+	public Jukebox GetSpeakerJukebox(Block source)
+	{
+		if(source.getRelative(BlockFace.UP).getType() == Material.JUKEBOX)
+		{
+			return (Jukebox)source.getRelative(BlockFace.UP).getState();
+		}else if(source.getRelative(BlockFace.DOWN).getType() == Material.JUKEBOX)
+		{
+			return (Jukebox)source.getRelative(BlockFace.DOWN).getState();
+		}else if(source.getRelative(BlockFace.EAST).getType() == Material.JUKEBOX)
+		{
+			return (Jukebox)source.getRelative(BlockFace.EAST).getState();
+		}else if(source.getRelative(BlockFace.WEST).getType() == Material.JUKEBOX)
+		{
+			return (Jukebox)source.getRelative(BlockFace.WEST).getState();
+		}else if(source.getRelative(BlockFace.SOUTH).getType() == Material.JUKEBOX)
+		{
+			return (Jukebox)source.getRelative(BlockFace.SOUTH).getState();
+		}else if(source.getRelative(BlockFace.NORTH).getType() == Material.JUKEBOX)
+		{
+			return (Jukebox)source.getRelative(BlockFace.NORTH).getState();
+		}
+		
+		return null;
+	}
+	
+	public void CheckSpeakerLocRemove(Block speaker)
+	{
+		Utils.BroadcastMessage(ChatColor.GRAY + "SEARCHING FOR SPEAKERS at " + speaker.getLocation().toString());
+		
+		
+		for(Entity e : speaker.getWorld().getNearbyEntities(speaker.getLocation(), 60f, 60f, 60f))
+		{
+			if(e instanceof ArmorStand)
+			{
+				if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(e.getLocation().getBlock()))
+				{
+					int i = 0;
+					for(Location loc : PlayingSpeakers)
+					{
+						if(e.getLocation().getBlock().getLocation().distance(loc) < 5)
+						{
+							//Utils.BroadcastMessage(ChatColor.RED + "INVALID SPEAKER " + PlayingSpeakers.size());
+							if(e.getLocation().getBlock().getLocation().distance(speaker.getLocation()) > 5)
+							{
+								Utils.BroadcastMessage("FOUND SPEAKER " + PlayingSpeakers.size() + " " + e.getLocation().toString());
+								
+								Jukebox nextPlay = GetSpeakerJukebox(e.getLocation().getBlock());
+								
+								if(nextPlay != null)
+								{
+									nextPlay.setRecord(null);
+									nextPlay.setPlaying(null);
+									nextPlay.stopPlaying();
+									
+									nextPlay.update(true);
+								}
+								
+								
+								break;
+							}							
+						}
+						
+						i++;
+					}
+						
+				}
+			}
+		}
+		
+		RemoveSpeakerLocSystems(speaker);
+		
+	}
+	
+	public void RemoveSpeakerLocSystems(Block speaker)
+	{
+		ArrayList<Location> removes = new ArrayList<Location>();
+		
+		for(Location loc : PlayingSpeakers)
+		{
+			if(loc.distance(speaker.getLocation()) < 60f)
+			{
+				removes.add(loc);
+			}
+		}
+		
+		for(Location loc : removes)
+		{
+			PlayingSpeakers.remove(loc);
+		}
+		
+		removes.clear();
+		
+		for(Location loc : SpeakerSystemsSearched)
+		{
+			if(loc.distance(speaker.getLocation()) < 60f)
+			{
+				removes.add(loc);
+			}
+		}
+		
+		for(Location loc : removes)
+		{
+			SpeakerSystemsSearched.remove(loc);
+		}
+	}
+	
+	public void CheckSpeakerLoc(Block speaker, String name)
+	{
+		Utils.BroadcastMessage(ChatColor.GRAY + "SEARCHING FOR SPEAKERS at " + speaker.getLocation().toString());
+
+		ArrayList<Block> nextSearch = new ArrayList<Block>();
+		
+for_entity:
+		for(Entity e : speaker.getWorld().getNearbyEntities(speaker.getLocation(), 60f, 60f, 60f))
+		{
+			if(e instanceof ArmorStand)
+			{
+				if(MyItems.speaker_block.getRelatedBlock().CheckForCustomBlock(e.getLocation().getBlock()))
+				{
+					
+					for(Location loc : PlayingSpeakers)
+					{
+						if(e.getLocation().getBlock().getLocation().distance(loc) < 5)
+						{
+							//Utils.BroadcastMessage(ChatColor.RED + "INVALID SPEAKER " + PlayingSpeakers.size());
+							PlayingSpeakers.add(e.getLocation().getBlock().getLocation());
+							continue for_entity;
+						}
+					}
+					
+					if(e.getLocation().getBlock().getLocation().distance(speaker.getLocation()) > 5)
+					{
+						Utils.BroadcastMessage("FOUND SPEAKER " + PlayingSpeakers.size() + " " + e.getLocation().toString());
+						
+						Jukebox nextPlay = GetSpeakerJukebox(e.getLocation().getBlock());
+						if(nextPlay != null)
+						{
+							SpeakerSystemsSearched.add(nextPlay.getLocation());
+							nextPlay.setRecord(new ItemStack(Material.getMaterial(name)));
+							nextPlay.setPlaying(Material.getMaterial(name));
+							nextPlay.startPlaying();
+							
+							nextPlay.update(true);
+							
+						}
+						
+						//speaker.getWorld().playSound(e.getLocation(), Sound.valueOf(name), 1f, 1f);
+						PlayingSpeakers.add(e.getLocation().getBlock().getLocation());
+						nextSearch.add(e.getLocation().getBlock());
+					}
+					
+					
+					
+				}
+			}
+		}
+		
+		for(Block b : nextSearch)
+		{
+			CheckSpeakerLoc(b, name);
+		}
 	}
 	
 	ArrayList<Inventory> teleportInventories = new ArrayList<Inventory>();

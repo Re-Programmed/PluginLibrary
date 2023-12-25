@@ -183,6 +183,8 @@ public class MyItems {
 	
 	public static CustomItemStack hinge, brass;
 	
+	public static CustomItemStack shulker_pouch, ender_pouch;
+	
 	public static void RegisterMyItems() {
 		
 		lead_powder = ItemCreator.RegisterNewItem(new CustomItemStack("Impure Lead Powder", Material.GUNPOWDER, 15023));
@@ -562,7 +564,7 @@ public class MyItems {
 		
 		jet_booster.getRecipe(2, "TtT", "PKP", "EtE").AddMaterial('T', RecipeBuilder.ItemStackInput(tungsten_block)).AddMaterial('t', RecipeBuilder.ItemStackInput(titanium_block)).AddMaterial('P', RecipeBuilder.ItemStackInput(platinum_block)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('K', RecipeBuilder.ItemStackInput(kerosene)).Finalize();
 		
-		jetpack = ItemCreator.RegisterNewItem(new CustomItemStack("Jetpack", Material.ELYTRA, 20001)).AddLoreLine(ChatColor.RED + "Fuel: 0 mB").AddLoreLine(ChatColor.GRAY + "*Jetpack*").AddLoreLine(ChatColor.GRAY + "Uses kerosene (injector)").Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.CHEST).Attribute(Attribute.GENERIC_ARMOR, 7, EquipmentSlot.CHEST);
+		jetpack = ItemCreator.RegisterNewItem(new CustomItemStack("Jetpack", Material.ELYTRA, 20001)).AddLoreLine(ChatColor.RED + "Fuel: 0 mB").AddLoreLine(ChatColor.GRAY + "*Jetpack*").AddLoreLine(ChatColor.GRAY + "Uses kerosene (injector)").AddLoreLine(ChatColor.GREEN + "Mode: Rocket").Attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, 1f, EquipmentSlot.CHEST).Attribute(Attribute.GENERIC_ARMOR, 7, EquipmentSlot.CHEST);
 		
 		jetpack.getRecipe(1, "tKt", "ETE", "BBB").AddMaterial('t', RecipeBuilder.ItemStackInput(titanium_ingot)).AddMaterial('T', Material.ELYTRA).AddMaterial('K', RecipeBuilder.ItemStackInput(kerosene)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).AddMaterial('B', RecipeBuilder.ItemStackInput(jet_booster)).Finalize();
 	
@@ -793,7 +795,7 @@ public class MyItems {
 			ShopBlock.SHOP_BLOCK_ITEM.getRecipe(4, "PTP", "CcR", "LLL", "craft_shop").AddMaterial('P', RecipeBuilder.ItemStackInput(MyItems.platinum_block)).AddMaterial('T', RecipeBuilder.ItemStackInput(MyItems.tubing_pump)).AddMaterial('c', Material.CHEST).AddMaterial('C', RecipeBuilder.ItemStackInput(MyItems.capacitor)).AddMaterial('R', RecipeBuilder.ItemStackInput(MyItems.resistor)).AddMaterial('L', RecipeBuilder.ItemStackInput(MyItems.steel_enforced_gray_concrete)).Finalize();
 			
 			PlotProtector.RegisterItems();
-			//PlotProtector.PLOT_PROTECTOR.getRecipe(2, "GWG", "COC", "TET").AddMaterial('G', RecipeBuilder.ItemStackInput(MyItems.electronic_gearshift)).AddMaterial('W', RecipeBuilder.ItemStackInput(MyItems.wireless_redstone_activator)).AddMaterial('C', RecipeBuilder.ItemStackInput(MyItems.capacitor)).AddMaterial('O', Material.OBSIDIAN).AddMaterial('T', RecipeBuilder.ItemStackInput(tungsten_block)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).Finalize();
+			PlotProtector.PLOT_PROTECTOR.getRecipe(2, "GWG", "COC", "TET").AddMaterial('G', RecipeBuilder.ItemStackInput(MyItems.electronic_gearshift)).AddMaterial('W', RecipeBuilder.ItemStackInput(MyItems.wireless_redstone_activator)).AddMaterial('C', RecipeBuilder.ItemStackInput(MyItems.capacitor)).AddMaterial('O', Material.OBSIDIAN).AddMaterial('T', RecipeBuilder.ItemStackInput(tungsten_block)).AddMaterial('E', RecipeBuilder.ItemStackInput(engine)).Finalize();
 	
 			
 			//Turret
@@ -808,7 +810,7 @@ public class MyItems {
 			
 			lead_padlock = padlock;
 			
-			//ChestLock.CHEST_LOCK.getRecipe(2, "PPP", "PpP", "PPP").AddMaterial('P', RecipeBuilder.MultiMaterialInput(Material.OAK_PLANKS, Material.DARK_OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS, Material.ACACIA_PLANKS, Material.CHERRY_PLANKS, Material.BAMBOO_PLANKS, Material.WARPED_PLANKS, Material.JUNGLE_PLANKS, Material.CRIMSON_PLANKS)).AddMaterial('p', RecipeBuilder.ItemStackInput(padlock)).Finalize();
+			ChestLock.CHEST_LOCK.getRecipe(2, "PPP", "PpP", "PPP").AddMaterial('P', RecipeBuilder.MultiMaterialInput(Material.OAK_PLANKS, Material.DARK_OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS, Material.ACACIA_PLANKS, Material.CHERRY_PLANKS, Material.BAMBOO_PLANKS, Material.WARPED_PLANKS, Material.JUNGLE_PLANKS, Material.CRIMSON_PLANKS)).AddMaterial('p', RecipeBuilder.ItemStackInput(padlock)).Finalize();
 			
 			CrucibleItemRegistry.RegisterItems();
 			
@@ -863,8 +865,20 @@ public class MyItems {
 			teleport_remote = ItemCreator.RegisterNewItem(new CustomItemStack("Teleport Remote", Material.GREEN_DYE, 16612)).AddLoreLine(ChatColor.DARK_AQUA + "Right click a teleport pad to add it as a link.").AddLoreLine(ChatColor.DARK_AQUA + "Right clicking with this item will open the teleport menu.").AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS);
 			
 			teleport_remote.getRecipe(1, "LWL", "LCL", "DID").AddMaterial('L', RecipeBuilder.ItemStackInput(lead_ingot)).AddMaterial('W', RecipeBuilder.ItemStackInput(wireless_redstone_activator)).AddMaterial('C', RecipeBuilder.ItemStackInput(photovoltaic_cell)).AddMaterial('D', Material.DIAMOND).AddMaterial('I', RecipeBuilder.ItemStackInput(capacitor)).Finalize();
+	
+			ender_pouch = ItemCreator.RegisterNewItem(new CustomItemStack("Ender Pouch", Material.ENDER_CHEST, 10001).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS));
+			shulker_pouch = ItemCreator.RegisterNewItem(new CustomItemStack("Shulker Pouch", Material.SHULKER_BOX, 10001).AddEnchant(Enchantment.LUCK, 1, true).AddFlags(ItemFlag.HIDE_ENCHANTS));
+	
+			ender_pouch.getRecipe(1, "EOE", "ReR", "EOE").AddMaterial('E', Material.ENDER_EYE).AddMaterial('O', Material.OBSIDIAN).AddMaterial('R', RecipeBuilder.ItemStackInput(Cosmetics.leatherColorMap.get(Material.BLACK_DYE))).AddMaterial('e', Material.ENDER_CHEST).Finalize();
+	
+			shulker_pouch.getRecipe(1, "EOE", "ReR", "EOE").AddMaterial('E', Material.SHULKER_SHELL).AddMaterial('O', Material.ENDER_EYE).AddMaterial('R', RecipeBuilder.ItemStackInput(Cosmetics.leatherColorMap.get(Material.PURPLE_DYE))).AddMaterial('e', Material.SHULKER_BOX).Finalize();
+	
+			speaker_block = ItemCreator.RegisterNewItem(new CustomItemStack("Speaker", Material.BLACK_CONCRETE, 555));
+			BlockCreator.RegisterNewBlock(speaker_block);
 	}
 	
+	public static CustomItemStack speaker_block;
+		
 	public static CustomItemStack teleport_block, teleport_remote;
 
 	public static CustomItemStack baguette, baguette_b1, baguette_b2;

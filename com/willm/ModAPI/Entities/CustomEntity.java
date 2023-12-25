@@ -36,6 +36,11 @@ public class CustomEntity {
 		return e;
 	}
 	
+	public boolean IsCustomEntity(Entity e)
+	{
+		return e.getCustomName().equalsIgnoreCase(this.name.toLowerCase()) && e.getType() == this.type;
+	}
+	
 	public final String GetName()
 	{
 		return name;

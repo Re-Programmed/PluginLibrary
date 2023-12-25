@@ -2,6 +2,7 @@ package com.willm.ModAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class Utils {
 
@@ -23,5 +24,15 @@ public class Utils {
 	public static void StopCustomSound(String sound)
 	{
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stopsound @a * minecraft:" + sound);
+	}
+	
+	public static void BroadcastMessage(String message)
+	{
+		for(Player p : Bukkit.getOnlinePlayers())
+		{
+			p.sendMessage(message);
+		}
+		
+		System.out.println("[ModAPI] " + message);
 	}
 }

@@ -39,6 +39,7 @@ public class ChestLock extends CustomBlock {
 		Dispenser d = (Dispenser)event.getClickedBlock().getState();
 		if(d.getInventory().getItem(0) == null)
 		{
+			
 			event.getPlayer().sendMessage(ChatColor.GREEN + "Claimed chest lock.");
 			
 			ItemStack playerTracker = new ItemStack(Material.DIRT, 1);

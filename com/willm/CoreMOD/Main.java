@@ -2,22 +2,23 @@ package com.willm.CoreMOD;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Smoker;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,6 +28,8 @@ import com.willm.CoreMOD.Alloying.CreateAlloyPickTabCompleter;
 import com.willm.CoreMOD.Alloying.Crucibles.CrucibleEvents;
 import com.willm.CoreMOD.BackSlot.BackSlotCommand;
 import com.willm.CoreMOD.BackSlot.BackSlotEvents;
+import com.willm.CoreMOD.CustomCommands.CMapCommand;
+import com.willm.CoreMOD.CustomCommands.CMapCompleter;
 import com.willm.CoreMOD.CustomCommands.CoordCommand;
 import com.willm.CoreMOD.CustomCommands.CoordsCommandCompleter;
 import com.willm.CoreMOD.CustomCommands.LukeModeCommand;
@@ -58,7 +61,7 @@ public class Main extends JavaPlugin {
 		com.willm.ModAPI.Voltage.Main.UseVoltage();
 
 		MyItems.RegisterMyItems();
-		MyEnchants.RegisterEnchants();
+		//MyEnchants.RegisterEnchants();
 		
 		com.willm.CoreMOD.Holiday.WinterStuff.RegisterWinterStuff();
 	
@@ -89,6 +92,9 @@ public class Main extends JavaPlugin {
 		getCommand("coordinates").setExecutor(new CoordCommand());
 		getCommand("coordinates").setTabCompleter(new CoordsCommandCompleter());
 		
+		getCommand("cmap").setExecutor(new CMapCommand());
+		getCommand("cmap").setTabCompleter(new CMapCompleter());
+
 		getCommand("lukemode").setExecutor(new LukeModeCommand());
 		
 		getCommand("setdifficulty").setExecutor(new SetDifficultyCommand());
@@ -115,6 +121,22 @@ public class Main extends JavaPlugin {
 				try
 				{
 					if(BlockEvents.elevator_cooldown > 0f) {BlockEvents.elevator_cooldown --;}
+					
+					for(Entry<Inventory, ItemStack> shulkerOpen : ItemEvents.shulkerPouches.entrySet())
+					{
+						Inventory inv = shulkerOpen.getKey();
+						
+						if(inv.getViewers().size() < 1) {ItemEvents.shulkerPouches.remove(inv);return;}
+						
+						ItemStack item = shulkerOpen.getValue();
+						BlockStateMeta im = (BlockStateMeta)item.getItemMeta();
+						ShulkerBox shulker = (ShulkerBox) im.getBlockState();
+						
+						shulker.getInventory().setContents(inv.getContents());
+						im.setBlockState(shulker);
+						item.setItemMeta(im);
+
+					}
 				}catch(Exception e)
 				{
 					e.printStackTrace();
@@ -194,35 +216,6 @@ Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
 			
 			for (BlockState state: p.getLocation().getChunk().getTileEntities()) {
 				
-				if(state instanceof Furnace)
-				{
-					Furnace c = (Furnace)state;
-					for(ItemStack i : c.getInventory())
-					{
-						if(i == null) {continue;}
-						RotItem(i, count);
-					}
-				}
-				
-				if(state instanceof Smoker)
-				{
-					Smoker c = (Smoker)state;
-					for(ItemStack i : c.getInventory())
-					{
-						if(i == null) {continue;}
-						RotItem(i, count);
-					}
-				}
-				
-				if(state instanceof BlastFurnace)
-				{
-					BlastFurnace c = (BlastFurnace)state;
-					for(ItemStack i : c.getInventory())
-					{
-						if(i == null) {continue;}
-						RotItem(i, count);
-					}
-				}
 				
 				if (state instanceof Chest) {
 					Chest c = (Chest)state;
